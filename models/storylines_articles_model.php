@@ -16,6 +16,20 @@ class Storylines_articles_model extends BF_Model
 	/*-----------------------------------------------
 	/	PUBLIC FUNCTIONS
 	/----------------------------------------------*/
+	/*
+		Method:
+			build_article_tree()
+			
+		Builds a multidimensional array of articles with child articles nested
+		as children attributes;
+		
+		Parameters:
+			$storyline_id - Storyline ID int
+			
+		Return:
+			Articles Array with ested child articles as Array->children
+	
+	*/
 	public function build_article_tree($storyline_id = false)
 	{
 		if ($storyline_id === false)
@@ -36,7 +50,42 @@ class Storylines_articles_model extends BF_Model
 		}
 		return $articles;
 	}
+	public function get_game_message_types()
+	{
+		$query = $this->db->select('id, name')->get( 'list_storylines_articles_message_types' );
+
+		if ( $query->num_rows() <= 0 )
+			return '';
+
+		$option = array();
+
+		foreach ($query->result() as $row)
+		{
+		  $row_id          = (int) $row->id;
+		  $option[$row_id] = $row->name;
+		}
+
+		$query->free_result();
+
+		return $option;
 	
+	}
+	/*-----------------------------------------------
+	/	PRIVATE FUNCTIONS
+	/----------------------------------------------*/
+	/*
+		Method:
+			get_article_details()
+			
+		Fetches the content field  for the given article ID.
+		
+		Parameters:
+			$article_id - Storyline Article ID int
+			
+		Return:
+			Articles Return object
+	
+	*/
 	private function get_article_details($article_id = false) 
 	{
 		if ($article_id === false)
@@ -47,6 +96,19 @@ class Storylines_articles_model extends BF_Model
 		return $this->select('subject, wait_days_min, wait_days_max, in_game_message, comment_thread_id, created_on, modified_on, deleted')
 					->find($article_id);
 	}
+	/*
+		Method:
+			get_article_parents()
+			
+		Returns an array of top level articles that do not reference any predecessors.
+		
+		Parameters:
+			$storyline_id - Storyline ID int
+			
+		Return:
+			Array of parent article IDs,
+	
+	*/
 	private function get_article_parents($storyline_id = false) 
 	{
 		$articles = array();
@@ -57,9 +119,19 @@ class Storylines_articles_model extends BF_Model
 		
 		return $articles;
 	}
-	/*-----------------------------------------------
-	/	PRIVATE FUNCTIONS
-	/----------------------------------------------*/
+	/*
+		Method:
+			get_article_children()
+			
+		Returns an array of articles that are children of the passed article_id.
+		
+		Parameters:
+			$article_id - Storyline Article ID int
+			
+		Return:
+			Array of article return objects,
+	
+	*/
 	private function get_article_children($article_id = false) 
 	{
 		if ($article_id === false)

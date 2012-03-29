@@ -24,6 +24,11 @@ $lang['sl_description']				= 'Description';
 $lang['sl_category']				= 'Category';
 $lang['sl_edit_after_create']		= 'Edit after created';
 
+$lang['sl_create_article']			= 'Create Article';
+$lang['sl_edit_article']			= 'Edit Article';
+$lang['sl_subject']					= 'Subject';
+$lang['sl_text']					= 'Text';
+
 $lang['sl_edit_storyline']			= 'Edit Storyline';
 $lang['sl_status_category']			= 'Status and Category';
 $lang['sl_meta']					= 'Meta Details';
