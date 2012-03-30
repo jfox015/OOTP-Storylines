@@ -31,6 +31,10 @@ class Author_model extends BF_Model
 	protected $table		= 'users';
 
 	//--------------------------------------------------------------------
+	// !PUBLIC METHODS
+	//--------------------------------------------------------------------
+	
+	//--------------------------------------------------------------------
 
 	public function __construct()
 	{
@@ -41,8 +45,8 @@ class Author_model extends BF_Model
 
 	public function find_author( $id = 0 )
 	{
-		if ( (int)$id == 0 )
-			return false;
+	if ( (int)$id == 0 )
+		return false;
 
 		$this->select('username');
 
@@ -52,8 +56,8 @@ class Author_model extends BF_Model
 
 	//--------------------------------------------------------------------
 
-  public function get_users_select ( )
-  {
+	public function get_users_select ( )
+	{
 		$query = $this->db->select('id, username')->get( $this->table );
 
 		if ( $query->num_rows() <= 0 )
@@ -70,6 +74,9 @@ class Author_model extends BF_Model
 		$query->free_result();
 
 		return $option;
-  }
+	}
+	//--------------------------------------------------------------------
+	// !PRIVATE METHODS
+	//--------------------------------------------------------------------
 
 }

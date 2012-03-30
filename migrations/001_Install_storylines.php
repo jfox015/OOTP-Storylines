@@ -100,6 +100,7 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_field("`var_id` int(11) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`object_type` int(1) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`condition_id` int(11) NOT NULL DEFAULT '0'");
+		$this->dbforge->add_field("`value` int(11) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('storylines_conditions');
 		
@@ -121,6 +122,7 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_field("`article_id` int(1) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`results_id` int(1) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`result_type` int(1) NOT NULL DEFAULT '0'");
+		$this->dbforge->add_field("`result_value` varchar(325) NOT NULL DEFAULT ''");
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('storylines_article_results');
 		
@@ -132,6 +134,7 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('storylines_article_predecessors');
 		
+		// STORYLINE 1
 		$comments = $this->db->table_exists('comments_threads');
 		$comments_thread_id = 0;
 		if ($comments) { 
@@ -276,7 +279,7 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_field("`type` int(1) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`rules` varchar(1000) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`value_range_min` int(11) NOT NULL DEFAULT '0'");
-		$this->dbforge->add_field("`value_range_maz` int(11) NOT NULL DEFAULT '0'");
+		$this->dbforge->add_field("`value_range_max` int(11) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`level_id` int(11) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`category_id` int(11) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`active` int(1) NOT NULL DEFAULT '1'");
@@ -384,9 +387,9 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('list_storylines_conditions_types');
 		
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_types VALUES(0, 'Value Range')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_types VALUES(0, 'Yes/No')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_types VALUES(0, 'Multi')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_types VALUES(1, 'Value Range')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_types VALUES(2, 'Yes/No')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_types VALUES(3, 'Multi')");
 		
 		// Storylines conditions levels List
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
@@ -394,9 +397,9 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('list_storylines_conditions_levels');
 		
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_levels VALUES(0,'Storyline')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_levels VALUES(0,'Article')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_levels VALUES(0,'Object')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_levels VALUES(1,'Storyline')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_levels VALUES(2,'Article')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_levels VALUES(3,'Object')");
 		
 		// Storylines conditions categories List
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
@@ -404,39 +407,52 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('list_storylines_conditions_categories');
 		
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(0,'Default')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(0,'Player')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(0,'Team')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(0,'League')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(0,'Event')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(0,'Coach')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(0,'Owner')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(0,'World')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(1,'Default')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(2,'Player')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(3,'Team')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(4,'League')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(5,'Event')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(6,'Coach')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(7,'Owner')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions_categories VALUES(8,'World')");
 		
 		// Storylines Articles Results List
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
 		$this->dbforge->add_field("`slug` varchar(255) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`name` varchar(255) NOT NULL DEFAULT ''");
-		$this->dbforge->add_field("`object_type` int(1) NOT NULL DEFAULT '0'");
+		$this->dbforge->add_field("`description` varchar(1000) NOT NULL DEFAULT ''");
+		$this->dbforge->add_field("`category_id` int(11) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`value_type` int(1) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`value_range_min` int(11) NOT NULL DEFAULT '0'");
-		$this->dbforge->add_field("`value_range_maz` int(11) NOT NULL DEFAULT '0'");
+		$this->dbforge->add_field("`value_range_max` int(11) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`options` varchar(500) NOT NULL DEFAULT ''");
-		$this->dbforge->add_field("`description` varchar(1000) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`rules` varchar(1000) NOT NULL DEFAULT ''");
+		$this->dbforge->add_field("`active` int(1) NOT NULL DEFAULT '1'");
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('list_storylines_results');
 		
+		// Storylines Articles Results Value Types
+		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
+		$this->dbforge->add_field("`name` varchar(255) NOT NULL DEFAULT ''");
+		$this->dbforge->add_key('id', true);
+		$this->dbforge->create_table('list_storylines_result_categories');
+		
+		$this->db->query("INSERT INTO {$prefix}list_storylines_result_categories VALUES(1, 'Injuries/DL')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_result_categories VALUES(2, 'Transactions')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_result_categories VALUES(3, 'Personality Effects')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_result_categories VALUES(4, 'Talent Effects')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_result_categories VALUES(5, 'Team Effects')");
+				
 		// Storylines Articles Results Value Types
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
 		$this->dbforge->add_field("`slug` varchar(255) NOT NULL DEFAULT ''");
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('list_storylines_result_value_types');
 		
-		$this->db->query("INSERT INTO {$prefix}list_storylines_result_value_types VALUES(0, 'Value Range')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_result_value_types VALUES(0, 'Yes/No')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_result_value_types VALUES(0, 'Multi')");
-		
+		$this->db->query("INSERT INTO {$prefix}list_storylines_result_value_types VALUES(1, 'Value Range')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_result_value_types VALUES(2, 'Yes/No')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_result_value_types VALUES(3, 'Multi')");
+
 	}
 	
 	//--------------------------------------------------------------------
@@ -489,6 +505,7 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->drop_table('list_storylines_conditions_types');
 		$this->dbforge->drop_table('list_storylines_conditions_levels');
 		$this->dbforge->drop_table('list_storylines_results');
+		$this->dbforge->drop_table('list_storylines_result_categories');
 		$this->dbforge->drop_table('list_storylines_result_value_types');
 		$this->dbforge->drop_table('list_storylines_categories');
 		$this->dbforge->drop_table('list_storylines_review_status');

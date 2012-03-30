@@ -1,4 +1,4 @@
-# OOTP Storylines Editor
+# OOTP Storylines Editor: Community Edition
 
 A module for creating and managing OOTP Storylines content.
 

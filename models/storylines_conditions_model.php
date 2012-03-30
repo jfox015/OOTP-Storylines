@@ -14,9 +14,9 @@ class Storylines_conditions_model extends BF_Model
 	protected $set_created	= false;
 	protected $set_modified = false;
 	
-	/*-----------------------------------------------
-	/	PUBLIC FUNCTIONS
-	/----------------------------------------------*/
+	//--------------------------------------------------------------------
+	// !PUBLIC METHODS
+	//--------------------------------------------------------------------
 	public function range_as_select_by_category($range = false)
 	{
 		if ($range === false) {
@@ -51,34 +51,81 @@ class Storylines_conditions_model extends BF_Model
 		return $arrOut;
 	}
 	
-	public function list_as_select_by_category($category_id = false)
+	public function list_as_select_by_category($category_id = false, $level_id = false)
 	{
-		if ($category_id === false) 
+		if ($category_id !== false) 
 		{
-			return false;
+			$this->db->where('category_id', $category_id);
+		}
+		if ($level_id !== false) 
+		{
+			$this->db->where('level_id', $level_id);
 		}
 		$arrOut = array();
-		$this->db->where('category_id', $category_id);
-		$results = $this->select('id, name, slug')->find_all();
-		if (sizeof($results) > 0)
+		
+		$this->db->select('id, name, slug, category_id')->order_by('category_id','asc');
+		$query = $this->db->get($this->table);
+		if ($query->num_rows() > 0)
 		{
-			foreach ($results as $result)
+			$curr_cat = 0;
+			$cat_label = '';
+			$sub_array = array();
+			$category_names = $this->get_category_names();
+			foreach ($query->result() as $row)
 			{
-				if (!isset($result->name) || empty($result->name))
+				if ($row->category_id != $curr_cat)
 				{
-					$name = $result->slug;
+					$curr_cat = $row->category_id;
+					$cat_label = $category_names[$curr_cat];
+					if (count($sub_array) > 0)
+					{
+						$arrOut[$cat_label] = $sub_array;
+						$sub_array = array();
+					}
+				}
+				if (!isset($row->name) || empty($row->name))
+				{
+					$name = $row->slug;
 				}
 				else
 				{
-					$name = $result->name;
+					$name = $row->name;
 				}
-				$arrOut[$result->id] = $name;
+				$sub_array[$row->id] = $name;
+			}
+			if (count($sub_array) > 0)
+			{
+				$arrOut[$cat_label] = $sub_array;
 			}
 		}
+		$query->free_result();
 		return $arrOut;
 	}
-	/*-----------------------------------------------
-	/	PRIVATE FUNCTIONS
-	/----------------------------------------------*/
-
+	//--------------------------------------------------------------------
+	// !PRIVATE METHODS
+	//--------------------------------------------------------------------
+	private function get_category_name($category_id = false) 
+	{
+		if ($category_id === false) {
+			return;
+		}
+		return $this->select('name')->find($category_id);
+	}	
+	private function get_category_names() 
+	{
+		$this->db->select('id, name');
+		$query = $this->db->get('list_storylines_conditions_categories');
+		
+		$category_names = array();
+		if ($query->num_rows() > 0) 
+		{
+			foreach($query->result() as $row) 
+			{
+				$category_names[$row->id] = $row->name;
+			}
+		}
+		$query->free_result();
+		
+		return $category_names;
+	}
 }

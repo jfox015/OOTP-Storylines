@@ -14,9 +14,9 @@ class Storylines_category_model extends BF_Model
 	protected $set_created	= false;
 	protected $set_modified = false;
 	
-	/*-----------------------------------------------
-	/	PUBLIC FUNCTIONS
-	/----------------------------------------------*/
+	//--------------------------------------------------------------------
+	// !PUBLIC METHODS
+	//--------------------------------------------------------------------
 	public function list_as_select()
 	{
 		$arrOut = array();
@@ -30,8 +30,8 @@ class Storylines_category_model extends BF_Model
 		}
 		return $arrOut;
 	}
-	/*-----------------------------------------------
-	/	PRIVATE FUNCTIONS
-	/----------------------------------------------*/
+	//--------------------------------------------------------------------
+	// !PRIVATE METHODS
+	//--------------------------------------------------------------------
 
 }

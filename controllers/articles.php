@@ -10,7 +10,13 @@ class Articles extends Admin_Controller {
 		$this->load->model('storylines_model');
 		$this->load->model('storylines_articles_model');
 		$this->load->model('storylines_category_model');
-		$this->load->model('storylines_status_model');
+		$this->load->model('storylines_review_status_model');
+		$this->load->model('storylines_publish_status_model');
+		$this->load->helper('storylines');
+
+		Template::set_block('sub_nav', 'custom/_sub_nav');
+
+		$this->lang->load('storylines');
 	}
 
 	//--------------------------------------------------------------------
@@ -100,9 +106,9 @@ class Articles extends Admin_Controller {
 	public function create()
 	{
 		$settings = $this->settings_model->select('name,value')->find_all_by('module', 'storylines');
-		$this->auth->restrict('Storylines.Stories.Add');
+		$this->auth->restrict('Storylines.Content.Add');
 
-		$storyline_id = $this->uri->segment(6)
+		$storyline_id = $this->uri->segment(6);
 		
 		if ($this->input->post('submit'))
 		{
@@ -114,7 +120,7 @@ class Articles extends Admin_Controller {
 				$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_create').' '.$this->current_user->display_name, 'storylines/articles');
 
 				Template::set_message('Storyline Article successfully created.', 'success');
-				$dest = '/custom/stoylines/';
+				$dest = '/custom/stoylines/edit/'.$storyline_id;
 				if ($this->input->post('edit_after_create')) {
 					$dest = '/custom/stoylines/articles/edit/'.$id;
 				}
@@ -126,25 +132,26 @@ class Articles extends Admin_Controller {
 			}
 		}
         
+		Template::set('game_message_types', $this->storylines_articles_model->get_game_message_types());
 		Template::set('storyline_id', $storyline_id);
 		Template::set('toolbar_title', lang('sl_create_article'));
 		Template::set_view('storylines/custom/create_article_form');
 		Template::render();
 	}
 	
-
 	//--------------------------------------------------------------------
 
 	public function edit()
 	{
         $settings = $this->settings_model->select('name,value')->find_all_by('module', 'storylines');
-		$this->auth->restrict('Storylines.Stories.Manage');
+		$this->auth->restrict('Storylines.Content.Manage');
 		
-		$article_id = $this->uri->segment(5);
+		$article_id = $this->uri->segment(6);
+
 		if (empty($article_id))
 		{
-			Template::set_message(lang('us_empty_id'), 'error');
-			redirect(SITE_AREA .'/custom/storylines');
+			Template::set_message(lang('sl_empty_id'), 'error');
+			redirect(SITE_AREA .'/custom/storylines/');
 		}
 
 		if ($this->input->post('submit'))
@@ -160,55 +167,74 @@ class Articles extends Admin_Controller {
 			}
 			else
 			{
-				Template::set_message('There was a problem updating the storyline Article: '. $this->storylines_articles_model->error);
+				Template::set_message('There was a problem updating the Storyline Article: '. $this->storylines_articles_model->error);
 			}
 		}
 
-		$storyline = $this->storylines_articles_model->find($article_id);
-		if (isset($storyline))
+		$article = $this->storylines_articles_model->find($article_id);
+		
+		if (isset($article))
 		{
-			Template::set('storyline', $storyline);
+			Template::set('article', $article);
 			Template::set_view('storylines/custom/articles/edit_article_form');
+			$this->load->model('storylines_conditions_model');
+			Template::set('conditions', $this->storylines_conditions_model->list_as_select_by_category());
+			$this->load->model('storylines_results_model');
+			Template::set('results', $this->storylines_results_model->find_all());
+			Template::set('article_conditions', $this->storylines_articles_model->get_article_conditions($article_id));
+			Template::set('article_results', $this->storylines_articles_model->get_article_results($article_id));
+			Template::set('game_message_types', $this->storylines_articles_model->get_game_message_types());
+			Template::set('storyline', $this->storylines_model->find($article->storyline_id));
+			Template::set('comment_form', (in_array('comments',module_list(true))) ? modules::run('comments/thread_view_with_form',$article->comments_thread_id) : '');
 		}
 		else
 		{
-			Template::set_message(sprintf(lang('us_unauthorized')), 'error');
-			redirect(SITE_AREA .'/custom/storylines/'.$storyline_id);
+			Template::set_message(lang('sl_no_article_matches'), 'error');
+			redirect(SITE_AREA .'/custom/storylines/');
 		}
-
+		
 		Template::set('toolbar_title', lang('sl_edit_article'));
+		Template::set_view('storylines/custom/edit_article_form');
 		Template::render();
 	}
 
 	//--------------------------------------------------------------------
 
-	private function save_article($type='insert', $id=0)
+	private function save_article($type='insert', $id = 0)
 	{
 		$db_prefix = $this->db->dbprefix;
 
 		if ($type == 'insert')
 		{
-			$this->form_validation->set_rules('subject', lang('sl_title'), 'required|trim|max_length[255]|xss_clean');
-			$this->form_validation->set_rules('text', lang('sl_description'), 'required|trim|xss_clean');
+			$this->form_validation->set_rules('subject', lang('sl_subject'), 'required|trim|max_length[255]|xss_clean');
+			$this->form_validation->set_rules('text', lang('sl_text'), 'required|trim|xss_clean');
+			$this->form_validation->set_rules('reply', lang('sl_reply'), 'strip_tags|trim|xss_clean');
+			$this->form_validation->set_rules('in_game_message', lang('sl_in_game_message'), 'required|strip_tags|numeric|trim|xss_clean');
 		}
-		else
-		{
-			$this->form_validation->set_rules('subject', lang('sl_title'), 'required|trim|max_length[255]|xss_clean');
-			$this->form_validation->set_rules('text', lang('sl_description'), 'required|trim|xss_clean');
-		}
-
 		if ($this->form_validation->run() === false)
 		{
 			return false;
 		}
 		$data = array(
-					'title'=>$this->input->post('subject'),
-					'description'=>$this->input->post('text')
+					'subject'=>$this->input->post('subject'),
+					'text'=>$this->input->post('text'),
+					'reply'=>$this->input->post('reply'),
+					'in_game_message'=>($this->input->post('in_game_message')) ? $this->input->post('in_game_message') : 1
 		);
 
 		if ($type == 'insert')
 		{
-			$data = $data + array('storyline_id'=>$this->input->post('$storyline_id'));
+			$thread_id = 0;
+			if (in_array('comments',module_list(true))) 
+			{
+				if(!isset($this->comments_model)) 
+				{
+					$this->load->model('comments/comments_model');
+				}
+				$thread_id = $this->comments_model->new_comments_thread();
+			}
+			$data = $data + array('storyline_id'=>$this->input->post('storyline_id'),
+								  'comments_thread_id'=>$thread_id);
 			return $this->storylines_articles_model->insert($data);
 		}
 		else	// Update

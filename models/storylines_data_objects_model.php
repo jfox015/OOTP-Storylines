@@ -14,17 +14,17 @@ class Storylines_data_objects_model extends BF_Model
 	protected $set_created	= false;
 	protected $set_modified = false;
 	
-	/*-----------------------------------------------
-	/	PUBLIC FUNCTIONS
-	/----------------------------------------------*/
+	//--------------------------------------------------------------------
+	// !PUBLIC METHODS
+	//--------------------------------------------------------------------
 	public function find_all_by($field=null, $value=null)
 	{
 		$this->select('storylines_data_objects.id, list_storylines_data_objects.name, list_storylines_data_objects.description');
 		$this->db->join('list_storylines_data_objects','list_storylines_data_objects.id = storylines_data_objects.object_id','right outer');
 		return parent::find_all_by($field, $value);
 	}
-	/*-----------------------------------------------
-	/	PRIVATE FUNCTIONS
-	/----------------------------------------------*/
+	//--------------------------------------------------------------------
+	// !PRIVATE METHODS
+	//--------------------------------------------------------------------
 
 }

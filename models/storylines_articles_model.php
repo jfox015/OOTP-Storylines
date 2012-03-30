@@ -13,9 +13,15 @@ class Storylines_articles_model extends BF_Model
 	protected $set_created	= true;
 	protected $set_modified = true;
 	
-	/*-----------------------------------------------
-	/	PUBLIC FUNCTIONS
-	/----------------------------------------------*/
+	//--------------------------------------------------------------------
+	// !PUBLIC METHODS
+	//--------------------------------------------------------------------
+	public function __construct()
+	{
+		parent::__construct();
+	}
+	//--------------------------------------------------------------------
+
 	/*
 		Method:
 			build_article_tree()
@@ -27,7 +33,7 @@ class Storylines_articles_model extends BF_Model
 			$storyline_id - Storyline ID int
 			
 		Return:
-			Articles Array with ested child articles as Array->children
+			Articles Array with nested child articles as Array->children
 	
 	*/
 	public function build_article_tree($storyline_id = false)
@@ -50,6 +56,87 @@ class Storylines_articles_model extends BF_Model
 		}
 		return $articles;
 	}
+	
+	//--------------------------------------------------------------------
+
+	/*
+		Method:
+			get_article_conditions()
+			
+		Returns an array of result types and values.
+		
+		Parameters:
+			$article_id - Storyline Article ID int
+			
+		Return:
+			Array of result IDs and values
+	
+	*/
+	public function get_article_conditions($article_id = false)
+	{
+		if ($article_id === false)
+		{
+			$this->error .= "No article ID was received.<br/>\n";
+			return false;
+		}
+		$results = array();
+		$this->db->select('*')
+				 ->where('var_id', $article_id);
+		$query = $this->db->get('storylines_conditions');
+		if ($query->num_rows() > 0) 
+		{
+			$results = $query->result();
+		}
+		$query->free_result();
+		return $results;
+	}
+	
+	//--------------------------------------------------------------------
+
+	/*
+		Method:
+			get_article_results()
+			
+		Returns an array of result types and values.
+		
+		Parameters:
+			$article_id - Storyline Article ID int
+			
+		Return:
+			Array of result IDs and values
+	
+	*/
+	public function get_article_results($article_id = false)
+	{
+		if ($article_id === false)
+		{
+			$this->error .= "No article ID was received.<br/>\n";
+			return false;
+		}
+		$results = array();
+		$this->db->select('id, results_id, result_value')
+				 ->where('article_id', $article_id);
+		$query = $this->db->get('storylines_article_results');
+		if ($query->num_rows() > 0) 
+		{
+			$results = $query->result();
+		}
+		$query->free_result();
+		return $results;
+	}
+	
+	//--------------------------------------------------------------------
+
+	/*
+		Method:
+			get_game_message_types()
+			
+		Returns a select box ready array of game message type values
+			
+		Return:
+			Array of value in id => value format
+	
+	*/
 	public function get_game_message_types()
 	{
 		$query = $this->db->select('id, name')->get( 'list_storylines_articles_message_types' );
@@ -70,9 +157,12 @@ class Storylines_articles_model extends BF_Model
 		return $option;
 	
 	}
-	/*-----------------------------------------------
-	/	PRIVATE FUNCTIONS
-	/----------------------------------------------*/
+	
+	//--------------------------------------------------------------------
+
+	//--------------------------------------------------------------------
+	// !PRIVATE METHODS
+	//--------------------------------------------------------------------
 	/*
 		Method:
 			get_article_details()

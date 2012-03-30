@@ -33,7 +33,7 @@
 		
 			<!-- Reply -->
         <div class="control-group <?php echo form_error('reply') ? 'error' : '' ?>">
-             <label class="control-label" for="reply"><?php echo lang('sl_subject') ?></label>
+             <label class="control-label" for="reply"><?php echo lang('sl_reply') ?></label>
             <div class="controls">
                 <input type="text" class="span6" name="reply" id="reply" value="<?php echo set_value('reply') ?>" />
 				<?php if (form_error('reply')) echo '<span class="help-inline">'. form_error('reply') .'</span>'; ?>
@@ -41,7 +41,7 @@
         </div>
 		
 		<!-- Game Message Type -->
-		<?php echo form_dropdown('category_id',$categories,set_value('category_id'),lang('sl_category'),' class="span6" id="category_id"'); ?>
+		<?php echo form_dropdown('in_game_message',$game_message_types,set_value('in_game_message'),lang('sl_in_game_message'),' class="span6" id="in_game_message"'); ?>
 		
 		
 			<!-- Edit after creating -->

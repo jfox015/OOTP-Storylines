@@ -43,16 +43,16 @@ class Custom extends Admin_Controller {
             switch(strtolower($action))
             {
                 case 'approve':
-                    $this->approve($checked);
+                    $this->change_status($checked, 3);
                     break;
                 case 'in review':
-                    $this->review($checked);
+                    $this->change_status($checked, 2);
                     break;
                 case 'reject':
-                    $this->reject($checked);
+                    $this->change_status($checked, 4);
                     break;
                 case 'archive':
-                    $this->archive($checked);
+                    $this->change_status($checked, 5);
                     break;
                 case 'delete':
                     $this->delete($checked);
@@ -113,12 +113,9 @@ class Custom extends Admin_Controller {
 
         $this->load->helper('ui/ui');
 		$dbprefix = $this->db->dbprefix;
-        $this->storylines_model->join('list_storylines_categories','list_storylines_categories.id = storylines.category_id');
-        $this->storylines_model->join('list_storylines_publish_status','list_storylines_publish_status.id = storylines.publish_status_id');
-        $this->storylines_model->limit($this->limit, $offset)->where($where);
-        $this->storylines_model->select('storylines.id, storylines.category_id, list_storylines_categories.name as category_name, title, created_by, created_on, modified_on, modified_by, storylines.publish_status_id, list_storylines_publish_status.name as status_name, (SELECT COUNT('.$dbprefix.'storylines_articles.id) FROM '.$dbprefix.'storylines_articles WHERE '.$dbprefix.'storylines_articles.storyline_id = '.$dbprefix.'storylines.id) as article_count');
 
-        Template::set('storylines', $this->storylines_model->find_all());
+		$this->limit($this->limit, $offset)->where($where);
+		Template::set('storylines', $this->storylines_model->find_all());
 
         // Pagination
         $this->load->library('pagination');
@@ -225,6 +222,7 @@ class Custom extends Admin_Controller {
 			Template::set('review_statuses', $this->storylines_review_status_model->list_as_select());
 			$comments = (in_array('comments',module_list(true))) ? modules::run('comments/thread_view_with_form',$storyline->comments_thread_id) : '';
 			Template::set('comment_form', $comments);
+			Assets::add_js($this->load->view('storylines/custom/edit_form_js',array('storyline'=>$storyline),true),'inline');
 			Template::set_view('storylines/custom/edit_form');
 		}
 		else
@@ -239,7 +237,72 @@ class Custom extends Admin_Controller {
 
 	//--------------------------------------------------------------------
 
-	private function save_storyline($type='insert', $id=0)
+	public function delete($items)
+	{
+		if (empty($items))
+		{
+			$item_id = $this->uri->segment(5);
+
+			if(!empty($item_id))
+			{
+					$items = array($item_id);
+			}
+		}
+
+		if (!empty($items))
+		{
+			$this->auth->restrict('Storylines.Content.Manage');
+
+			foreach ($items as $id)
+			{
+				$item = $this->storylines_model->find($id);
+
+				if (isset($item))
+				{
+					if ($this->storylines_model->delete($id))
+					{
+						$this->load->model('activities/Activity_model', 'activity_model');
+
+						$item = $this->storylines_model->find($id);
+						$user = $this->user_model->find($this->current_user->id);
+						$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->current_user->username : ($this->settings_lib->item('auth.use_usernames') ? $user->username : $user->email);
+						$this->activity_model->log_activity($this->current_user->id, lang('us_log_delete') . ': '.$log_name, 'storylines');
+						Template::set_message('The Storyline was successfully deleted.', 'success');
+					} else {
+						Template::set_message(lang('us_action_not_deleted'). $this->storylines_model->error, 'error');
+					}
+				}
+				else 
+				{
+					Template::set_message(lang('sl_no_matches_found'), 'error');
+				}
+			}
+		}
+		else 
+		{
+				Template::set_message(lang('us_empty_id'), 'error');
+		}
+		redirect(SITE_AREA .'/custom/storylines');
+	}
+	//--------------------------------------------------------------------
+
+	public function change_status($items=false, $status_id = 1)
+	{
+		if (!$items)
+		{
+			return;
+		}
+		$this->auth->restrict('Storylines.Content.Manage');
+		
+		foreach ($items as $item_id)
+		{
+			$this->storylines_model->update($item_id, array('publish_status' => $status_id));
+		}
+	}
+
+	//--------------------------------------------------------------------
+
+	private function save_storyline($type='insert', $id = 0)
 	{
 		$db_prefix = $this->db->dbprefix;
 
@@ -272,11 +335,15 @@ class Custom extends Admin_Controller {
 
 		if ($type == 'insert')
 		{
-			if (!isset($this->comments_model)) 
+			$thread_id = 0;
+			if (in_array('comments',module_list(true))) 
 			{
-				$this->load->model('comments/comments_model');
+				if(!isset($this->comments_model)) 
+				{
+					$this->load->model('comments/comments_model');
+				}
+				$thread_id = $this->comments_model->new_comments_thread();
 			}
-			$thread_id = $this->comments_model->new_comments_thread();
 			$data = $data + array('comments_thread_id'=>$thread_id,'created_by'=>$this->current_user->id);
 			return $this->storylines_model->insert($data);
 		}
