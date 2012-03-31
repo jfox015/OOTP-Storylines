@@ -63,6 +63,8 @@ $lang['sl_results']					= 'Results';
 $lang['sl_conditions']				= 'Conditions';
 $lang['sl_condition']				= 'Condition';
 $lang['sl_value']					= 'Value';
+$lang['sl_name']					= 'Name';
+$lang['sl_frequency']				= 'Frequency';
 
 $lang['sl_no_storyline_found']		= 'The selected Storyline could nto be found.';
 $lang['sl_no_articles']				= 'No articles were found';

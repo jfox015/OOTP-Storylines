@@ -35,46 +35,65 @@
 					</div>
 				</fieldset>
 				
-				<?php if(isset($characters_list) && is_array($characters_list) && count($characters_list)) : ?>
-				<div id="data_object_modal" class="modal" style="display:none;">
+				<?php if(isset($conditions_objs) && is_array($conditions_objs) && count($conditions_objs)) :
+				
+					// BUILD CONDITIONS JS OBJECT ARRAY 
+					?>
+					<script type="text/javascript">
+					var conditions_objs = [], options = [];
+					<?php 
+
+						$conditions = array();
+						foreach ($conditions_objs as $condition) :
+						if (isset($condition->options) && !empty($condition->options)) {
+								echo('options = []');
+								echo('options[0] = "Select Option";');
+								if (strpos($condition->options,"|") !== false) :
+
+									$ops_array = explode("|",$condition->options);
+								else:
+									$ops_array = array($condition->options);
+								endif;
+								foreach($ops_array as $option)  :
+									$ops = explode(":",$option);
+									echo('options[options.length] = { value: "'.$ops[1].'", name: "'.$ops[0].'"};');
+								endforeach;
+							}
+							echo('conditions_objs['.$condition->id.'] = new Condition_Obj('.$condition->id.',"'.$condition->slug.'","'.$condition->name.'","'.$condition->description.'",'.$condition->type.','.$condition->value_range_min.','.$condition->value_range_max.', options);');
+							$conditions = $conditions + array($condition->id=>$condition->slug);
+						endforeach;
+					?>
+					</script>
+				<div id="condition_modal" class="modal" style="display:none;">
 					<div class="modal-header">
 						<a href="#" class="close" data-dismiss="modal"></a>
-						<h3>Characters</h3>
+						<h3>Conditions Editor</h3>
 					</div>
 					<div class="modal-body">
 						<div id="modal_waitload" class="well center" style="display:none;">
 							<img src="<?php echo(TEMPLATE::theme_url('images/ajax-loader.gif'));?>" width="28" height="28" border="0" align="absmiddle" /><br />Operation in progress. Please wait...
 						</div>
+						<?php if (isset($conditions)) { ?>
 						<div id="modal_ajaxStatusBox" style="display:none;"><div id="modal_ajaxStatus" class="alert"></div></div>
-
-						<div ID="object_form">
-							<div class="control-group">
-								<label class="control-label"><?php echo lang('sl_select_character') ?></label>
-								<div class="controls">
-									<?php
-									echo form_dropdown('chatacter',$characters_list);
-									echo '<span class="help-inline"></span>'; ?>
-								</div>
-							</div>	
-							<div id="object_conditions_box"  style="display:none;">
-								<div class="control-group">
-									<div class="controls">
-										<?php
-										echo form_dropdown('object_conditions_select',$character_condition_list); ?>
-										<input type="text" class="span1" name="object_condition_val" id="object_condition_val" />
-										<a href class="btn btn-small" id="add_object_condition">Add</a>
-									</div>
-								</div>
+						<div class="control-group">
+							<div class="controls">
+								<?php
+									echo form_dropdown('condition_select',$conditions);
+								?>
+								<a href class="btn btn-small" id="add_object_condition">Add</a>
+								<span class="help-inline"></span>
 							</div>
 						</div>
-						<div class="controls">
-							<?php echo form_textarea( array( 'name' => 'description', 'id' => 'description', 'class'=>'span6','rows' => '5', 'cols' => '80', 'value' => isset($storyline) ? $storyline->description : set_value('description') ) )?>
-							<?php if (form_error('description')) echo '<span class="help-inline">'. form_error('description') .'</span>'; ?>
-						</div>						
+						<?php } ?>
+
+						<table class="table table-striped table-bordered">
+						<tbody id="conditions_tbody">
+						</tbody>
+						</table>
 					</div>
 					<div class="modal-footer">
-						<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-						<a href="#" id="submit_character" class="btn btn-primary">Add Character</a>
+						<a href="#" class="btn" data-dismiss="modal"><?php echo lang('bf_action_save'); ?></a>
+						<a href="#" id="save_conditions" class="btn btn-primary"><?php echo lang('bf_action_save'); ?></a>
 					</div>
 				</div>
 				<?php endif; ?>
@@ -83,6 +102,7 @@
 				<fieldset>
 					<legend><?php echo lang('sl_data_objects'); ?></legend>
 					<div class="help-inline">
+						<?php echo form_dropdown('chatacter',$characters_list); ?>
 						<a class="btn btn-small" href="#" id="add_object">
 							<i class="icon-plus"></i> <?php echo lang('sl_add_object'); ?></i>
 						</a>
@@ -262,6 +282,23 @@
 					</div>
 					<?php endif; ?>
 					
+				</fieldset>
+				
+					<!-- FREQUENCY -->
+				<fieldset>
+					<legend><?php echo lang('sl_frequency') ?></legend>
+							<!-- Category -->
+					<?php if (isset($frequencies) && is_array($frequencies) && count($frequencies)) : ?>
+					<div class="control-group <?php echo form_error('random_frequency') ? 'error' : '' ?>">
+						 <label class="control-label"><?php echo lang('sl_frequency') ?></label>
+						<div class="controls">
+							<?php 
+							echo form_dropdown('random_frequency',$frequencies, isset($storyline) ? $storyline->random_frequency : set_value('random_frequency 	'));
+							?>
+							<?php if (form_error('random_frequency')) echo '<span class="help-inline">'. form_error('random_frequency') .'</span>'; ?>
+						</div>
+					</div>
+					<?php endif; ?>
 				</fieldset>
 				
 					<!-- TRIGGERS -->

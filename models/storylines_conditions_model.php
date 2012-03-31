@@ -50,7 +50,20 @@ class Storylines_conditions_model extends BF_Model
 		}
 		return $arrOut;
 	}
-	
+	public function list_by_range()
+	{
+		$arrOut = array();
+		$results = $this->find_all();
+		if (sizeof($results) > 0)
+		{
+			foreach ($results as $result)
+			{
+				$arrOut[$result->id] = $result->name;
+			}
+		}
+		return $arrOut;
+	}
+
 	public function list_as_select_by_category($category_id = false, $level_id = false)
 	{
 		if ($category_id !== false) 

@@ -183,6 +183,20 @@ class Migration_Install_storylines extends Migration {
 		/*--------------------------
 		/	LISTS
 		/-------------------------*/
+		// Storylines Random Frequencies
+		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
+		$this->dbforge->add_field("`name` varchar(255) NOT NULL DEFAULT ''");
+		$this->dbforge->add_field("`value` int(4) NOT NULL DEFAULT '0'");
+		$this->dbforge->add_key('id', true);
+		$this->dbforge->create_table('list_storylines_random_frequencies');
+		
+		$this->db->query("INSERT INTO {$prefix}list_storylines_random_frequencies VALUES(0,'Once in a generation',100)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_random_frequencies VALUES(0,'Extremely rare',1000)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_random_frequencies VALUES(0,'Rarelyn',2000)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_random_frequencies VALUES(0,'Standard',5000)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_random_frequencies VALUES(0,'Often',6500)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_random_frequencies VALUES(0,'Very Often',8000)");
+		
 		// Storylines Article message types List
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
 		$this->dbforge->add_field("`name` varchar(255) NOT NULL DEFAULT ''");
@@ -277,7 +291,7 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_field("`name` varchar(255) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`description` varchar(1000) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`type` int(1) NOT NULL DEFAULT '0'");
-		$this->dbforge->add_field("`rules` varchar(1000) NOT NULL DEFAULT ''");
+		$this->dbforge->add_field("`options` varchar(1000) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`value_range_min` int(11) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`value_range_max` int(11) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`level_id` int(11) NOT NULL DEFAULT '0'");
@@ -363,7 +377,7 @@ class Migration_Install_storylines extends Migration {
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(0,'PLAYER_PERSONALITY_IS_FAN_FAVORITE', 'Personality: Fan Favorite', '', 0, '', 0, 0, 1, 1, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(0,'PLAYER_PERSONALITY_IS_HUMBLE', 'Personality: Humble', '', 0, '', 0, 0, 1, 1, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(0,'PLAYER_PERSONALITY_IS_SELFISH', 'Personality: Selfish', '', 0, '', 0, 0, 1, 1, 1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(0,'PLAYER_POSITION', '', 'pitcher=1, catcher=2, first_base=3, second_base=4=, third_base=5, shortstop=6, left_field=7, center_field=8, right_field=9, designated_hitter=10, starter=11, reliever=12, closer=13, all_batters=14, highschool_players=15, college_players=16', 0, '', 1, 16, 1, 1, 1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(0,'PLAYER_POSITION', 'Position', 'pitcher=1, catcher=2, first_base=3, second_base=4=, third_base=5, shortstop=6, left_field=7, center_field=8, right_field=9, designated_hitter=10, starter=11, reliever=12, closer=13, all_batters=14, highschool_players=15, college_players=16', 3, 'Pitcher:1|Catcher:2|First Base:3|Second Base:4|Third Base:5|Dhortstop:6|Left_field:7|center_field:8|right_field:9|designated_hitter:10|starter:11|reliever:12|closer:13|all Batters:14|highschool_players:15|college_players:16', 1, 16, 1, 1, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(0,'PLAYER_PRO_SERVICE_MAX', 'Professional service time Max', '', 0, '', 0, 99, 1, 1,1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(0,'PLAYER_PRO_SERVICE_MIN', 'Professional service time Min', 'Player has accrued no professional service time', 0, '', 0, 99,1, 1, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(0,'PLAYER_QUALITY_MAX', '', 'Sum of players Contact, Gap, Power and Eye/Patience actual ratings (for hitters) or players Fastball, Stuff, Movement and Control actual ratings (for pitchers) is at least/below X', 0, '', 0, 7, 1, 1, 1)");
@@ -452,7 +466,14 @@ class Migration_Install_storylines extends Migration {
 		$this->db->query("INSERT INTO {$prefix}list_storylines_result_value_types VALUES(1, 'Value Range')");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_result_value_types VALUES(2, 'Yes/No')");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_result_value_types VALUES(3, 'Multi')");
-
+		
+		// Storylines Articles Results Value Types
+		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
+		$this->dbforge->add_field("`slug` varchar(255) NOT NULL DEFAULT ''");
+		$this->dbforge->add_field("`value` varchar(255) NOT NULL DEFAULT ''");
+		$this->dbforge->add_key('id', true);
+		$this->dbforge->create_table('list_storylines_tokens');
+		
 	}
 	
 	//--------------------------------------------------------------------
@@ -497,6 +518,7 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->drop_table('storylines_history');
 		$this->dbforge->drop_table('storylines_article_results');
 		$this->dbforge->drop_table('storylines_article_predecessors');
+		$this->dbforge->drop_table('list_storylines_random_frequencies');
 		$this->dbforge->drop_table('list_storylines_articles_message_types');
 		$this->dbforge->drop_table('list_storylines_triggers');
 		$this->dbforge->drop_table('list_storylines_data_objects');
@@ -510,6 +532,7 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->drop_table('list_storylines_categories');
 		$this->dbforge->drop_table('list_storylines_review_status');
 		$this->dbforge->drop_table('list_storylines_publish_status');
+		$this->dbforge->drop_table('list_storylines_tokens');
 	}
 	
 	//--------------------------------------------------------------------

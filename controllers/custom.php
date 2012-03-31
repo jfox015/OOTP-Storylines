@@ -114,7 +114,7 @@ class Custom extends Admin_Controller {
         $this->load->helper('ui/ui');
 		$dbprefix = $this->db->dbprefix;
 
-		$this->limit($this->limit, $offset)->where($where);
+		$this->storylines_model->limit($this->limit, $offset)->where($where);
 		Template::set('storylines', $this->storylines_model->find_all());
 
         // Pagination
@@ -212,12 +212,21 @@ class Custom extends Admin_Controller {
 			if (!isset($this->storylines_articles_model)) {
 				$this->load->model('storylines_articles_model');
 			}
+			if (!isset($this->storylines_conditions_model)) {
+				$this->load->model('storylines_conditions_model');
+			}
 			if (!isset($this->storylines_data_objects_model)) {
 				$this->load->model('storylines_data_objects_model');
 			}
+			if (!isset($this->storylines_random_frequencies_model)) {
+				$this->load->model('storylines_random_frequencies_model');
+			}
+			Template::set('conditions_objs', $this->storylines_conditions_model->find_all());
+			Template::set('characters_list', $this->storylines_data_objects_model->list_as_select());
 			Template::set('characters', $this->storylines_data_objects_model->find_all_by('storyline_id',$storyline_id));
 			Template::set('articles', $this->storylines_articles_model->build_article_tree($storyline_id));
 			Template::set('categories', $this->storylines_category_model->list_as_select());
+			Template::set('frequencies', $this->storylines_random_frequencies_model->list_as_select());
 			Template::set('publish_statuses', $this->storylines_publish_status_model->list_as_select());
 			Template::set('review_statuses', $this->storylines_review_status_model->list_as_select());
 			$comments = (in_array('comments',module_list(true))) ? modules::run('comments/thread_view_with_form',$storyline->comments_thread_id) : '';

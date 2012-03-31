@@ -23,6 +23,23 @@ class Storylines_data_objects_model extends BF_Model
 		$this->db->join('list_storylines_data_objects','list_storylines_data_objects.id = storylines_data_objects.object_id','right outer');
 		return parent::find_all_by($field, $value);
 	}
+	public function list_as_select()
+	{
+		$this->db->select('id, name');
+		$query = $this->db->get('list_storylines_data_objects');
+
+		$data_objects = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach($query->result() as $row)
+			{
+				$data_objects[$row->id] = $row->name;
+			}
+		}
+		$query->free_result();
+
+		return $data_objects;
+	}
 	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
 	//--------------------------------------------------------------------

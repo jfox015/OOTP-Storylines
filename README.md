@@ -8,6 +8,11 @@ A module for creating and managing OOTP Storylines content.
 - Add, edit and delete storyline articles
 - Discuss Storylines and articles using the Bonfire::Comments module (available seperately)
 
+## Possible Future Features
+
+- Reference Library
+- Import Storylines from XML, SQL, JSON
+
 ## Keep Current on the Mod
 
 Follow the official Twitter feed [ootpFox07](http://twitter.com/#!/ootpFox07).
