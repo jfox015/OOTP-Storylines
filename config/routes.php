@@ -25,3 +25,27 @@ $route['storylines/custom/articles/(:any)/(:any)/(:any)']		= "articles/$1/$2/$3"
 $route['storylines/custom/articles/(:any)/(:any)']		= "articles/$1/$2";
 $route['storylines/custom/articles/(:any)'] 		= "articles/$1";
 $route['storylines/custom/articles']				= "articles";
+
+$route['storylines/custom/conditions/(:any)/(:any)/(:any)/(:any)']		= "conditions/$1/$2/$3/$4";
+$route['storylines/custom/conditions/(:any)/(:any)/(:any)']		= "conditions/$1/$2/$3";
+$route['storylines/custom/conditions/(:any)/(:any)']		= "conditions/$1/$2";
+$route['storylines/custom/conditions/(:any)'] 		= "conditions/$1";
+$route['storylines/custom/conditions']				= "conditions";
+
+$route['storylines/custom/triggers/(:any)/(:any)/(:any)/(:any)']		= "triggers/$1/$2/$3/$4";
+$route['storylines/custom/triggers/(:any)/(:any)/(:any)']		= "triggers/$1/$2/$3";
+$route['storylines/custom/triggers/(:any)/(:any)']		= "triggers/$1/$2";
+$route['storylines/custom/triggers/(:any)'] 		= "triggers/$1";
+$route['storylines/custom/triggers']				= "triggers";
+
+$route['storylines/custom/results/(:any)/(:any)/(:any)/(:any)']		= "results/$1/$2/$3/$4";
+$route['storylines/custom/results/(:any)/(:any)/(:any)']		= "results/$1/$2/$3";
+$route['storylines/custom/results/(:any)/(:any)']		= "results/$1/$2";
+$route['storylines/custom/results/(:any)'] 		= "results/$1";
+$route['storylines/custom/results']				= "results";		
+
+$route['storylines/custom/data_objects/(:any)/(:any)/(:any)/(:any)']		= "data_objects/$1/$2/$3/$4";
+$route['storylines/custom/data_objects/(:any)/(:any)/(:any)']		= "data_objects/$1/$2/$3";
+$route['storylines/custom/data_objects/(:any)/(:any)']		= "data_objects/$1/$2";
+$route['storylines/custom/data_objects/(:any)'] 		= "data_objects/$1";
+$route['storylines/custom/data_objects']				= "data_objects";

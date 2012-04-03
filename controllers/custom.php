@@ -221,17 +221,27 @@ class Custom extends Admin_Controller {
 			if (!isset($this->storylines_random_frequencies_model)) {
 				$this->load->model('storylines_random_frequencies_model');
 			}
+			if (!isset($this->storylines_category_model)) {
+				$this->load->model('storylines_category_model');
+			}
+
+			// Storyline Data sets
+			Template::set('conditions', $this->storylines_conditions_model->get_object_conditions($storyline_id, 1));
+			Template::set('data_objects', $this->storylines_model->get_data_objects('storyline_id',$storyline_id));
+			Template::set('articles', $this->storylines_articles_model->build_article_tree($storyline_id));
+			
+			// Options Lists Data
 			Template::set('conditions_objs', $this->storylines_conditions_model->find_all());
 			Template::set('characters_list', $this->storylines_data_objects_model->list_as_select());
-			Template::set('characters', $this->storylines_data_objects_model->find_all_by('storyline_id',$storyline_id));
-			Template::set('articles', $this->storylines_articles_model->build_article_tree($storyline_id));
-			Template::set('categories', $this->storylines_category_model->list_as_select());
 			Template::set('frequencies', $this->storylines_random_frequencies_model->list_as_select());
+			Template::set('categories', $this->storylines_category_model->list_as_select());
 			Template::set('publish_statuses', $this->storylines_publish_status_model->list_as_select());
 			Template::set('review_statuses', $this->storylines_review_status_model->list_as_select());
+			
 			$comments = (in_array('comments',module_list(true))) ? modules::run('comments/thread_view_with_form',$storyline->comments_thread_id) : '';
 			Template::set('comment_form', $comments);
 			Assets::add_js($this->load->view('storylines/custom/edit_form_js',array('storyline'=>$storyline),true),'inline');
+			
 			Template::set_view('storylines/custom/edit_form');
 		}
 		else
@@ -293,6 +303,7 @@ class Custom extends Admin_Controller {
 		}
 		redirect(SITE_AREA .'/custom/storylines');
 	}
+	
 	//--------------------------------------------------------------------
 
 	public function change_status($items=false, $status_id = 1)
@@ -305,10 +316,31 @@ class Custom extends Admin_Controller {
 		
 		foreach ($items as $item_id)
 		{
-			$this->storylines_model->update($item_id, array('publish_status' => $status_id));
+			$this->storylines_model->update($item_id, array('publish_status_id' => $status_id));
 		}
 	}
-
+	
+	//--------------------------------------------------------------------
+	
+	public function export()
+	{
+		Template::render();
+	}
+	
+	//--------------------------------------------------------------------
+	
+	public function manage_data()
+	{
+		Template::render();
+	}
+	
+	//--------------------------------------------------------------------
+	
+	public function reference()
+	{
+		Template::render();
+	}
+	
 	//--------------------------------------------------------------------
 
 	private function save_storyline($type='insert', $id = 0)

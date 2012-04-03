@@ -33,7 +33,25 @@ class Storylines_model extends BF_Model
 		$this->join('list_storylines_publish_status','list_storylines_publish_status.id = storylines.publish_status_id');
 		$this->select('storylines.id, storylines.description, random_frequency, storylines.category_id, list_storylines_categories.name as category_name, title, created_by, created_on, modified_on, modified_by, storylines.publish_status_id, list_storylines_publish_status.name as status_name, comments_thread_id, (SELECT COUNT('.$dbprefix.'storylines_articles.id) FROM '.$dbprefix.'storylines_articles WHERE '.$dbprefix.'storylines_articles.storyline_id = '.$dbprefix.'storylines.id) as article_count');
 		return parent::find_all();
-	}//--------------------------------------------------------------------
+	}
+	
+	public function get_data_objects($storyline_id = false)
+	{
+		$query = $this->db->select('storylines_data_objects.id, list_storylines_data_objects.name, list_storylines_data_objects.slug, list_storylines_data_objects.description')
+				 ->join('list_storylines_data_objects','list_storylines_data_objects.id = storylines_data_objects.object_id','right outer')
+				 ->where('storyline_id',$storyline_id)
+				 ->get('storylines_data_objects');
+		
+		$data_objects = array();
+		if ($query->num_rows() > 0) 
+		{
+			$data_objects = $query->result();
+		}
+		$query->free_result();
+		return $data_objects;
+	
+	}
+	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
 	//--------------------------------------------------------------------
 

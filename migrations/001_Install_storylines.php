@@ -36,6 +36,16 @@ class Migration_Install_storylines extends Migration {
 
 		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
 
+		$data = array(
+			'name'        => 'Storylines.Data.Manage' ,
+			'description' => 'Manage Storylines Data Values'
+		);
+		$this->db->insert("{$prefix}permissions", $data);
+
+		$permission_id = $this->db->insert_id();
+
+		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
+
 		// ADD TABLES
 		
 		// Storylines
@@ -98,7 +108,7 @@ class Migration_Install_storylines extends Migration {
 		// Storylines Conditions
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
 		$this->dbforge->add_field("`var_id` int(11) NOT NULL DEFAULT '0'");
-		$this->dbforge->add_field("`object_type` int(1) NOT NULL DEFAULT '0'");
+		$this->dbforge->add_field("`level_type` int(1) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`condition_id` int(11) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`value` int(11) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_key('id', true);
@@ -212,6 +222,7 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_field("`slug` varchar(255) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`name` varchar(255) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`description` varchar(1000) NOT NULL DEFAULT ''");
+		$this->dbforge->add_field("`active` int(1) NOT NULL DEFAULT '1'");
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('list_storylines_triggers');
 		
@@ -220,24 +231,25 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_field("`slug` varchar(255) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`name` varchar(255) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`description` varchar(1000) NOT NULL DEFAULT ''");
+		$this->dbforge->add_field("`active` int(1) NOT NULL DEFAULT '1'");
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('list_storylines_data_objects');
 
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'BENCH_COACH', 'Bench Coach','Team Bench Coach')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'DOCTOR', 'Doctor','Team Trainer/Doctor')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'HEAD_SCOUT', 'head Scout','Teams Head Scout')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'HIGHER_LEAGUE', 'Higher League','Available for Minors/feeders only')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'LEAGUE', 'League','Not necessary. Always added by default.')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'LOWER_LEAGUE', 'Minor League (Any)','Team Bench Coach')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'MANAGER', 'Manager','Team Bench Coach')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'NON_TEAM_MATE', 'Non teammate','Team Bench Coach')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'OTHER_LEAGUE', 'Other League','')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'OTHER_TEAM', 'Other Team','')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'OWNER', 'Team owner','')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'PITCHING_COACH', 'pitching Coach','')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'PLAYER', 'Player','')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'TEAM', 'Team','')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'TEAM_MATE', 'teammate','')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'BENCH_COACH', 'Bench Coach','Team Bench Coach',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'DOCTOR', 'Doctor','Team Trainer/Doctor',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'HEAD_SCOUT', 'head Scout','Teams Head Scout',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'HIGHER_LEAGUE', 'Higher League','Available for Minors/feeders only',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'LEAGUE', 'League','Not necessary. Always added by default.',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'LOWER_LEAGUE', 'Minor League (Any)','Team Bench Coach',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'MANAGER', 'Manager','Team Bench Coach',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'NON_TEAM_MATE', 'Non teammate','Team Bench Coach',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'OTHER_LEAGUE', 'Other League','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'OTHER_TEAM', 'Other Team','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'OWNER', 'Team owner','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'PITCHING_COACH', 'Pitching Coach','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'PLAYER', 'Player','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'TEAM', 'Team','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_data_objects VALUES(0,'TEAM_MATE', 'teammate','',1)");
 
 		// Storylines categories List
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
@@ -290,7 +302,7 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_field("`slug` varchar(255) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`name` varchar(255) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`description` varchar(1000) NOT NULL DEFAULT ''");
-		$this->dbforge->add_field("`type` int(1) NOT NULL DEFAULT '0'");
+		$this->dbforge->add_field("`type_id` int(1) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`options` varchar(1000) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`value_range_min` int(11) NOT NULL DEFAULT '0'");
 		$this->dbforge->add_field("`value_range_max` int(11) NOT NULL DEFAULT '0'");
@@ -397,7 +409,7 @@ class Migration_Install_storylines extends Migration {
 		
 		// Storylines conditions types List
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
-		$this->dbforge->add_field("`slug` varchar(255) NOT NULL DEFAULT ''");
+		$this->dbforge->add_field("`name` varchar(255) NOT NULL DEFAULT ''");
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('list_storylines_conditions_types');
 		
@@ -508,6 +520,15 @@ class Migration_Install_storylines extends Migration {
 		}
 		//delete the permission
 		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Storylines.Content.Add')");
+		
+		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Storylines.Data.Manage'");
+		foreach ($query->result_array() as $row)
+		{
+			$permission_id = $row['permission_id'];
+			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
+		}
+		//delete the permission
+		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Storylines.Data.Manage')");
 
 		// drop tables
 		$this->dbforge->drop_table('storylines');

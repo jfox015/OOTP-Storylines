@@ -4,7 +4,7 @@
 	
 */
 
-class Storylines_category_model extends BF_Model 
+class storylines_category_model extends BF_Model
 {
 
 	protected $table		= 'list_storylines_categories';
@@ -13,7 +13,7 @@ class Storylines_category_model extends BF_Model
 	protected $date_format	= '';
 	protected $set_created	= false;
 	protected $set_modified = false;
-	
+
 	//--------------------------------------------------------------------
 	// !PUBLIC METHODS
 	//--------------------------------------------------------------------

@@ -32,6 +32,31 @@ $lang['sl_text']					= 'Text';
 $lang['sl_reply']					= 'Reply';
 $lang['sl_in_game_message']			= 'In Game Message';
 
+$lang['sl_trigger_details']			= 'Trigger Details';
+$lang['sl_activate_note']			= 'Make item active for use in the editor';
+$lang['sl_deactivate_note']			= 'Deactivate this item to prevent use in editor';
+
+$lang['sl_result_details']			= 'Result Details';
+$lang['sl_create_result']			= 'Create Result';
+$lang['sl_edit_result']				= 'Edit Result';
+$lang['sl_rules']					= 'Rules';
+$lang['sl_value_type']				= 'Value Type';
+
+$lang['sl_conditions_details']		= 'Condition Details';
+$lang['sl_create_condition']		= 'Create Condition';
+$lang['sl_edit_condition']			= 'Edit Condition';
+$lang['sl_type']					= 'Type';
+$lang['sl_level']					= 'Level';
+$lang['sl_slug']					= 'Slug';
+$lang['sl_description_note']		= 'For editor use only. Not seen in game.';
+$lang['sl_slug_note']				= 'The condition name as it appears to the game engine';
+$lang['sl_options']					= 'Options';
+$lang['sl_options_note']			= 'Used when type is <i>option list</i>. Seperate options values as Label:value|Label:value...etc.';
+$lang['sl_active']					= 'Active';
+$lang['us_value_range']				= 'Value Range';
+$lang['sl_value_range_min']			= 'Min. Value';
+$lang['sl_value_range_max']			= 'Max. Value';
+
 $lang['sl_edit_storyline']			= 'Edit Storyline';
 $lang['sl_status_category']			= 'Status and Category';
 $lang['sl_meta']					= 'Meta Details';
@@ -64,6 +89,7 @@ $lang['sl_conditions']				= 'Conditions';
 $lang['sl_condition']				= 'Condition';
 $lang['sl_value']					= 'Value';
 $lang['sl_name']					= 'Name';
+$lang['sl_name_note']				= 'Name for use in editor only';
 $lang['sl_frequency']				= 'Frequency';
 
 $lang['sl_no_storyline_found']		= 'The selected Storyline could nto be found.';

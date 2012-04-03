@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /*
-	Class: Storylines_category_model
+	Class: Storylines_conditions_model
 	
 */
 
@@ -17,6 +17,27 @@ class Storylines_conditions_model extends BF_Model
 	//--------------------------------------------------------------------
 	// !PUBLIC METHODS
 	//--------------------------------------------------------------------
+	
+	public function get_object_conditions($object_id = false, $level_type = 3)
+	{
+		if ($object_id === false)
+		{
+			return false;
+		}
+		$this->where('level_type',$level_type);
+		$this->where('var_id',$object_id);
+		$this->select('*');
+		$query = $this->db->get('storylines_conditions');
+		$conditions = array();
+		if ($query->num_rows() > 0)
+		{
+			$conditions = $query->result();
+		}
+		$query->free_result();
+
+		return $conditions;
+	}
+	
 	public function range_as_select_by_category($range = false)
 	{
 		if ($range === false) {
@@ -114,9 +135,38 @@ class Storylines_conditions_model extends BF_Model
 		$query->free_result();
 		return $arrOut;
 	}
+	public function categories_as_select()
+	{
+		return $this->data_as_select('list_storylines_conditions_categories');
+	}
+	public function levels_as_select()
+	{
+		return $this->data_as_select('list_storylines_conditions_levels');
+	}
+	public function types_as_select()
+	{
+		return $this->data_as_select('list_storylines_conditions_types');
+	}
 	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
 	//--------------------------------------------------------------------
+	private function data_as_select($table = false)
+	{
+		if ($table === false) {
+			return;
+		}
+		$arrOut = array();
+		$this->db->select('id, name');
+		$query = $this->db->get($table);
+		if ($query->num_rows() > 0) 
+		{
+			foreach($query->result() as $row) 
+			{
+				$arrOut[$row->id] = $row->name;
+			}
+		}
+		return $arrOut;
+	}
 	private function get_category_name($category_id = false) 
 	{
 		if ($category_id === false) {

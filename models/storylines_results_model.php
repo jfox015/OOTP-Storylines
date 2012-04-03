@@ -48,8 +48,33 @@ class Storylines_results_model extends BF_Model
 
 		return parent::find_all();
 	}
+		public function categories_as_select()
+	{
+		return $this->data_as_select('list_storylines_result_categories');
+	}
+	public function value_types_as_select()
+	{
+		return $this->data_as_select('list_storylines_result_value_types');
+	}
 	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
 	//--------------------------------------------------------------------
-
+	private function data_as_select($table = false)
+	{
+		if ($table === false) {
+			return;
+		}
+		$arrOut = array();
+		$this->db->select('id, name');
+		$query = $this->db->get($table);
+		if ($query->num_rows() > 0) 
+		{
+			foreach($query->result() as $row) 
+			{
+				$arrOut[$row->id] = $row->name;
+			}
+		}
+		return $arrOut;
+	}
+	
 }

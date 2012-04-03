@@ -183,7 +183,7 @@ class Storylines_articles_model extends BF_Model
 			$this->error .= "No article ID was received to retrieve details.<br/>\n";
 			return false;
 		}
-		return $this->select('subject, wait_days_min, wait_days_max, in_game_message, comment_thread_id, created_on, modified_on, deleted')
+		return $this->select('subject, storyline_id, wait_days_min, wait_days_max, in_game_message, comment_thread_id, created_on, modified_on, deleted')
 					->find($article_id);
 	}
 	/*
@@ -205,7 +205,7 @@ class Storylines_articles_model extends BF_Model
 		$this->db->join('storylines_article_predecessors','storylines_article_predecessors.article_id = storylines_articles.id','left outer')
 				 ->where('storylines_article_predecessors.article_id IS NULL')
 				 ->where('storylines_articles.deleted',0);
-		$articles = $this->select('storylines_articles.id, subject, wait_days_min, wait_days_max, in_game_message, comments_thread_id, created_on, modified_on, deleted')->find_all_by('storylines_articles.storyline_id',$storyline_id);
+		$articles = $this->select('storylines_articles.id, storylines_articles.storyline_id, subject, wait_days_min, wait_days_max, in_game_message, comments_thread_id, created_on, modified_on, deleted')->find_all_by('storylines_articles.storyline_id',$storyline_id);
 		
 		return $articles;
 	}
@@ -243,7 +243,7 @@ class Storylines_articles_model extends BF_Model
 				$str_ids .= $row->article_id;
 			}
 			$str_ids .= ")";
-			$this->db->select('id, subject, wait_days_min, wait_days_max, in_game_message, comments_thread_id, created_on, modified_on, deleted')
+			$this->db->select('id, storyline_id, subject, wait_days_min, wait_days_max, in_game_message, comments_thread_id, created_on, modified_on, deleted')
 					->where('deleted',0)
 					->where_in('id',$str_ids);
 			$child_results = $this->db->get($this->table);

@@ -9,7 +9,7 @@
 		<a href="<?php echo site_url(SITE_AREA .'/custom/storylines/export') ?>" id="export"><?php echo "Export"; ?></a>
 	</li>
 	<li <?php echo $this->uri->segment(4) == 'manage' ? 'class="active"' : '' ?>>
-		<a href="<?php echo site_url(SITE_AREA .'/custom/storylines/manage') ?>" id="manage"><?php echo 'Manage Values'; ?></a>
+		<a href="<?php echo site_url(SITE_AREA .'/custom/storylines/manage_data') ?>" id="manage"><?php echo 'Manage Values'; ?></a>
 	</li>
 	<li <?php echo $this->uri->segment(4) == 'reference' ? 'class="active"' : '' ?>>
 		<a href="<?php echo site_url(SITE_AREA .'/custom/storylines/reference') ?>" id="reference"><?php echo 'Help/Reference'; ?></a>

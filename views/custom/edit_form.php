@@ -40,13 +40,28 @@
 					// BUILD CONDITIONS JS OBJECT ARRAY 
 					?>
 					<script type="text/javascript">
+					function Condition(id, elem, value) {
+						this.id = (id !== null) ? id : 0;
+						this.elem = (elem !== null) ? elem : '';
+						this.value = (value !== null) ? value : '';
+					}
+					function Condition_Obj(id, slug, name, description, type, min, max, options) {
+						this.id = (id !== null) ? id : 0;
+						this.slug = (slug !== null) ? slug : '';
+						this.name = (name !== null) ? name : '';
+						this.description = (description !== null) ? description : '';
+						this.type = (type !== null) ? type : '';
+						this.value_range_min = (min !== null) ? min : 0;
+						this.value_range_max = (max !== null) ? max : 0;
+						this.options = (options !== null) ? options : 0;
+					}
 					var conditions_objs = [], options = [];
 					<?php 
 
 						$conditions = array();
 						foreach ($conditions_objs as $condition) :
 						if (isset($condition->options) && !empty($condition->options)) {
-								echo('options = []');
+								echo('options = [];');
 								echo('options[0] = "Select Option";');
 								if (strpos($condition->options,"|") !== false) :
 
@@ -59,7 +74,7 @@
 									echo('options[options.length] = { value: "'.$ops[1].'", name: "'.$ops[0].'"};');
 								endforeach;
 							}
-							echo('conditions_objs['.$condition->id.'] = new Condition_Obj('.$condition->id.',"'.$condition->slug.'","'.$condition->name.'","'.$condition->description.'",'.$condition->type.','.$condition->value_range_min.','.$condition->value_range_max.', options);');
+							echo('conditions_objs['.$condition->id.'] = new Condition_Obj('.$condition->id.',"'.$condition->slug.'","'.$condition->name.'","'.$condition->description.'",'.$condition->type_id.','.$condition->value_range_min.','.$condition->value_range_max.', options);');
 							$conditions = $conditions + array($condition->id=>$condition->slug);
 						endforeach;
 					?>
@@ -116,7 +131,7 @@
 					</tr>
 					</thead>
 					<?php 
-					if (isset($characters) && is_array($characters) && count($characters)) :
+					if (isset($data_objects) && is_array($data_objects) && count($data_objects)) :
 					 ?>
 					<tfoot>
 						<tr>
@@ -128,7 +143,7 @@
 					</tfoot>
 					<tbody id="data_objects_body">
 					<?php
-						foreach($characters as $data_object) : ?>
+						foreach($data_objects as $data_object) : ?>
 					<tr>
 						<td>
 							<input type="checkbox" name="checked[]" value="<?php echo $data_object->id ?>" />
@@ -187,26 +202,8 @@
 					</tfoot>
 					<tbody>
 					<?php	
-						foreach($articles as $article) : ?>
-					<tr>
-						<td>
-							<input type="checkbox" name="checked[]" value="<?php echo $article->id ?>" />
-						</td>
-						<td><?php echo(anchor(SITE_AREA.'/custom/storylines/articles/edit/'.$article->id,$article->subject)); ?></td>
-						<td>
-							<a class="btn btn-small" href="#" rel="article_details" id="<?php echo $storyline->id."|".$article->id ?>">
-								<i class=" icon-zoom-in"></i> <?php echo lang('sl_details'); ?>
-							</a>
-							<a class="btn btn-small" href="#" rel="article_edit" id="<?php echo $storyline->id."|".$article->id ?>">
-								<i class="icon-edit"></i><?php echo lang('sl_edit'); ?>
-							</a>
-							<a class="btn btn-small" href="#" rel="article_remove" id="<?php echo $storyline->id."|".$article->id ?>">
-								<i class=" icon-remove"></i> <?php echo lang('sl_delete'); ?>
-							</a>
-						</td>
-					</tr>
-					<?php
-						endforeach;?>
+						echo draw_articles($articles);
+					?>
 					</tbody>
 					<?php
 					else: ?>
@@ -366,5 +363,5 @@
 			</div>
 		</div>
 	</div>
-
+</div>
 <?php echo form_close(); ?>

@@ -9,9 +9,6 @@ class Articles extends Admin_Controller {
 		parent::__construct();
 		$this->load->model('storylines_model');
 		$this->load->model('storylines_articles_model');
-		$this->load->model('storylines_category_model');
-		$this->load->model('storylines_review_status_model');
-		$this->load->model('storylines_publish_status_model');
 		$this->load->helper('storylines');
 
 		Template::set_block('sub_nav', 'custom/_sub_nav');

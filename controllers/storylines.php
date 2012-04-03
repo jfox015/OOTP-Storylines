@@ -17,6 +17,7 @@ class Storylines extends Front_Controller {
 	{
 		Template::render();
 	}
+
 }
 
 // End main module class

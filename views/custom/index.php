@@ -60,11 +60,11 @@
 			<tr>
 				<td colspan="6">
 					<?php echo lang('bf_with_selected') ?>
-					<input type="submit" name="submit" class="btn" value="<?php echo lang('sl_action_approve') ?>">
-					<input type="submit" name="submit" class="btn" value="<?php echo lang('sl_action_review') ?>">
-					<input type="submit" name="submit" class="btn" value="<?php echo lang('sl_action_reject') ?>">
-					<input type="submit" name="submit" class="btn" value="<?php echo lang('sl_action_archive') ?>">
-					<input type="submit" name="submit" class="btn-danger" id="delete-me" value="<?php echo lang('bf_action_delete') ?>" onclick="return confirm('<?php echo lang('sl_delete_confirm'); ?>')">
+					<input type="submit" name="submit" class="btn btn-success" value="<?php echo lang('sl_action_approve') ?>">
+					<input type="submit" name="submit" class="btn btn-warning" value="<?php echo lang('sl_action_review') ?>">
+					<input type="submit" name="submit" class="btn btn-danger" value="<?php echo lang('sl_action_reject') ?>">
+					<input type="submit" name="submit" class="btn btn-primary" value="<?php echo lang('sl_action_archive') ?>">
+					<input type="submit" name="submit" class="btn btn-danger" id="delete-me" value="<?php echo lang('bf_action_delete') ?>" onclick="return confirm('<?php echo lang('sl_delete_confirm'); ?>')">
 				</td>
 			</tr>
 		</tfoot>

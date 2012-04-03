@@ -1,17 +1,20 @@
 # OOTP Storylines Editor: Community Edition
 
-A module for creating and managing OOTP Storylines content.
+An [OOLM](https://github.com/jfox015/OOTP-Online-League-Manager) module for creating and managing OOTP Storylines content. Based off the original Storylines Editor tools developed by Andreas Raht and Florian of OOTP Developments, Inc.
 
 ## Features
 
-- Create edit and delete storylines content
+- Create edit and manage storylines content
 - Add, edit and delete storyline articles
+- Manage related Storylines data elements
+- Export Storylines content as XML, SQL or JSON
 - Discuss Storylines and articles using the Bonfire::Comments module (available seperately)
 
 ## Possible Future Features
 
-- Reference Library
+- Full Dynamic Reference Library
 - Import Storylines from XML, SQL, JSON
+- Preview using local OOTP data
 
 ## Keep Current on the Mod
 
@@ -19,7 +22,9 @@ Follow the official Twitter feed [ootpFox07](http://twitter.com/#!/ootpFox07).
   
 ## Team
 
-- [Jeff Fox](http://www.aeoliandigital.com/) - Lead Developer
+- [Jeff Fox](http://www.aeoliandigital.com/) - Lead OOLM Developer
+- [Andreas Raht](http://www.ootpdevelopments.com/board/members/andreas-raht.html) - Storylines Feature Developer
+- [Florian](http://www.ootpdevelopments.com/board/members/florian.html) - Original Editor Developer
 
 ## Contribute to the development
 

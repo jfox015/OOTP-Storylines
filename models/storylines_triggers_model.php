@@ -1,38 +1,35 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /*
-	Class: Storylines_data_objects
-	
+	Class: Storylines_triggers_model
+
 */
 
-class Storylines_data_objects_model extends BF_Model
+class Storylines_triggers_model extends BF_Model
 {
 
-	protected $table		= 'list_storylines_data_objects';
+	protected $table		= 'list_storylines_triggers';
 	protected $key			= 'id';
 	protected $soft_deletes	= false;
-	protected $date_format	= 'int';
+	protected $date_format	= '';
 	protected $set_created	= false;
 	protected $set_modified = false;
-	
+
 	//--------------------------------------------------------------------
 	// !PUBLIC METHODS
 	//--------------------------------------------------------------------
 	public function list_as_select()
 	{
-		$this->db->select('id, name');
-		$query = $this->db->get('list_storylines_data_objects');
-
-		$data_objects = array();
-		if ($query->num_rows() > 0)
+		$arrOut = array();
+		$results = $this->select('id, name, slug')->find_all();
+		if (sizeof($results) > 0)
 		{
-			foreach($query->result() as $row)
+			foreach ($results as $result)
 			{
-				$data_objects[$row->id] = $row->name;
+				$name = (isset($result->name) && !empty($result->name)) ? $result->name : $result->slug;
+				$arrOut[$result->id] = $name;
 			}
 		}
-		$query->free_result();
-
-		return $data_objects;
+		return $arrOut;
 	}
 	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
