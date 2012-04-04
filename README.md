@@ -6,13 +6,13 @@ An [OOLM](https://github.com/jfox015/OOTP-Online-League-Manager) module for crea
 
 - Create edit and manage storylines content
 - Add, edit and delete storyline articles
-- Manage related Storylines data elements
+- Manage Storylines data elements
 - Export Storylines content as XML, SQL or JSON
 - Discuss Storylines and articles using the Bonfire::Comments module (available seperately)
 
 ## Possible Future Features
 
-- Full Dynamic Reference Library
+- Full Dynamically Generated Reference Library
 - Import Storylines from XML, SQL, JSON
 - Preview using local OOTP data
 

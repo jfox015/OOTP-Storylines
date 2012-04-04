@@ -58,10 +58,8 @@ class Results extends Admin_Controller {
 
         $this->load->helper('ui/ui');
 		$dbprefix = $this->db->dbprefix;
-        $this->storylines_results_model->join('list_storylines_results_value_types','list_storylines_results_value_types.id = storylines_results_model.level_id', 'right outer');
-        $this->storylines_results_model->join('list_storylines_results_categories','list_storylines_results_categories.id = storylines_results_model.category_id', 'right outer');
         $this->storylines_results_model->limit($this->limit, $offset)->where($where);
-        $this->storylines_results_model->select('storylines_results_model.id, category_id, list_storylines_results_categories.id as category_id, list_storylines_results_categories.name as category_name, list_storylines_results_categories.slug as category_slug, list_storylines_results_value_types.id as level_id, list_storylines_results_value_types.name as level_name');
+        $this->storylines_results_model->find_all();
 
         Template::set('storylines', $this->storylines_results_model->find_all());
 
@@ -83,6 +81,7 @@ class Results extends Admin_Controller {
 		Template::set('current_url', current_url());
         Template::set('filter', $filter);
 
+        Template::set_view('storylines/custom/results');
         Template::set('toolbar_title', lang('sl_results'));
         Template::render();
     }

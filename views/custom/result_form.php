@@ -13,7 +13,7 @@
     <?php echo form_open($this->uri->uri_string(), 'class="form-horizontal"'); ?>
 
     <fieldset>
-        <legend>General Details</legend>
+        <legend><?php echo lang('sl_general_header'); ?></legend>
 			<!-- Slug -->
         <div class="control-group <?php echo form_error('slug') ? 'error' : '' ?>">
              <label class="control-label" for="slug"><?php echo lang('sl_slug') ?></label>

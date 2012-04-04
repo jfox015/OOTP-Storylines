@@ -1,10 +1,12 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-$lang['mod_settings_title']			= 'Storylines';
+$lang['mod_settings_title']			= 'OOTP Storylines';
 $lang['mod_act_settings_saved']		= 'Storylines Settings Saved';
 $lang['md_settings_saved']			= 'Settings Saved Successfully';
 $lang['md_settings_error']			= 'There was an error saving your settings.';
 $lang['mod_unauthorized']			= 'Unauthorized. Sorry you do not have the appropriate permission to this area.';
+
+$lang['sl_general_header']			= 'General Details';
 
 $lang['sl_storyline']				= 'Storyline';
 $lang['sl_custom_header']			= 'Storylines';
@@ -31,6 +33,8 @@ $lang['sl_subject']					= 'Subject';
 $lang['sl_text']					= 'Text';
 $lang['sl_reply']					= 'Reply';
 $lang['sl_in_game_message']			= 'In Game Message';
+
+$lang['sl_tokens_details']			= 'Token Details';
 
 $lang['sl_trigger_details']			= 'Trigger Details';
 $lang['sl_activate_note']			= 'Make item active for use in the editor';
@@ -104,6 +108,8 @@ $lang['sl_no_conditions']			= 'No conditions found"';
 $lang['sl_no_results']				= 'No results found"';
 
 $lang['sl_select_character']		= 'Select Character"';
+$lang['sl_action_activate']			= 'Activate"';
+$lang['sl_action_deactivate']		= 'Deactivate"';
 
 // HISTORY
 $lang['sl_date']					= 'Date"';

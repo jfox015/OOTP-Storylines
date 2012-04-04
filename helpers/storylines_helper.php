@@ -21,6 +21,19 @@ if (!function_exists('find_author_name'))
 
 	}
 }
+if (!function_exists('make_spaces'))
+{
+	function make_spaces($count = 0)
+	{
+		$str_out = '';
+		$i = $count;
+		while ($i > 0)
+		{
+			$str_out .= "&nbsp;&nbsp;";
+		}
+		return $str_out;
+	}
+}
 if (!function_exists('draw_articles'))
 {
 	function draw_articles($articles = false, $level = 1)
@@ -32,9 +45,12 @@ if (!function_exists('draw_articles'))
 		$html_out = '';
 		if (is_array($articles) && sizeof($articles) > 0)
 		{
+			$count = 1;
 			foreach($articles as $article) {
 			
-				$link =anchor(SITE_AREA.'/custom/storylines/articles/edit/'.$article->id,$article->subject);
+				$space = '';
+				if ($level > 1) { $space = make_spaces($level); }
+				$link =anchor(SITE_AREA.'/custom/storylines/articles/edit/'.$article->id,$space.$level.".".$count." - ".$article->subject);
 				$id = $article->id;
 				$storyline_id = $article->storyline_id;
 				$details = lang('sl_details');
@@ -61,8 +77,9 @@ if (!function_exists('draw_articles'))
 EOL;
 				if (isset($article->children) && sizeof($article->children) > 0) 
 				{
-					$html_out .= draw_articles($article->children);
+					$html_out .= draw_articles($article->children, $level++);
 				}
+				$count++;
 			}
 		}
 		return $html_out;

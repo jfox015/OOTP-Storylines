@@ -35,9 +35,32 @@ class Storylines_model extends BF_Model
 		return parent::find_all();
 	}
 	
+	public function add_data_object($data = false)
+	{
+		if ($data === false)
+		{
+			return false;
+		}
+		$this->db->insert('storylines_data_objects',$data);
+		return ($this->db->affected_rows() > 0);
+	}
+	public function remove_data_object($object_id = false)
+	{
+		if ($object_id === false)
+		{
+			return false;
+		}
+		$this->db->delete('storylines_data_objects',$object_id);
+		return ($this->db->affected_rows() > 0);
+	}
 	public function get_data_objects($storyline_id = false)
 	{
-		$query = $this->db->select('storylines_data_objects.id, list_storylines_data_objects.name, list_storylines_data_objects.slug, list_storylines_data_objects.description')
+		if ($storyline_id === false)
+		{
+			return false;
+		}
+		$dbprefix = $this->db->dbprefix;
+		$query = $this->db->select('storylines_data_objects.id, list_storylines_data_objects.name, list_storylines_data_objects.slug, list_storylines_data_objects.description, (SELECT COUNT('.$dbprefix.'storylines_conditions.id) FROM '.$dbprefix.'storylines_conditions LEFT JOIN '.$dbprefix.'storylines_data_objects ON '.$dbprefix.'storylines_data_objects.id = '.$dbprefix.'storylines_conditions.var_id WHERE '.$dbprefix.'storylines_conditions.level_type =2) as condition_count')
 				 ->join('list_storylines_data_objects','list_storylines_data_objects.id = storylines_data_objects.object_id','right outer')
 				 ->where('storyline_id',$storyline_id)
 				 ->get('storylines_data_objects');
@@ -50,9 +73,42 @@ class Storylines_model extends BF_Model
 		$query->free_result();
 		return $data_objects;
 	
+	}	
+	public function add_trigger($data = false)
+	{
+		if ($data === false)
+		{
+			return false;
+		}
+		$this->db->insert('storylines_triggers',$data);
+		return ($this->db->affected_rows() > 0);
+	}
+	public function remove_trigger($object_id = false)
+	{
+		if ($object_id === false)
+		{
+			return false;
+		}
+		$this->db->delete('storylines_triggers',array('id'=>$object_id));
+		return ($this->db->affected_rows() > 0);
+	}
+	public function get_triggers($storyline_id = false)
+	{
+		$query = $this->db->select('storylines_triggers.id, list_storylines_triggers.name, list_storylines_triggers.slug')
+				 ->join('list_storylines_triggers','list_storylines_triggers.id = storylines_triggers.trigger_id','right outer')
+				 ->where('storyline_id',$storyline_id)
+				 ->get('storylines_triggers');
+		
+		$triggers = array();
+		if ($query->num_rows() > 0) 
+		{
+			$triggers = $query->result();
+		}
+		$query->free_result();
+		return $triggers;
+	
 	}
 	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
 	//--------------------------------------------------------------------
-
 }

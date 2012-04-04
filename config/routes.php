@@ -32,6 +32,12 @@ $route['storylines/custom/conditions/(:any)/(:any)']		= "conditions/$1/$2";
 $route['storylines/custom/conditions/(:any)'] 		= "conditions/$1";
 $route['storylines/custom/conditions']				= "conditions";
 
+$route['storylines/custom/tokens/(:any)/(:any)/(:any)/(:any)']		= "tokens/$1/$2/$3/$4";
+$route['storylines/custom/tokens/(:any)/(:any)/(:any)']		= "tokens/$1/$2/$3";
+$route['storylines/custom/tokens/(:any)/(:any)']		= "tokens/$1/$2";
+$route['storylines/custom/tokens/(:any)'] 		= "tokens/$1";
+$route['storylines/custom/tokens']				= "tokens";
+
 $route['storylines/custom/triggers/(:any)/(:any)/(:any)/(:any)']		= "triggers/$1/$2/$3/$4";
 $route['storylines/custom/triggers/(:any)/(:any)/(:any)']		= "triggers/$1/$2/$3";
 $route['storylines/custom/triggers/(:any)/(:any)']		= "triggers/$1/$2";

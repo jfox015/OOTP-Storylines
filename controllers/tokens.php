@@ -1,13 +1,13 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Triggers extends Admin_Controller {
+class Tokens extends Admin_Controller {
 
 	//--------------------------------------------------------------------
 	
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->load->model('storylines_triggers_model');
+		$this->load->model('storylines_tokens_model');
 		$this->load->helper('storylines');
 
 		Template::set_block('sub_nav', 'custom/_sub_nav');
@@ -49,28 +49,28 @@ class Triggers extends Admin_Controller {
         switch($filter)
         {
             case 'inactive':
-                $where['list_storylines_triggers.active'] = 0;
+                $where['list_storylines_tokens.active'] = 0;
                 break;
             default:
-                $where['list_storylines_triggers.active'] = 1;
+                $where['list_storylines_tokens.active'] = 1;
                 break;
         }
 
         $this->load->helper('ui/ui');
 		$dbprefix = $this->db->dbprefix;
-        $this->storylines_triggers_model->limit($this->limit, $offset)->where($where);
-        $this->storylines_triggers_model->select('id, name, slug, active');
+        $this->storylines_tokens_model->limit($this->limit, $offset)->where($where);
+        $this->storylines_tokens_model->select('id, name, slug, active');
 
-        Template::set('triggers', $this->storylines_triggers_model->find_all());
+        Template::set('tokens', $this->storylines_tokens_model->find_all());
 
         // Pagination
         $this->load->library('pagination');
 
-        $this->storylines_triggers_model->where($where);
-        $total_stories = $this->storylines_triggers_model->count_all();
+        $this->storylines_tokens_model->where($where);
+        $total_stories = $this->storylines_tokens_model->count_all();
 		
 
-        $this->pager['base_url'] = site_url(SITE_AREA .'/custom/storylines/triggers/index');
+        $this->pager['base_url'] = site_url(SITE_AREA .'/custom/storylines/tokens/index');
         $this->pager['total_rows'] = $total_stories;
         $this->pager['per_page'] = $this->limit;
         $this->pager['uri_segment']	= 5;
@@ -81,8 +81,8 @@ class Triggers extends Admin_Controller {
 		Template::set('current_url', current_url());
         Template::set('filter', $filter);
 
-        Template::set_view('storylines/custom/triggers');
-        Template::set('toolbar_title', lang('sl_triggers'));
+        Template::set_view('storylines/custom/tokens');
+        Template::set('toolbar_title', lang('sl_tokens'));
         Template::render();
     }
 
@@ -95,24 +95,24 @@ class Triggers extends Admin_Controller {
 		
 		if ($this->input->post('submit'))
 		{
-			if ($id = $this->save_trigger())
+			if ($id = $this->save_token())
 			{
-				$article = $this->storylines_triggers_model->find($id);
+				$article = $this->storylines_tokens_model->find($id);
 				
 				$this->load->model('activities/activity_model');
-				$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_create').' '.$this->current_user->display_name, 'storylines/triggers');
+				$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_create').' '.$this->current_user->display_name, 'storylines/tokens');
 
 				Template::set_message('Storyline Trigger successfully created.', 'success');
 				Template::redirect(SITE_AREA .'/custom/storylines/manage_data/');	
 			}
 			else
 			{
-				Template::set_message('There was a problem creating the storyline trigger: '. $this->storylines_triggers_model->error);
+				Template::set_message('There was a problem creating the storyline token: '. $this->storylines_tokens_model->error);
 			}
 		}
         
-		Template::set('toolbar_title', lang('sl_create_trigger'));
-		Template::set_view('storylines/custom/trigger_form');
+		Template::set('toolbar_title', lang('sl_create_token'));
+		Template::set_view('storylines/custom/token_form');
 		Template::render();
 	}
 	
@@ -123,9 +123,9 @@ class Triggers extends Admin_Controller {
         $settings = $this->settings_model->select('name,value')->find_all_by('module', 'storylines');
 		$this->auth->restrict('Storylines.Data.Manage');
 		
-		$trigger_id = $this->uri->segment(6);
+		$token_id = $this->uri->segment(6);
 
-		if (empty($trigger_id))
+		if (empty($token_id))
 		{
 			Template::set_message(lang('sl_empty_id'), 'error');
 			Template::redirect(SITE_AREA .'/custom/storylines/manage_data/');
@@ -133,9 +133,9 @@ class Triggers extends Admin_Controller {
 
 		if ($this->input->post('submit'))
 		{
-			if ($this->save_trigger('update', $trigger_id))
+			if ($this->save_token('update', $token_id))
 			{
-				$trigger = $this->storylines_triggers_model->find($trigger_id);
+				$token = $this->storylines_tokens_model->find($token_id);
 
 				$this->load->model('activities/activity_model');
 				$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_create').' '.$this->current_user->display_name, 'storylines');
@@ -144,24 +144,24 @@ class Triggers extends Admin_Controller {
 			}
 			else
 			{
-				Template::set_message('There was a problem updating the Storyline Trigger: '. $this->storylines_triggers_model->error);
+				Template::set_message('There was a problem updating the Storyline Trigger: '. $this->storylines_tokens_model->error);
 			}
 		}
 
-		$trigger = $this->storylines_triggers_model->find($trigger_id);
+		$token = $this->storylines_tokens_model->find($token_id);
 		
-		if (isset($trigger))
+		if (isset($token))
 		{
-			Template::set('trigger', $trigger);
+			Template::set('token', $token);
 		}
 		else
 		{
-			Template::set_message(lang('sl_no_trigger_matches'), 'error');
+			Template::set_message(lang('sl_no_token_matches'), 'error');
 			Template::redirect(SITE_AREA .'/custom/storylines/manage_data/');
 		}
 		
-		Template::set('toolbar_title', lang('sl_edit_trigger'));
-		Template::set_view('storylines/custom/trigger_form');
+		Template::set('toolbar_title', lang('sl_edit_token'));
+		Template::set_view('storylines/custom/token_form');
 		Template::render();
 	}
 
@@ -185,21 +185,21 @@ class Triggers extends Admin_Controller {
 
 			foreach ($items as $id)
 			{
-				$item = $this->storylines_triggers_model->find($id);
+				$item = $this->storylines_tokens_model->find($id);
 
 				if (isset($item))
 				{
-					if ($this->storylines_triggers_model->delete($id))
+					if ($this->storylines_tokens_model->delete($id))
 					{
 						$this->load->model('activities/Activity_model', 'activity_model');
 
-						$item = $this->storylines_triggers_model->find($id);
+						$item = $this->storylines_tokens_model->find($id);
 						$user = $this->user_model->find($this->current_user->id);
 						$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->current_user->username : ($this->settings_lib->item('auth.use_usernames') ? $user->username : $user->email);
-						$this->activity_model->log_activity($this->current_user->id, lang('us_log_delete') . ': '.$log_name, 'storylines/triggers');
+						$this->activity_model->log_activity($this->current_user->id, lang('us_log_delete') . ': '.$log_name, 'storylines/tokens');
 						Template::set_message('The Storyline Data Object was successfully deleted.', 'success');
 					} else {
-						Template::set_message(lang('us_action_not_deleted'). $this->storylines_triggers_model->error, 'error');
+						Template::set_message(lang('us_action_not_deleted'). $this->storylines_tokens_model->error, 'error');
 					}
 				}
 				else 
@@ -216,7 +216,7 @@ class Triggers extends Admin_Controller {
 	}
 	//--------------------------------------------------------------------
 
-	private function change_status($items=false, $active = 1)
+	public function change_status($items=false, $active = 1)
 	{
 		if (!$items)
 		{
@@ -226,12 +226,12 @@ class Triggers extends Admin_Controller {
 		
 		foreach ($items as $item_id)
 		{
-			$this->storylines_triggers_model->update($item_id, array('active' => $active));
+			$this->storylines_tokens_model->update($item_id, array('active' => $active));
 		}
 	}
 	//--------------------------------------------------------------------
 
-	private function save_trigger($type='insert', $id = 0)
+	private function save_token($type='insert', $id = 0)
 	{
 		$db_prefix = $this->db->dbprefix;
 
@@ -254,11 +254,11 @@ class Triggers extends Admin_Controller {
 		
 		if ($type == 'insert')
 		{
-			return $this->storylines_triggers_model->insert($data);
+			return $this->storylines_tokens_model->insert($data);
 		}
 		else	// Update
 		{
-			return $this->storylines_triggers_model->update($id, $data);
+			return $this->storylines_tokens_model->update($id, $data);
 		}
 	}
 }

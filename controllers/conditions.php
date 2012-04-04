@@ -175,7 +175,7 @@ class Conditions extends Admin_Controller {
 	
 	//--------------------------------------------------------------------
 
-	public function change_status($items=false, $active = 1)
+	private function change_status($items=false, $active = 1)
 	{
 		if (!$items)
 		{

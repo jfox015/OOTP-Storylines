@@ -479,12 +479,29 @@ class Migration_Install_storylines extends Migration {
 		$this->db->query("INSERT INTO {$prefix}list_storylines_result_value_types VALUES(2, 'Yes/No')");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_result_value_types VALUES(3, 'Multi')");
 		
-		// Storylines Articles Results Value Types
+		// Text String Tokens
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
+		$this->dbforge->add_field("`name` varchar(255) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`slug` varchar(255) NOT NULL DEFAULT ''");
-		$this->dbforge->add_field("`value` varchar(255) NOT NULL DEFAULT ''");
+		$this->dbforge->add_field("`category_id` int(11) NOT NULL DEFAULT '1'");
+		$this->dbforge->add_field("`active` int(1) NOT NULL DEFAULT '1'");
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('list_storylines_tokens');
+		
+		// Storylines Tokens categories List
+		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
+		$this->dbforge->add_field("`name` varchar(255) NOT NULL DEFAULT ''");
+		$this->dbforge->add_key('id', true);
+		$this->dbforge->create_table('list_storylines_tokens_categories');
+		
+		$this->db->query("INSERT INTO {$prefix}list_storylines_tokens_categories VALUES(1,'Default')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_tokens_categories VALUES(2,'Player')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_tokens_categories VALUES(3,'Team')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_tokens_categories VALUES(4,'League')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_tokens_categories VALUES(5,'Event')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_tokens_categories VALUES(6,'Coach')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_tokens_categories VALUES(7,'Owner')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_tokens_categories VALUES(8,'World')");
 		
 	}
 	
@@ -554,6 +571,7 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->drop_table('list_storylines_review_status');
 		$this->dbforge->drop_table('list_storylines_publish_status');
 		$this->dbforge->drop_table('list_storylines_tokens');
+		$this->dbforge->drop_table('list_storylines_tokens_categories');
 	}
 	
 	//--------------------------------------------------------------------

@@ -9,6 +9,7 @@ class Articles extends Admin_Controller {
 		parent::__construct();
 		$this->load->model('storylines_model');
 		$this->load->model('storylines_articles_model');
+		$this->load->model('storylines_tokens_model');
 		$this->load->helper('storylines');
 
 		Template::set_block('sub_nav', 'custom/_sub_nav');
@@ -172,17 +173,25 @@ class Articles extends Admin_Controller {
 		
 		if (isset($article))
 		{
-			Template::set('article', $article);
-			Template::set_view('storylines/custom/articles/edit_article_form');
 			$this->load->model('storylines_conditions_model');
-			Template::set('conditions', $this->storylines_conditions_model->list_as_select_by_category());
 			$this->load->model('storylines_results_model');
+			
+			
+			Template::set('article', $article);
+			
+			Template::set('tokens', $this->storylines_tokens_model->list_as_select_by_category());
+			Template::set('conditions', $this->storylines_conditions_model->list_as_select_by_category());
 			Template::set('results', $this->storylines_results_model->find_all());
-			Template::set('article_conditions', $this->storylines_articles_model->get_article_conditions($article_id));
-			Template::set('article_results', $this->storylines_articles_model->get_article_results($article_id));
 			Template::set('game_message_types', $this->storylines_articles_model->get_game_message_types());
+			
 			Template::set('storyline', $this->storylines_model->find($article->storyline_id));
 			Template::set('comment_form', (in_array('comments',module_list(true))) ? modules::run('comments/thread_view_with_form',$article->comments_thread_id) : '');
+			
+			Template::set('article_conditions', $this->storylines_articles_model->get_article_conditions($article_id));
+			Template::set('article_results', $this->storylines_articles_model->get_article_results($article_id));
+			
+			Template::set_view('storylines/custom/articles/edit_article_form');
+			
 		}
 		else
 		{

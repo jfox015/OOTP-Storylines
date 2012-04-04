@@ -48,10 +48,12 @@ class Storylines_results_model extends BF_Model
 
 		return parent::find_all();
 	}
-		public function categories_as_select()
+	
+	public function categories_as_select()
 	{
 		return $this->data_as_select('list_storylines_result_categories');
 	}
+	
 	public function value_types_as_select()
 	{
 		return $this->data_as_select('list_storylines_result_value_types');

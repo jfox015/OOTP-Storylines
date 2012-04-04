@@ -13,7 +13,7 @@
     <?php echo form_open($this->uri->uri_string(), 'class="form-horizontal"'); ?>
 
     <fieldset>
-        <legend>General Details</legend>
+        <legend><?php echo lang('sl_general_header'); ?></legend>
 			<!-- Slug -->
         <div class="control-group <?php echo form_error('slug') ? 'error' : '' ?>">
              <label class="control-label" for="slug"><?php echo lang('sl_slug') ?></label>
@@ -41,30 +41,18 @@
             </div>
         </div>
 			<!-- CATEGORY ID -->
-		<div class="control-group <?php echo form_error('category_id') ? 'error' : '' ?>">
-			 <label class="control-label"><?php echo lang('sl_category') ?></label>
-			<div class="controls">
-				<?php
-				if (isset($categories) && is_array($categories) && count($categories)) :
+		<?php
+		if (isset($categories) && is_array($categories) && count($categories)) :
 
-					$selection = ( isset ($condition) && !empty($condition->category_id ) ) ? (int) $condition->category_id : 0;
-					echo form_dropdown('category_id', $categories, $selection , ' class="chzn-select" id="category_id"');
-				endif; ?>
-				<?php if (form_error('category_id')) echo '<span class="help-inline">'. form_error('category_id') .'</span>'; ?>
-			</div>
-		</div>
+			$selection = ( isset ($condition) && !empty($condition->category_id ) ) ? (int) $condition->category_id : 0;
+			echo form_dropdown('category_id', $categories, $selection , lang('sl_category'), ' id="category_id"');
+		endif; ?>
 			<!-- LEVEL ID -->
-		<div class="control-group <?php echo form_error('level_id') ? 'error' : '' ?>">
-			 <label class="control-label"><?php echo lang('sl_level') ?></label>
-			<div class="controls">
-				<?php
-				if (isset($levels) && is_array($levels) && count($levels)) :
-					$selection = ( isset ($condition) && !empty($condition->level_id ) ) ? (int) $condition->level_id : 0;
-					echo form_dropdown('level_id', $levels, $selection , ' class="chzn-select" id="level_id"');
-				endif; ?>
-				<?php if (form_error('level_id')) echo '<span class="help-inline">'. form_error('level_id') .'</span>'; ?>
-			</div>
-		</div>
+		<?php
+		if (isset($levels) && is_array($levels) && count($levels)) :
+			$selection = ( isset ($condition) && !empty($condition->level_id ) ) ? (int) $condition->level_id : 0;
+			echo form_dropdown('level_id', $levels, $selection , lang('sl_level'), ' id="level_id"');
+		endif; ?>
 
 		<?php
 		$field = 'activate';
@@ -85,17 +73,11 @@
 	    <legend>Values</legend>
 
 			<!-- TYPE ID -->
-		<div class="control-group <?php echo form_error('type_id') ? 'error' : '' ?>">
-			 <label class="control-label"><?php echo lang('sl_type') ?></label>
-			<div class="controls">
-				<?php
-				if (isset($levels) && is_array($levels) && count($levels)) :
-					$selection = ( isset ($condition) && !empty($condition->type_id ) ) ? (int) $condition->type_id : 0;
-					echo form_dropdown('type_id', $types, $selection ,' class="chzn-select" id="type_id"');
-				endif; ?>
-				<?php if (form_error('type_id')) echo '<span class="help-inline">'. form_error('type_id') .'</span>'; ?>
-			</div>
-		</div>
+		<?php
+		if (isset($types) && is_array($types) && count($types)) :
+			$selection = ( isset ($condition) && !empty($condition->type_id ) ) ? (int) $condition->type_id : 0;
+			echo form_dropdown('type_id', $types, $selection ,lang('sl_type'), ' id="type_id"');
+		endif; ?>
 
 			<!-- VALUE RANGE -->
 		<div class="control-group <?php echo form_error('value_range_min') || form_error('value_range_max') ? 'error' : '' ?>">

@@ -8,7 +8,7 @@
 
 <div class="admin-box">
 
-    <h3><?php echo lang('sl_trigger_details'); ?></h3>
+    <h3><?php echo lang('sl_tokens_details'); ?></h3>
 
     <?php echo form_open($this->uri->uri_string(), 'class="form-horizontal"'); ?>
 
@@ -18,7 +18,7 @@
         <div class="control-group <?php echo form_error('slug') ? 'error' : '' ?>">
              <label class="control-label" for="slug"><?php echo lang('sl_slug') ?></label>
             <div class="controls">
-                <input type="text" class="span8" name="slug" id="slug" value="<?php echo isset($trigger) ? $trigger->slug : set_value('slug') ?>" />
+                <input type="text" class="span8" name="slug" id="slug" value="<?php echo isset($token) ? $token->slug : set_value('slug') ?>" />
 				<span class="help-inline"><?php if (form_error('slug')) echo form_error('slug'); else echo lang('sl_slug_note'); ?></span>
             </div>
         </div>
@@ -27,23 +27,27 @@
         <div class="control-group <?php echo form_error('name') ? 'error' : '' ?>">
              <label class="control-label" for="name"><?php echo lang('sl_name') ?></label>
             <div class="controls">
-                <input type="text" class="span8" name="name" id="name" value="<?php echo (isset($trigger) && isset($trigger->name)) ? $trigger->name : set_value('name') ?>" />
+                <input type="text" class="span8" name="name" id="name" value="<?php echo (isset($token) && isset($token->name)) ? $token->name : set_value('name') ?>" />
 				<span class="help-inline"><?php if (form_error('name')) echo form_error('name'); else echo lang('sl_name_note'); ?></span>
             </div>
         </div>
+			<!-- CATEGORY ID -->
+		<div class="control-group <?php echo form_error('category_id') ? 'error' : '' ?>">
+			 <label class="control-label"><?php echo lang('sl_category') ?></label>
+			<div class="controls">
+				<?php
+				if (isset($categories) && is_array($categories) && count($categories)) :
 
-			<!-- Description -->
-        <div class="control-group <?php echo form_error('description') ? 'error' : '' ?>">
-             <label class="control-label"><?php echo lang('sl_description') ?></label>
-            <div class="controls">
-                <?php echo form_textarea( array( 'class' => 'editor', 'class'=>"span8", 'name' => 'description', 'id' => 'description', 'rows' => '8', 'cols' => '80', 'value' => isset($trigger) ? $trigger->description : set_value('description') ) )?>
-				<span class="help-inline"><?php if (form_error('description')) echo description('name'); else echo lang('sl_description_note'); ?></span>
-            </div>
-        </div>
-		
+					$selection = ( isset ($token) && !empty($token->category_id ) ) ? (int) $token->category_id : 0;
+					echo form_dropdown('category_id', $categories, $selection , ' class="chzn-select" id="category_id"');
+				endif; ?>
+				<?php if (form_error('category_id')) echo '<span class="help-inline">'. form_error('category_id') .'</span>'; ?>
+			</div>
+		</div>
+
 		<?php
 		$field = 'activate';
-		if ($trigger->active) :
+		if ($token->active) :
 				$field = 'de'.$field;
 		endif; ?>
 		<div class="control-group">
@@ -55,7 +59,7 @@
 			</div>
 		</div>
 		
-	</fieldset>
+    </fieldset>
 
 	<div class="form-actions">
 		<input type="submit" name="submit" class="btn btn-primary" value="<?php echo lang('bf_action_save') ?>" />

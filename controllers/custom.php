@@ -17,6 +17,10 @@ class Custom extends Admin_Controller {
 
 		$this->lang->load('storylines');
 	}
+	
+	//--------------------------------------------------------------------
+	//	!STORYLINES SPECIFIC FUNCTIONS
+	//--------------------------------------------------------------------
 
 	//--------------------------------------------------------------------
 	
@@ -209,25 +213,30 @@ class Custom extends Admin_Controller {
 		if (isset($storyline))
 		{
 			Template::set('storyline', $storyline);
-			if (!isset($this->storylines_articles_model)) {
+			if (!isset($this->storylines_articles_model))
+			{
 				$this->load->model('storylines_articles_model');
 			}
-			if (!isset($this->storylines_conditions_model)) {
+			if (!isset($this->storylines_conditions_model))
+			{
 				$this->load->model('storylines_conditions_model');
 			}
-			if (!isset($this->storylines_data_objects_model)) {
+			if (!isset($this->storylines_data_objects_model))
+			{
 				$this->load->model('storylines_data_objects_model');
 			}
-			if (!isset($this->storylines_random_frequencies_model)) {
+			if (!isset($this->storylines_random_frequencies_model))
+			{
 				$this->load->model('storylines_random_frequencies_model');
 			}
-			if (!isset($this->storylines_category_model)) {
+			if (!isset($this->storylines_category_model))
+			{
 				$this->load->model('storylines_category_model');
 			}
 
 			// Storyline Data sets
 			Template::set('conditions', $this->storylines_conditions_model->get_object_conditions($storyline_id, 1));
-			Template::set('data_objects', $this->storylines_model->get_data_objects('storyline_id',$storyline_id));
+			Template::set('data_objects', $this->storylines_model->get_data_objects($storyline_id));
 			Template::set('articles', $this->storylines_articles_model->build_article_tree($storyline_id));
 			
 			// Options Lists Data
@@ -241,6 +250,7 @@ class Custom extends Admin_Controller {
 			$comments = (in_array('comments',module_list(true))) ? modules::run('comments/thread_view_with_form',$storyline->comments_thread_id) : '';
 			Template::set('comment_form', $comments);
 			Assets::add_js($this->load->view('storylines/custom/edit_form_js',array('storyline'=>$storyline),true),'inline');
+			Assets::add_js(js_path() . 'json2.js');
 			
 			Template::set_view('storylines/custom/edit_form');
 		}
@@ -305,20 +315,8 @@ class Custom extends Admin_Controller {
 	}
 	
 	//--------------------------------------------------------------------
-
-	public function change_status($items=false, $status_id = 1)
-	{
-		if (!$items)
-		{
-			return;
-		}
-		$this->auth->restrict('Storylines.Content.Manage');
-		
-		foreach ($items as $item_id)
-		{
-			$this->storylines_model->update($item_id, array('publish_status_id' => $status_id));
-		}
-	}
+	//	!ADDITIONAL FUNCTIONAL PAGES
+	//--------------------------------------------------------------------
 	
 	//--------------------------------------------------------------------
 	
@@ -339,6 +337,255 @@ class Custom extends Admin_Controller {
 	public function reference()
 	{
 		Template::render();
+	}
+	
+	//--------------------------------------------------------------------
+	//	!AJAX FUNCTIONS
+	//--------------------------------------------------------------------
+	
+	//--------------------------------------------------------------------
+	/*
+		Method:
+			add_data_object()
+		
+		An ajax method to add a data object to a storyline
+		
+		Return:
+			JSON data object
+	*/
+	public function add_data_object()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		if ($this->input->post('object_data'))
+		{
+			$items = json_decode($this->input->post('object_data'));
+			$data = array('storyline_id'		=> $items->storyline_id,
+						  'object_id'	 		=> $items->object_id
+			);
+			$this->storylines_model->add_data_object($data);
+			$json_out['result']['items'] = $this->storylines_model->get_data_objects($items->storyline_id);
+		}
+		else
+		{
+			$error = true;
+			$status = "Post data was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	}
+	
+	//--------------------------------------------------------------------
+	/*
+		Method:
+			get_data_objects()
+		
+		An ajax method to get a JSON object of data objects for a storyline
+		
+		Return:
+			JSON data object
+	*/
+	public function get_data_objects()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		$storyline_id = $this->uri->segment(5);
+		
+		if (isset($storyline_id) && !empty($storyline_id)) 
+		{
+			$json_out['result']['items'] = $this->storylines_model->get_data_objects($storyline_id);
+		}
+		else
+		{
+			$error = true;
+			$status = "Storyline ID was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	}
+	//--------------------------------------------------------------------
+	/*
+		Method:
+			remove_data_object()
+		
+		An ajax method to remove a data object from a storyline
+		
+		Return:
+			JSON data object
+	*/
+	public function remove_data_object()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		if ($this->input->post('object_data'))
+		{
+			$items = json_decode($this->input->post('object_data'));
+			$data = array('storyline_id'		=> $items->storyline_id,
+						  'object_id'	 		=> $items->object_id
+			);
+			$this->storylines_model->remove_data_object($data);
+			$json_out['result']['items'] = $this->storylines_model->get_data_objects($items->storyline_id);
+		}
+		else
+		{
+			$error = true;
+			$status = "Post data was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	}
+	
+	//--------------------------------------------------------------------
+	/*
+		Method:
+			add_trigger()
+		
+		An ajax method to add a trigger to a storyline
+		
+		Return:
+			JSON data object
+	*/
+	public function add_trigger()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		if ($this->input->post('object_data'))
+		{
+			$items = json_decode($this->input->post('object_data'));
+			$data = array('storyline_id'		=> $items->storyline_id,
+						  'object_id'	 		=> $items->object_id
+			);
+			$this->storylines_model->add_trigger($data);
+			$json_out['result']['items'] = $this->storylines_model->get_triggers($items->storyline_id);
+		}
+		else
+		{
+			$error = true;
+			$status = "Post data was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	}
+	
+	//--------------------------------------------------------------------
+	/*
+		Method:
+			get_triggers()
+		
+		An ajax method to get a JSON object of triggers for a storyline
+		
+		Return:
+			JSON data object
+	*/
+	public function get_triggers()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		$storyline_id = $this->uri->segment(4);
+		
+		if (isset($storyline_id) && !empty($storyline_id)) 
+		{
+			$json_out['result']['items'] = $this->storylines_model->get_triggers($storyline_id);
+		}
+		else
+		{
+			$error = true;
+			$status = "Storyline ID was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	}
+	//--------------------------------------------------------------------
+	/*
+		Method:
+			remove_trigger()
+		
+		An ajax method to remove a trigger from a storyline
+		
+		Return:
+			JSON data object
+	*/
+	public function remove_trigger()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		if ($this->input->post('object_data'))
+		{
+			$items = json_decode($this->input->post('object_data'));
+			$data = array('storyline_id'		=> $items->storyline_id,
+						  'object_id'	 		=> $items->object_id
+			);
+			$this->storylines_model->remove_trigger($data);
+			$json_out['result']['items'] = $this->storylines_model->get_triggers($items->storyline_id);
+		}
+		else
+		{
+			$error = true;
+			$status = "Post data was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	}
+	//--------------------------------------------------------------------
+	//	!PRIVATE FUNCTIONS
+	//--------------------------------------------------------------------
+
+	//--------------------------------------------------------------------
+
+	private function change_status($items=false, $status_id = 1)
+	{
+		if (!$items)
+		{
+			return;
+		}
+		$this->auth->restrict('Storylines.Content.Manage');
+		
+		foreach ($items as $item_id)
+		{
+			$this->storylines_model->update($item_id, array('publish_status_id' => $status_id));
+		}
 	}
 	
 	//--------------------------------------------------------------------
