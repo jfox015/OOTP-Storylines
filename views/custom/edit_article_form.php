@@ -223,7 +223,7 @@
 				if (isset($storyline) && !empty($storyline->id) && !empty($storyline->title)) : ?>
 				<tr>
 					<td>Storyline:</td>
-					<td><?php echo anchor(SITE_AREA.'/storylines/edit/'.$storyline->id,$storyline->title); ?></td>
+					<td><?php echo anchor(SITE_AREA.'/custom/storylines/edit/'.$storyline->id,$storyline->title); ?></td>
 				</tr>
 				<?php endif;
 				

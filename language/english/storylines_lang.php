@@ -34,6 +34,7 @@ $lang['sl_text']					= 'Text';
 $lang['sl_reply']					= 'Reply';
 $lang['sl_in_game_message']			= 'In Game Message';
 
+$lang['sl_tokens']					= 'Tokens';
 $lang['sl_tokens_details']			= 'Token Details';
 
 $lang['sl_trigger_details']			= 'Trigger Details';
@@ -67,7 +68,7 @@ $lang['sl_meta']					= 'Meta Details';
 $lang['sl_history']					= 'History';
 $lang['sl_triggers']				= 'Triggers';
 $lang['sl_publish_status']			= 'Publish Status';
-$lang['sl_review_status']			= 'Review Status';
+$lang['sl_author_status']			= 'Author Status';
 $lang['sl_article_frequency']		= 'Frequency/Usage';
 $lang['sl_days_for_usage']			= 'Days between uses';
 $lang['sl_days_min']				= 'Min';
@@ -102,19 +103,23 @@ $lang['sl_no_comments']				= 'No comments were found';
 $lang['sl_no_objects']				= 'No data objects were found';
 $lang['sl_no_history']				= 'No history was found';
 $lang['sl_no_triggers']				= 'No triggers were found';
-$lang['sl_no_categories']			= 'No categories found"';
-$lang['sl_no_statuses']				= 'No statuses found"';
-$lang['sl_no_conditions']			= 'No conditions found"';
-$lang['sl_no_results']				= 'No results found"';
+$lang['sl_no_categories']			= 'No categories found';
+$lang['sl_no_statuses']				= 'No statuses found';
+$lang['sl_no_conditions']			= 'No conditions found';
+$lang['sl_no_results']				= 'No results found';
 
 $lang['sl_select_character']		= 'Select Character"';
-$lang['sl_action_activate']			= 'Activate"';
-$lang['sl_action_deactivate']		= 'Deactivate"';
+$lang['sl_action_activate']			= 'Activate';
+$lang['sl_action_deactivate']		= 'Deactivate';
+
+$lang['sl_manage_data']				= 'Manage Data Values';
+$lang['sl_export']					= 'Export';
+$lang['sl_reference']				= 'Reference';
 
 // HISTORY
-$lang['sl_date']					= 'Date"';
-$lang['sl_changes']					= 'Change(s)"';
-$lang['sl_added']					= 'Added"';
-$lang['sl_removed']					= 'Removed"';
-$lang['sl_deleted']					= 'Deleted"';
+$lang['sl_date']					= 'Date';
+$lang['sl_changes']					= 'Change(s)';
+$lang['sl_added']					= 'Added';
+$lang['sl_removed']					= 'Removed';
+$lang['sl_deleted']					= 'Deleted';
 $lang['sl_empty_id']				= 'No ID parameter was received';

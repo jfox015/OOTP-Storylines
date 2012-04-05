@@ -19,7 +19,7 @@
              <label class="control-label" for="slug"><?php echo lang('sl_slug') ?></label>
             <div class="controls">
                 <input type="text" class="span8" name="slug" id="slug" value="<?php echo isset($result) ? $result->slug : set_value('slug') ?>" />
-				<span class="help-inline"><?php if (form_error('slug')) echo form_error('slug'); else echo lang('sl_slug_note'); ?></span>'
+				<span class="help-inline"><?php if (form_error('slug')) echo form_error('slug'); else echo lang('sl_slug_note'); ?></span>
             </div>
         </div>
 
@@ -27,8 +27,8 @@
         <div class="control-group <?php echo form_error('name') ? 'error' : '' ?>">
              <label class="control-label" for="name"><?php echo lang('us_date') ?></label>
             <div class="controls">
-                <input type="text" name="name" id="name" value="<?php echo (isset($result) && isset($result->name)) ? $result->name : set_value('name') ?>" />
-				<span class="help-inline"><?php if (form_error('name')) echo form_error('name'); else echo lang('sl_name_note'); ?></span>'
+                <input type="text" class="span8" name="name" id="name" value="<?php echo (isset($result) && isset($result->name)) ? $result->name : set_value('name') ?>" />
+				<span class="help-inline"><?php if (form_error('name')) echo form_error('name'); else echo lang('sl_name_note'); ?></span>
             </div>
         </div>
 
@@ -36,34 +36,28 @@
         <div class="control-group <?php echo form_error('description') ? 'error' : '' ?>">
              <label class="control-label"><?php echo lang('us_body') ?></label>
             <div class="controls">
-                <?php echo form_textarea( array( 'class' => 'editor', 'name' => 'description', 'id' => 'description', 'rows' => '8', 'cols' => '80', 'value' => isset($result) ? $result->description : set_value('description') ) )?>
-				<span class="help-inline"><?php if (form_error('description')) echo form_error('description'); else echo lang('sl_description_note'); ?></span>'
+                <?php echo form_textarea( array( 'class' => 'editor', 'class' => "span8", 'name' => 'description', 'id' => 'description', 'rows' => '8', 'cols' => '80', 'value' => isset($result) ? $result->description : set_value('description') ) )?>
+				<span class="help-inline"><?php if (form_error('description')) echo form_error('description'); else echo lang('sl_description_note'); ?></span>
             </div>
         </div>
 			<!-- CATEGORY ID -->
-		<div class="control-group <?php echo form_error('category_id') ? 'error' : '' ?>">
-			 <label class="control-label"><?php echo lang('sl_category') ?></label>
-			<div class="controls">
-				<?php
-				if (isset($categories) && is_array($categories) && count($categories)) :
+		<?php
+		if (isset($categories) && is_array($categories) && count($categories)) :
 
-					$selection = ( isset ($result) && !empty($result->category_id ) ) ? (int) $result->category_id : 0;
-					echo form_dropdown('category_id', $categories, $selection , ' class="chzn-select" id="category_id"');
-				endif; ?>
-				<?php if (form_error('category_id')) echo '<span class="help-inline">'. form_error('category_id') .'</span>'; ?>
-			</div>
-		</div>
+			$selection = ( isset ($result) && !empty($result->category_id ) ) ? (int) $result->category_id : 0;
+			echo form_dropdown('category_id', $categories, $selection , lang('sl_category'), ' class="chzn-select" id="category_id"');
+		endif; ?>
 
 		<?php
 		$field = 'activate';
-		if ($user->active) :
+		if ($result->active) :
 				$field = 'de'.$field;
 		endif; ?>
 		<div class="control-group">
 			<div class="controls">
 				<label>
 					<input type="checkbox" name="<?php echo $field; ?>" value="1">
-					<?php echo lang('al_'.$field.'_note') ?>
+					<?php echo lang('sl_'.$field.'_note') ?>
 				</label>
 			</div>
 		</div>
@@ -73,17 +67,11 @@
 	    <legend>Values</legend>
 
 			<!-- TYPE ID -->
-		<div class="control-group <?php echo form_error('value_type') ? 'error' : '' ?>">
-			 <label class="control-label"><?php echo lang('sl_type') ?></label>
-			<div class="controls">
-				<?php
-				if (isset($value_types) && is_array($value_types) && count($value_types)) :
-					$selection = ( isset ($result) && !empty($result->value_type ) ) ? (int) $result->value_type : 0;
-					echo form_dropdown('value_type', $value_types, $selection , ' class="chzn-select" id="value_type"');
-				endif; ?>
-				<?php if (form_error('value_type')) echo '<span class="help-inline">'. form_error('value_type') .'</span>'; ?>
-			</div>
-		</div>
+		<?php
+		if (isset($value_types) && is_array($value_types) && count($value_types)) :
+			$selection = ( isset ($result) && !empty($result->value_type ) ) ? (int) $result->value_type : 0;
+			echo form_dropdown('value_type', $value_types, $selection , lang('sl_level'), ' class="chzn-select" id="value_type"');
+		endif; ?>
 
 			<!-- VALUE RANGE -->
 		<div class="control-group <?php echo form_error('value_range_min') || form_error('value_range_max') ? 'error' : '' ?>">
@@ -100,8 +88,8 @@
 		<div class="control-group <?php echo form_error('options') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('sl_options') ?></label>
 			<div class="controls">
-				<input type="text" id="options" name="options" value="<?php echo isset($result) ? $result->options : set_value('options') ?>" />
-				<span class="help-inline"><?php if (form_error('name')) echo form_error('name'); else echo lang('sl_options_note'); ?></span>'
+				<input type="text" class="span8" id="options" name="options" value="<?php echo isset($result) ? $result->options : set_value('options') ?>" />
+				<span class="help-inline"><?php if (form_error('name')) echo form_error('name'); else echo lang('sl_options_note'); ?></span>
             </div>
 		</div>
 
@@ -109,8 +97,8 @@
 		<div class="control-group <?php echo form_error('rules') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('sl_rules') ?></label>
 			<div class="controls">
-				<input type="text" id="rules" name="rules" value="<?php echo isset($result) ? $result->rules : set_value('rules') ?>" />
-				<span class="help-inline"><?php if (form_error('rules')) echo form_error('rules'); else echo lang('sl_rules_note'); ?></span>'
+				<input type="text" class="span8" id="rules" name="rules" value="<?php echo isset($result) ? $result->rules : set_value('rules') ?>" />
+				<span class="help-inline"><?php if (form_error('rules')) echo form_error('rules'); else echo lang('sl_rules_note'); ?></span>
             </div>
 		</div
 	</fieldset>

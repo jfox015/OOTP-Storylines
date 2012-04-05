@@ -1,7 +1,6 @@
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span9">
-			<h3>Manage Data Values</h3>
 			<p>
 			<?php echo anchor(SITE_AREA.'/custom/storylines/conditions/index','Conditions'); ?>
 			</p>

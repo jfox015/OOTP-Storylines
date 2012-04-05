@@ -13,8 +13,8 @@
 			<tr>
 				<th class="column-check"><input class="check-all" type="checkbox" /></th>
 				<th style="width: 3em"><?php echo lang('bf_id'); ?></th>
-				<th><?php echo lang('sl_name'); ?></th>
 				<th><?php echo lang('sl_slug'); ?></th>
+				<th><?php echo lang('sl_name'); ?></th>
 			</tr>
 		</thead>
 		<?php if (isset($triggers) && is_array($triggers) && count($triggers)) : ?>
@@ -39,9 +39,9 @@
 				</td>
 				<td><?php echo $trigger->id ?></td>
 				<td>
-					<a href="<?php echo site_url(SITE_AREA .'/custom/storylines/triggers/edit/'. $trigger->id); ?>"><?php echo $trigger->name; ?></a>
+					<a href="<?php echo site_url(SITE_AREA .'/custom/storylines/triggers/edit/'. $trigger->id); ?>"><?php echo $trigger->slug; ?></a>
 				</td>
-				<td><?php echo $trigger->slug ?></td>
+				<td><?php echo $trigger->name ?></td>
 			</tr>
 			<?php endforeach; ?>
 		<?php else: ?>

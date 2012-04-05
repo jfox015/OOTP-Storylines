@@ -1,5 +1,25 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+/*
+	Copyright (c) 2012 Jeff Fox
 
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+*/
 class Tokens extends Admin_Controller {
 
 	//--------------------------------------------------------------------
@@ -20,7 +40,7 @@ class Tokens extends Admin_Controller {
     public function index()
     {
 		
-		$offset = $this->uri->segment(5);
+		$offset = $this->uri->segment(6);
 
         // Do we have any actions?
         if ($action = $this->input->post('submit'))
@@ -58,8 +78,9 @@ class Tokens extends Admin_Controller {
 
         $this->load->helper('ui/ui');
 		$dbprefix = $this->db->dbprefix;
-        $this->storylines_tokens_model->limit($this->limit, $offset)->where($where);
-        $this->storylines_tokens_model->select('id, name, slug, active');
+		$this->storylines_tokens_model->join('list_storylines_tokens_categories','list_storylines_tokens_categories.id = list_storylines_tokens.category_id', 'right outer');
+		$this->storylines_tokens_model->limit($this->limit, $offset)->where($where);
+        $this->storylines_tokens_model->select('list_storylines_tokens.id, list_storylines_tokens.name, slug, active, list_storylines_tokens_categories.name as category_name');
 
         Template::set('tokens', $this->storylines_tokens_model->find_all());
 

@@ -40,7 +40,7 @@ class Storylines_results_model extends BF_Model
 
 		if ($show_inactive === false)
 		{
-			$this->db->where('list_storylines_results.active', 0);
+			$this->db->where('list_storylines_results.active', 1);
 		}
 
 		$this->db->join('list_storylines_result_categories', 'list_storylines_result_categories.id = '.$this->table .'.category_id', 'right outer');

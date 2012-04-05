@@ -1,13 +1,13 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /*
-	Class: Storylines_review_status_model
+	Class: Storylines_author_status_model
 	
 */
 
-class Storylines_review_status_model extends BF_Model 
+class Storylines_author_status_model extends BF_Model 
 {
 
-	protected $table		= 'list_storylines_review_status';
+	protected $table		= 'list_storylines_author_status';
 	protected $key			= 'id';
 	protected $soft_deletes	= false;
 	protected $date_format	= '';

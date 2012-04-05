@@ -118,9 +118,10 @@
 				<legend><?php echo lang('sl_data_objects'); ?></legend>
 				<div class="help-inline">
 					<?php echo form_dropdown('data_object_select',$characters_list,'' ,'',' id="data_object_select"'); ?>
-					<a class="btn btn-small" href="#" id="add_data_object">
+					<span class="help-inline"><a class="btn btn-small" href="#" id="add_data_object">
 						<i class="icon-plus"></i> <?php echo lang('sl_add_object'); ?></i>
 					</a>
+					</span>
 				</div>
 				<div id="obj_waitload" class="well center" style="display:none;">
 					<img src="<?php echo(TEMPLATE::theme_url('images/ajax-loader.gif'));?>" width="28" height="28" border="0" align="absmiddle" /><br />Operation in progress. Please wait...
@@ -279,15 +280,15 @@
 				</div>
 				<?php endif; ?>
 				
-					<!-- Review Status -->
-				<?php if (isset($review_statuses) && is_array($review_statuses) && count($review_statuses)) : ?>
-				<div class="control-group <?php echo form_error('review_status_id') ? 'error' : '' ?>">
-					 <label class="control-label"><?php echo lang('sl_review_status') ?></label>
+					<!-- Author Status -->
+				<?php if (isset($author_statuses) && is_array($author_statuses) && count($author_statuses)) : ?>
+				<div class="control-group <?php echo form_error('author_status_id') ? 'error' : '' ?>">
+					 <label class="control-label"><?php echo lang('sl_author_status') ?></label>
 					<div class="controls">
 						<?php
-						echo form_dropdown('review_status_id',$review_statuses,(isset($storyline) ? $storyline->review_status_id : set_value('review_status_id')));
+						echo form_dropdown('author_status_id',$author_statuses,(isset($storyline) ? $storyline->author_status_id : set_value('author_status_id')));
 						?>
-						<?php if (form_error('review_status_id')) echo '<span class="help-inline">'. form_error('review_status_id') .'</span>'; ?>
+						<?php if (form_error('author_status_id')) echo '<span class="help-inline">'. form_error('author_status_id') .'</span>'; ?>
 					</div>
 				</div>
 				<?php endif; ?>

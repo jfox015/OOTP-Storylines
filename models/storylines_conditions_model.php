@@ -61,6 +61,7 @@ class Storylines_conditions_model extends BF_Model
 		}
 		$this->db->where_in('category_id',$range_str);
 		$arrOut = array();
+		$this->where('active',1);
 		$results = $this->select('id, name, slug')->find_all();
 		if (sizeof($results) > 0)
 		{
@@ -85,7 +86,7 @@ class Storylines_conditions_model extends BF_Model
 		return $arrOut;
 	}
 
-	public function list_as_select_by_category($category_id = false, $level_id = false)
+	public function list_as_select_by_category($category_id = false, $level_id = false, $show_inactive=false)
 	{
 		if ($category_id !== false) 
 		{
@@ -94,6 +95,10 @@ class Storylines_conditions_model extends BF_Model
 		if ($level_id !== false) 
 		{
 			$this->db->where('level_id', $level_id);
+		}
+		if ($show_inactive === false) 
+		{
+			$this->db->where('active',1);
 		}
 		$arrOut = array();
 		

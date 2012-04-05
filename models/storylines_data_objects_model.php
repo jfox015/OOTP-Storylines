@@ -17,8 +17,12 @@ class Storylines_data_objects_model extends BF_Model
 	//--------------------------------------------------------------------
 	// !PUBLIC METHODS
 	//--------------------------------------------------------------------
-	public function list_as_select()
+	public function list_as_select($show_inactive = false)
 	{
+		if ($show_inactive === false) 
+		{
+			$this->db->where('active',1);
+		}
 		$this->db->select('id, name');
 		$query = $this->db->get('list_storylines_data_objects');
 

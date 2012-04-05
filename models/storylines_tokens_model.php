@@ -17,9 +17,13 @@ class Storylines_tokens_model extends BF_Model
 	//--------------------------------------------------------------------
 	// !PUBLIC METHODS
 	//--------------------------------------------------------------------
-	public function list_as_select()
+	public function list_as_select($show_inactive = false)
 	{
 		$arrOut = array();
+		if ($show_inactive === false)
+		{
+			$this->db->where('list_storylines_results.active', 1);
+		}
 		$results = $this->select('id, name, slug')->find_all();
 		if (sizeof($results) > 0)
 		{
@@ -32,11 +36,15 @@ class Storylines_tokens_model extends BF_Model
 		return $arrOut;
 	}
 	
-	public function list_as_select_by_category($category_id = false)
+	public function list_as_select_by_category($category_id = false, $show_inactive = false)
 	{
 		if ($category_id !== false) 
 		{
 			$this->db->where('category_id', $category_id);
+		}
+		if ($show_inactive === false) 
+		{
+			$this->db->where('active',1);
 		}
 		$arrOut = array();
 		
@@ -78,10 +86,31 @@ class Storylines_tokens_model extends BF_Model
 		$query->free_result();
 		return $arrOut;
 	}
+	public function categories_as_select()
+	{
+		return $this->data_as_select('list_storylines_tokens_categories');
+	}
 	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
 	//--------------------------------------------------------------------
-	private function get_category_names() 
+	private function data_as_select($table = false)
+	{
+		if ($table === false) {
+			return;
+		}
+		$arrOut = array();
+		$this->db->select('id, name');
+		$query = $this->db->get($table);
+		if ($query->num_rows() > 0)
+		{
+			foreach($query->result() as $row)
+			{
+				$arrOut[$row->id] = $row->name;
+			}
+		}
+		return $arrOut;
+	}
+	private function get_category_names()
 	{
 		$this->db->select('id, name');
 		$query = $this->db->get('list_storylines_tokens_categories');

@@ -1,4 +1,25 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+/*
+	Copyright (c) 2012 Jeff Fox
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+*/
 
 class Custom extends Admin_Controller {
 
@@ -9,7 +30,7 @@ class Custom extends Admin_Controller {
 		parent::__construct();
 		$this->load->model('storylines_model');
 		$this->load->model('storylines_category_model');
-		$this->load->model('storylines_review_status_model');
+		$this->load->model('storylines_author_status_model');
 		$this->load->model('storylines_publish_status_model');
 		$this->load->helper('storylines');
 
@@ -245,7 +266,7 @@ class Custom extends Admin_Controller {
 			Template::set('frequencies', $this->storylines_random_frequencies_model->list_as_select());
 			Template::set('categories', $this->storylines_category_model->list_as_select());
 			Template::set('publish_statuses', $this->storylines_publish_status_model->list_as_select());
-			Template::set('review_statuses', $this->storylines_review_status_model->list_as_select());
+			Template::set('author_statuses', $this->storylines_author_status_model->list_as_select());
 			
 			$comments = (in_array('comments',module_list(true))) ? modules::run('comments/thread_view_with_form',$storyline->comments_thread_id) : '';
 			Template::set('comment_form', $comments);
@@ -322,6 +343,34 @@ class Custom extends Admin_Controller {
 	
 	public function export()
 	{
+		Template::set('toolbar_title', lang('sl_export'));
+		Template::render();
+	}
+	
+	//--------------------------------------------------------------------
+	
+	public function export_xml()
+	{
+		Template::set('toolbar_title', lang('sl_export'));
+		Template::set_view('storylines/custom/export');
+		Template::render();
+	}
+	
+	//--------------------------------------------------------------------
+	
+	public function export_sql()
+	{
+		Template::set('toolbar_title', lang('sl_export'));
+		Template::set_view('storylines/custom/export');
+		Template::render();
+	}
+	
+	//--------------------------------------------------------------------
+	
+	public function export_json()
+	{
+		Template::set('toolbar_title', lang('sl_export'));
+		Template::set_view('storylines/custom/export');
 		Template::render();
 	}
 	
@@ -329,6 +378,7 @@ class Custom extends Admin_Controller {
 	
 	public function manage_data()
 	{
+		Template::set('toolbar_title', lang('sl_manage_data'));
 		Template::render();
 	}
 	
@@ -336,6 +386,7 @@ class Custom extends Admin_Controller {
 	
 	public function reference()
 	{
+		Template::set('toolbar_title', lang('sl_reference'));
 		Template::render();
 	}
 	
@@ -616,7 +667,7 @@ class Custom extends Admin_Controller {
 					'description'=>$this->input->post('description'),
 					'category_id'=>($this->input->post('category_id') ? $this->input->post('category_id') : 1),
 					'publish_status_id'=>($this->input->post('publish_status_id') ? $this->input->post('publish_status_id') : 1),
-					'review_status_id'=>($this->input->post('review_status_id') ? $this->input->post('review_status_id') : 1),
+					'author_status_id'=>($this->input->post('author_status_id') ? $this->input->post('author_status_id') : 1),
 					'tags'=>($this->input->post('tags') ? $this->input->post('tags') : ''),
 					'modified_by'=>$this->current_user->id
 		);

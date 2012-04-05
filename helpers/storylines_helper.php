@@ -75,7 +75,7 @@ if (!function_exists('draw_articles'))
 					</td>
 				</tr>
 EOL;
-				if (isset($article->children) && sizeof($article->children) > 0) 
+				if (isset($article->children) && is_array($article->children) && sizeof($article->children) > 0) 
 				{
 					$html_out .= draw_articles($article->children, $level++);
 				}

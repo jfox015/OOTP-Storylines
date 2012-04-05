@@ -17,9 +17,13 @@ class Storylines_triggers_model extends BF_Model
 	//--------------------------------------------------------------------
 	// !PUBLIC METHODS
 	//--------------------------------------------------------------------
-	public function list_as_select()
+	public function list_as_select($show_inactive = false)
 	{
 		$arrOut = array();
+		if ($show_inactive === false)
+		{
+			$this->db->where('list_storylines_results.active', 1);
+		}
 		$results = $this->select('id, name, slug')->find_all();
 		if (sizeof($results) > 0)
 		{
