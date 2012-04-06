@@ -32,6 +32,7 @@ class Custom extends Admin_Controller {
 		$this->load->model('storylines_category_model');
 		$this->load->model('storylines_author_status_model');
 		$this->load->model('storylines_publish_status_model');
+		$this->load->model('storylines_history_model');
 		$this->load->helper('storylines');
 
 		Template::set_block('sub_nav', 'custom/_sub_nav');
@@ -254,14 +255,20 @@ class Custom extends Admin_Controller {
 			{
 				$this->load->model('storylines_category_model');
 			}
+			if (!isset($this->storylines_triggers_model))
+			{
+				$this->load->model('storylines_triggers_model');
+			}
 
 			// Storyline Data sets
 			Template::set('conditions', $this->storylines_conditions_model->get_object_conditions($storyline_id, 1));
 			Template::set('data_objects', $this->storylines_model->get_data_objects($storyline_id));
 			Template::set('articles', $this->storylines_articles_model->build_article_tree($storyline_id));
+			Template::set('triggers', $this->storylines_model->get_triggers($storyline_id));
 			
 			// Options Lists Data
-			Template::set('conditions_objs', $this->storylines_conditions_model->find_all());
+			Template::set('conditions_objs', $this->storylines_conditions_model->list_as_select_by_category());
+			Template::set('triggers_list', $this->storylines_triggers_model->list_as_select());
 			Template::set('characters_list', $this->storylines_data_objects_model->list_as_select());
 			Template::set('frequencies', $this->storylines_random_frequencies_model->list_as_select());
 			Template::set('categories', $this->storylines_category_model->list_as_select());
@@ -272,7 +279,9 @@ class Custom extends Admin_Controller {
 			Template::set('comment_form', $comments);
 			Assets::add_js($this->load->view('storylines/custom/edit_form_js',array('storyline'=>$storyline),true),'inline');
 			Assets::add_js(js_path() . 'json2.js');
-			
+			Assets::add_module_js('storylines','jquery-ui-slider.min.js');
+			Assets::add_module_css('storylines','jquery-ui-slider.css');
+
 			Template::set_view('storylines/custom/edit_form');
 		}
 		else
@@ -313,11 +322,16 @@ class Custom extends Admin_Controller {
 					{
 						$this->load->model('activities/Activity_model', 'activity_model');
 
-						$item = $this->storylines_model->find($id);
+						//$item = $this->storylines_model->find($id);
 						$user = $this->user_model->find($this->current_user->id);
 						$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->current_user->username : ($this->settings_lib->item('auth.use_usernames') ? $user->username : $user->email);
 						$this->activity_model->log_activity($this->current_user->id, lang('us_log_delete') . ': '.$log_name, 'storylines');
 						Template::set_message('The Storyline was successfully deleted.', 'success');
+						
+						if (in_array('comments',module_list(true))) {
+							modules::run('comments/purge_thread',$item->comments_thread_id);
+						}
+			
 					} else {
 						Template::set_message(lang('us_action_not_deleted'). $this->storylines_model->error, 'error');
 					}
@@ -387,6 +401,33 @@ class Custom extends Admin_Controller {
 	public function reference()
 	{
 		Template::set('toolbar_title', lang('sl_reference'));
+		Template::render();
+	}
+	
+	//--------------------------------------------------------------------
+	
+	public function history()
+	{
+		$type_id = $this->uri->segment(5);
+		$var_id = $this->uri->segment(6);
+		
+		if (isset($type_id) && !empty($type_id))
+		{
+			if (isset($type_id) && !empty($type_id))
+			{
+				$history = $this->storylines_history_model->where('object_type',$type_id)->where('var_id',$var_id)->find_all();
+				Template::set('history', $history);
+			}
+			else
+			{
+				Template::set_message(lang('sl_history_empty_var_id'), 'error');
+			}
+		} 
+		else
+		{
+			Template::set_message(lang('sl_history_empty_type_id'), 'error');
+		}
+		Template::set('toolbar_title', lang('sl_history'));
 		Template::render();
 	}
 	
@@ -486,10 +527,7 @@ class Custom extends Admin_Controller {
 		if ($this->input->post('object_data'))
 		{
 			$items = json_decode($this->input->post('object_data'));
-			$data = array('storyline_id'		=> $items->storyline_id,
-						  'object_id'	 		=> $items->object_id
-			);
-			$this->storylines_model->remove_data_object($data);
+			$this->storylines_model->remove_data_object($items->object_id);
 			$json_out['result']['items'] = $this->storylines_model->get_data_objects($items->storyline_id);
 		}
 		else
@@ -526,7 +564,7 @@ class Custom extends Admin_Controller {
 		{
 			$items = json_decode($this->input->post('object_data'));
 			$data = array('storyline_id'		=> $items->storyline_id,
-						  'object_id'	 		=> $items->object_id
+						  'trigger_id'	 		=> $items->object_id
 			);
 			$this->storylines_model->add_trigger($data);
 			$json_out['result']['items'] = $this->storylines_model->get_triggers($items->storyline_id);
@@ -561,7 +599,7 @@ class Custom extends Admin_Controller {
 		$error = false;
 		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
 		
-		$storyline_id = $this->uri->segment(4);
+		$storyline_id = $this->uri->segment(5);
 		
 		if (isset($storyline_id) && !empty($storyline_id)) 
 		{
@@ -599,10 +637,7 @@ class Custom extends Admin_Controller {
 		if ($this->input->post('object_data'))
 		{
 			$items = json_decode($this->input->post('object_data'));
-			$data = array('storyline_id'		=> $items->storyline_id,
-						  'object_id'	 		=> $items->object_id
-			);
-			$this->storylines_model->remove_trigger($data);
+			$this->storylines_model->remove_trigger($items->object_id);
 			$json_out['result']['items'] = $this->storylines_model->get_triggers($items->storyline_id);
 		}
 		else

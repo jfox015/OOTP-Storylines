@@ -195,10 +195,12 @@ class Articles extends Admin_Controller {
 		{
 			$this->load->model('storylines_conditions_model');
 			$this->load->model('storylines_results_model');
-			
+			$this->load->model('storylines_data_objects_model');
+
 			
 			Template::set('article', $article);
 			
+			Template::set('characters', $this->storylines_model->get_data_objects($article->storyline_id));
 			Template::set('tokens', $this->storylines_tokens_model->list_as_select_by_category());
 			Template::set('conditions', $this->storylines_conditions_model->list_as_select_by_category());
 			Template::set('results', $this->storylines_results_model->find_all());
@@ -224,6 +226,63 @@ class Articles extends Admin_Controller {
 		Template::render();
 	}
 
+	//--------------------------------------------------------------------
+
+	public function delete($items)
+	{
+		$storyline_id = -1;
+		if (empty($items))
+		{
+			$item_id = $this->uri->segment(6);
+
+			if(!empty($item_id))
+			{
+				$items = array($item_id);
+			}
+		}
+
+		if (!empty($items))
+		{
+			$this->auth->restrict('Storylines.Content.Manage');
+
+			foreach ($items as $id)
+			{
+				$item = $this->storylines_articles_model->find($id);
+				
+				if (isset($item))
+				{
+					$storyline_id = $item->storyline_id;
+					if ($this->storylines_articles_model->delete($id))
+					{
+						$this->load->model('activities/Activity_model', 'activity_model');
+
+						//$item = $this->storylines_articles_model->find($id);
+						$user = $this->user_model->find($this->current_user->id);
+						$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->current_user->username : ($this->settings_lib->item('auth.use_usernames') ? $user->username : $user->email);
+						$this->activity_model->log_activity($this->current_user->id, lang('us_log_delete') . ': '.$log_name, 'storylines');
+						Template::set_message('The Storyline was successfully deleted.', 'success');
+						
+						if (in_array('comments',module_list(true))) {
+							modules::run('comments/purge_thread',$item->comments_thread_id);
+						}
+			
+					} else {
+						Template::set_message(lang('us_action_not_deleted'). $this->storylines_articles_model->error, 'error');
+					}
+				}
+				else 
+				{
+					Template::set_message(lang('sl_no_matches_found'), 'error');
+				}
+			}
+		}
+		else 
+		{
+				Template::set_message(lang('us_empty_id'), 'error');
+		}
+		redirect(SITE_AREA .'/custom/storylines/edit/'.$storyline_id);
+	}
+	
 	//--------------------------------------------------------------------
 
 	private function save_article($type='insert', $id = 0)

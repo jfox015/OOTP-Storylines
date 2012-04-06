@@ -17,7 +17,7 @@ $lang['sl_action_reject']			= 'Reject';
 $lang['sl_action_archive']			= 'Archive';
 $lang['sl_article_count']			= 'Articles';
 $lang['sl_creator']					= 'Created By';
-$lang['sl_delete_confirm']			= 'Are you sure you want to deleted the selected items?';
+$lang['sl_delete_confirm']			= 'Are you sure you want to deleted the selected items? This will permanently remove items from the database. This action cannot be undone!\n\nDo you want to proceed?';
 $lang['sl_no_matches_found']		= 'No storylines were found that match your selection.';
 $lang['sl_no_article_matches']		= 'No articles were found that match your selection.';
 
@@ -115,6 +115,9 @@ $lang['sl_action_deactivate']		= 'Deactivate';
 $lang['sl_manage_data']				= 'Manage Data Values';
 $lang['sl_export']					= 'Export';
 $lang['sl_reference']				= 'Reference';
+$lang['sl_history']					= 'History';
+$lang['sl_history_empty_var_id']	= 'A required variable identifier was missing.';
+$lang['sl_history_empty_type_id']	= 'A required history type identifier was missing.';
 
 // HISTORY
 $lang['sl_date']					= 'Date';

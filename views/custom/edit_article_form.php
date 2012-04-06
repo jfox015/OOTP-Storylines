@@ -1,8 +1,7 @@
 <?php if (validation_errors()) : ?>
-	<div class="alert alert-block alert-error fade in">
-		<a class="close" data-dismiss="alert">&times;</a>
-		<?php echo validation_errors(); ?>
-	</div>
+<div class="notification error">
+	<?php echo validation_errors(); ?>
+</div>
 <?php endif; ?>
 
 
@@ -185,8 +184,6 @@
 			<fieldset>
 				<legend><?php echo lang('sl_data_objects') ?></legend>
 				<table class="table table-bordered table-striped">
-				<tr>
-					<td>
 				<?php
 				$trigger_str = '';
 				if (isset($characters) && is_array($characters) && count($characters)) :
@@ -197,15 +194,11 @@
 					<?php
 					endforeach;
 				else:
-					echo lang('sl_no_objects');
+					echo '<tr><td>'.lang('sl_no_objects').'</td></tr>';
 				endif;
 				?>
-					</td>
-				</tr>
-				<tr>
-					<td><?php echo anchor(SITE_AREA. '/custom/storylines/edit/'.$article->storyline_id,lang('sl_edit')); ?></td>
-				</tr>
 				</table>
+				<?php echo anchor(SITE_AREA. '/custom/storylines/edit/'.$article->storyline_id,lang('sl_edit')); ?>
 			</fieldset>
 			
 				<!-- META -->
@@ -270,7 +263,7 @@
 				if (isset($article->modified_on) && !empty($article->modified_on)) : ?>		
 				<tr>
 					<td>Modified</td>
-					<td><?php echo date('m/d/Y h:i:s', $article->modified_on) .'<div class="help-inline">('. anchor('/custom/storylines/history/'.$article->id,'History') .')</div>'; ?></td>
+					<td><?php echo date('m/d/Y h:i:s', $article->modified_on) .'<div class="help-inline">('. anchor(SITE_AREA.'/custom/storylines/history/2/'.$article->id,'History') .')</div>'; ?></td>
 				</tr>
 				<?php endif; ?>		
 				

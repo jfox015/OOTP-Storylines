@@ -1,6 +1,6 @@
 <div class="container-fluid">
 	<div class="row-fluid">
-		<div class="span9">
+		<div class="span12">
 			<p>
 			<?php echo anchor(SITE_AREA.'/custom/storylines/export_xml','Export as XML'); ?>
 			</p>

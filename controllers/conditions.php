@@ -193,6 +193,31 @@ class Conditions extends Admin_Controller {
 		Template::render();
 	}
 	
+	public function get_condition()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		$condition_id = $this->uri->segment(6);
+		if (isset($condition_id) && !empty($condition_id)) 
+		{
+			$json_out['result']['items'] = $this->storylines_conditions_model->find($condition_id);
+		}
+		else
+		{
+			$error = true;
+			$status = "Condition ID was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	}
+	
 	//--------------------------------------------------------------------
 
 	private function change_status($items=false, $active = 1)

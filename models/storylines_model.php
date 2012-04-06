@@ -17,6 +17,50 @@ class Storylines_model extends BF_Model
 	//--------------------------------------------------------------------
 	// !PUBLIC METHODS
 	//--------------------------------------------------------------------
+	/*
+		Method:
+			Delete()
+			
+		A function to remove the stroyline. it must recurisvely remove all related data like 
+		triggers, conditions, data objects, tokens and articles.
+		
+		Parematers:
+			storyline_id - Sotrlyine ID int
+			
+		Result:
+			TRUE on success, FALSE on failure
+	*/
+	public function delete($storyline_id = false)
+	{
+		if ($storyline_id === false)
+		{
+			$this->error = 'No storyline ID was received.';
+			return false;
+		}
+		$this->load->model('storylines_history_model');
+		$this->load->model('storylines_conditions_model');
+		$this->load->model('storylines_articles_model');
+		$this->load->model('storylines_triggers_model');
+		$this->load->model('storylines_data_objects_model');
+		$this->load->model('storylines_results_model');
+		$this->load->model('storylines_article_predecessors');
+		
+		$articles = $this->storylines_articles_model->get_all_articles($storyline_id);
+		$data_objects = $this->get_data_objects_ids($storyline_id);
+		$this->storylines_history_model->batch_delete($articles, 2);
+		$this->storylines_conditions_model->batch_delete($data_objects, 3);
+		$this->storylines_conditions_model->batch_delete($articles, 2);
+		$this->storylines_conditions_model->batch_delete($storyline_id);
+		$this->storylines_articles_model->delete_predecessors('storyline_id',$storyline_id);
+		$this->storylines_articles_model->delete_where('storyline_id',$storyline_id);
+		$this->storylines_results_model->delete_where('storyline_id',$storyline_id);
+		$this->storylines_triggers_model->delete_where('storyline_id',$storyline_id);
+		$this->storylines_data_objects_model->delete_where('storyline_id',$storyline_id);
+		
+		parent::delete($storyline_id);
+	}
+	
+	
 	public function find($value= null)
 	{
 		$dbprefix = $this->db->dbprefix;
@@ -50,8 +94,26 @@ class Storylines_model extends BF_Model
 		{
 			return false;
 		}
-		$this->db->delete('storylines_data_objects',$object_id);
+		$this->db->delete('storylines_data_objects',array('id'=>$object_id));
+		//echo($this->db->last_query());
 		return ($this->db->affected_rows() > 0);
+	}
+	public function get_data_objects_ids($storyline_id = false)
+	{
+		if ($storyline_id === false)
+		{
+			return false;
+		}
+		$id_list = array();
+		$data_objects = $this->get_data_objects($storyline_id);
+		if (isset($data_objects) && is_array($data_objects) && count($data_objects))
+		{
+			foreach ($data_objects as $data_object)
+			{
+				array_push($id_list,$data_object->id);
+			}
+		}
+		return $id_list;
 	}
 	public function get_data_objects($storyline_id = false)
 	{

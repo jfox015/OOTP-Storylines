@@ -50,9 +50,10 @@ if (!function_exists('draw_articles'))
 			
 				$space = '';
 				if ($level > 1) { $space = make_spaces($level); }
-				$link =anchor(SITE_AREA.'/custom/storylines/articles/edit/'.$article->id,$space.$level.".".$count." - ".$article->subject);
+				$link_edit = site_url(SITE_AREA.'/custom/storylines/articles/edit/'.$article->id,$space.$level.".".$count." - ".$article->subject);
 				$id = $article->id;
 				$storyline_id = $article->storyline_id;
+				$subject = $article->subject;
 				$details = lang('sl_details');
 				$edit = lang('sl_edit');
 				$delete = lang('sl_delete');
@@ -61,15 +62,12 @@ if (!function_exists('draw_articles'))
 					<td>
 						<input type="checkbox" name="checked[]" value="{$id}" />
 					</td>
-					<td>{$link}</td>
+					<td>{$subject}</td>
 					<td>
-						<a class="btn btn-small" href="#" rel="article_details" id="{$storyline_id}|{$id}">
-							<i class=" icon-zoom-in"></i> {$details}
-						</a>
-						<a class="btn btn-small" href="#" rel="article_edit" id="{$storyline_id}|{$id}>">
+						<a class="btn btn-small" href="{$link_edit}">
 							<i class="icon-edit"></i> ($edit)
 						</a>
-						<a class="btn btn-small" href="#" rel="article_remove" id="{$storyline_id}|{$id}">
+						<a class="btn btn-small" href="#" rel="delete_article" id="{$id}">
 							<i class=" icon-remove"></i> {$delete}
 						</a>
 					</td>

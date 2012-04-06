@@ -17,7 +17,26 @@ class Storylines_conditions_model extends BF_Model
 	//--------------------------------------------------------------------
 	// !PUBLIC METHODS
 	//--------------------------------------------------------------------
-	
+	public function batch_delete($var_id = false, $object_type = 1) 
+	{
+		if ($var_id === false)
+		{
+			$this->error = "No var id was received.";
+			return;
+		}
+		if (is_array($var_id))
+		{
+			$str_ids = "(".implode(",",$var_id).")";
+			$this->where_in('var_id',$str_ids);
+		}
+		else
+		{
+			$this->where('var_id',$var_id);
+		}
+		$this->where('object_type',$object_type);	
+		$this->delete($this->table);
+
+	}
 	public function get_object_conditions($object_id = false, $level_type = 3)
 	{
 		if ($object_id === false)

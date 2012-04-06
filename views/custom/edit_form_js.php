@@ -1,48 +1,52 @@
+
+$('a[rel=delete_article]').click( function(e) {
+    e.preventDefault();
+	if (confirm("Are you sure you want to delete the selected article? This will also delete all results and conditions and may orphan any child articles.")) {
+		document.location.href = '<?php echo(site_url(SITE_AREA."/custom/storylines/articles/delete")); ?>/'+this.id;
+	}
+});
 //---------------------------------------------------------
 //	!CONDITIONS
 //---------------------------------------------------------
-$('#add_object_condition').click( function(e) {
+function Condition(id, elem, value) {
+	this.id = (id !== null) ? id : 0;
+	this.elem = (elem !== null) ? elem : '';
+	this.value = (value !== null) ? value : '';
+}
+function Condition_Obj(id, slug, name, description, type, min, max, options) {
+	this.id = (id !== null) ? id : 0;
+	this.slug = (slug !== null) ? slug : '';
+	this.name = (name !== null) ? name : '';
+	this.description = (description !== null) ? description : '';
+	this.type = (type !== null) ? type : '';
+	this.value_range_min = (min !== null) ? min : 0;
+	this.value_range_max = (max !== null) ? max : 0;
+	this.options = (options !== null) ? options : 0;
+}
+var conditions_objs = [];
+$('#add_object_condition').click( function(e) 
+{
 	e.preventDefault();
-    var val = $('#condition_select').val();
+    $('#condition_select').prev('.control-group').removeClass('control-group-error');
+	$('#condition_select').next('.help-inline').html('');
+	var val = $('#condition_select').val();
 	if (val == '') {
 		$('#condition_select').prev('.control-group').addClass('control-group-error');
 		$('#condition_select').next('.help-inline').html('You must select a condition before adding');
 	} else {
-		if (find_condition(val) !== null) {
+		if (find_condition(val)) {
 			$('#condition_select').prev('.control-group').addClass('control-group-error');
-			$('#condition_select').next('.help-inline').html('Condition already added to this object');
+			$('#condition_select').next('.help-inline').html('Condition is already in list. only one instance is allowed.');
 		} else {
-			// GET condition object
-			var obj = conditions_objs[val], htmlOut = '', makeSlider = false;
-			htmlOut += '<tr id="row_cond_'+ obj.id +'"><td><div class="control-group">';
-			htmlOut += ' \t<label class="control-label"><a href="#" rel="tooltip" class="tooltips" title="' + obj.description + '">' + obj.name + '</a></label>';
-			htmlOut += ' \t<div class="controls">';
-			switch (obj.type) {
-				case 1: // Value Range Slider
-					htmlOut += ' \t<div id="cond_'+ obj.id +'"></div>';
-				case 2: // Yes/No
-					htmlOut += ' \t<input type="checkbox" value="cond_'+ obj.id + '"> ' + obj.name;
-					break;
-				case 3: // Options List
-					htmlOut += ' \t<select id="cond_'+ obj.id + '"> ' + obj.name;
-					if (obj.options.length > 0) {
-						$.each(data.result.items, function(i,item){
-							htmlOut += ' \t\t<option value="'+item.value+'">'+item.name+'</option>';
-						});
-					}
-					htmlOut += ' \t</select>';
-					break;
-			} // END switch
-			htmlOut += ' \t</div>';
-			htmlOut += '</div></td>';
-			htmlOut += '<td><a href="#" class="btn btn-danger btn-small" rel="delete_condition" id="cond_'+ obj.id +'"><i class="icon-remove icon-white"></i></a></td>';
-			htmlOut += '</tr>';
-			$('#conditions_tbody').append(htmlOut);
-			if (makeSlider) {
-				$('#cond_'+ obj.id).slider("option", { min : obj.value_range_min, max : obj.value_range_max } );
+			if (conditions_objs[val] == null) {
+				$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/conditions/get_condition")); ?>/"+val, function(data,status) {
+					handle_ajax_reponse (status, data, 'condition', 'modal');
+				});
+			} else {
+				draw_condition(conditions_objs[val]);
 			} // END if
-			data_objects_conditions[data_objects_conditions.length] = new Condition(obj.id, "cond_"+ obj.id);
-		} // END if
+			$('#save_conditions').attr('disabled',false);
+		}
 	} // END if
 });  // END #add_object_condition.click
 
@@ -54,51 +58,30 @@ $('#save_conditions').click( function(e) {
 	{
 		var statusClass = '', statusMess = '', data_obj = {"storyline_id": currStroyline, "object_id" : currDataObj, conditions: JSON.stringify(data_objects_conditions, null, 4)};
 		$.post('<?php echo site_url(SITE_AREA.'/custom/storylines/conditions/save_object_conditions/'); ?>'+ object_id, {'cond_data_data':data_obj}, function(data,status) {
-			switch (status)
-			{
-				case 'success':
-					if (data.status.indexOf(":") != -1)
-					{
-						var status = data.status.split(":");
-						statusClass = 'alert-' + status[0];
-						statusMess = status[1];
-					}
-					else
-					{
-						drawDataObjects(data);
-						$('#data_object_modal').close();
-					}
-					break;
-				case 'timeout':
-					statusClass = 'alert-error';
-					statusMess = 'The server did not respond. Please try submitting again.';
-					break;
-				case 'error':
-					statusClass = 'alert-error';
-					statusMess = 'Ann error occured processing your request. Error:' + data;
-					break;
-			}
-			
-			if (statusMess != '') {
-				$('div#obj_ajaxStatus').addClass(statusClass);
-				$('div#obj_ajaxStatus').html(statusMess);
-				$('div#obj_ajaxStatusBox').fadeIn("slow",function() { setTimeout('fadeStatus("obj_ajaxStatusBox")',5000); });
-			}
-			$('#obj_waitload').css('display','none');
+			handle_ajax_reponse (status, data, 'condition', 'modal');
+			$('#condition_modal').modal('hide')
 		});
 	}
-	$('#data_object_modal').close();
-	loadDataObjects();
+	ajax_load('data_objects');
 });
-$('a[rel=delete_condition]').click( function(e) {
+$('a[rel=delete_condition]').live('click', function(e) {
     e.preventDefault();
 	if (confirm("Are you sure you want to remove the selected condition?")) {
-		$.each(data_objects_conditions, function(i,item){
-			if (item.elem == this.id) {
-				remove_condition(this.id);
-				$('#row_'+item.elem).remove();
-			}
-		});
+		if (data_objects_conditions[this.id] != null)
+		{
+			remove_condition(this.id);
+			$('#row_cond_'+this.id).remove();
+		}
+		if (data_objects_conditions.length == 0)
+			$('#save_conditions').attr('disabled',true);
+	}
+});
+$('a[rel=delete_all]').live('click', function(e) {
+    e.preventDefault();
+	if (confirm("Are you sure you want to remove all selected conditions?")) {
+		data_objects_conditions = [];
+		$('#conditions_table > tbody:last').empty();
+		$('#save_conditions').attr('disabled',true);
 	}
 });
 /*
@@ -115,6 +98,7 @@ $('a[rel=delete_condition]').click( function(e) {
 */
 function remove_condition(id) {
 	var tmpList = [];
+	console.log(data_objects_conditions);
 	$.each(data_objects_conditions, function(i,item){
 		if (item.id != id) {
 			tmpList[i] = item;
@@ -126,6 +110,48 @@ function remove_condition(id) {
 function find_condition(condition_id)
 {
 	return (data_objects_conditions[condition_id]);
+}
+function draw_condition(data) {
+	// GET condition object
+	console.log(data);
+	var obj = ((data.result != null) ? data.result.items : data), htmlOut = '', makeSlider = false;
+	console.log(obj);
+	htmlOut += '<tr id="row_cond_'+ obj.id +'"><td><div class="control-group">';
+	htmlOut += ' \t<div class="controls">';
+	console.debug('obj.type_id = '+ obj.type_id);
+	switch (parseInt(obj.type_id)) {
+		case 1: // Value Range Slider
+			htmlOut += ' \t<label class="control-label"><a href="#" rel="tooltip" class="tooltips" data-original-title="' + obj.description + '">' + obj.slug + '</a></label>';
+			htmlOut += ' \t<div id="cond_'+ obj.id +'"></div>';
+			break;
+		case 2: // Yes/No
+			htmlOut += ' \t<input type="checkbox" id="'+ obj.id + '" value="1" /> <a href="#" rel="tooltip" class="tooltips" data-original-title="' + obj.description + '">' + obj.slug + '</a>';
+			break;
+		case 3: // Options List
+			htmlOut += ' \t<label class="control-label"><a href="#" rel="tooltip" class="tooltips" data-original-title="' + obj.description + '">' + obj.slug + '</a></label>';
+			var optsArr = [];
+			if (obj.options != null && obj.options != '' && obj.options.indexOf('|') != -1)
+				optsArr = obj.options.split('|');
+			if (optsArr.length > 0) {
+				htmlOut += ' \t<select id="cond_'+ obj.id + '"> ' + obj.name;
+				$.each(optsArr, function(i,item){
+					var items = item.split(":");
+					htmlOut += ' \t\t<option value="'+items[0]+'">'+items[1]+'</option>';
+				});
+				htmlOut += ' \t</select>';
+			}
+			break;
+	} // END switch
+	htmlOut += ' \t</div>';
+	htmlOut += '</div></td>';
+	htmlOut += '<td><a href="#" class="btn-danger" rel="delete_condition" id="'+ obj.id +'"><i class="icon-remove icon-white"></i></a></td>';
+	htmlOut += '</tr>';
+	$('#conditions_table > tbody:last').append(htmlOut);
+	if (makeSlider) {
+		$('#cond_'+ obj.id).slider("option", { min : obj.value_range_min, max : obj.value_range_max } );
+	} // END if
+	if (conditions_objs[obj.id] == null) conditions_objs[obj.id] = obj;
+	data_objects_conditions[obj.id] = new Condition(obj.id);
 }
 //---------------------------------------------------------
 //	!DATA OBJECTS
@@ -144,14 +170,12 @@ function Data_Object(id, elem, order, conditions) {
 }
 $("a[rel=edit_object_cond]").live('click', function(e) {
     e.preventDefault();
+
 	var dataStr = this.id.split("|");
 	currStoryline = dataStr[0];
 	currDataObj = dataStr[1];
-	$('#data_object_modal').modal({
-		keyboard: false,
-		static:true,
-		background: true
-	});
+	console.debug(currDataObj);
+	$('#condition_modal').modal('show');
 });
 $('#add_data_object').click( function(e) {
     e.preventDefault();
@@ -195,7 +219,9 @@ $("a[rel=remove_data_object]").live('click', function(e) {
 });
 function drawDataObjects(data) {
 
-	if (data.result.items.length > 0) {
+	console.debug('drawDataObjects');
+	console.debug(data.result.items.length);
+if (data.result.items.length > 0) {
 		$('#data_objects_tbl > tbody:last').empty();
 		data_objects = [];
 		var outStr = '',order = 1;
@@ -233,12 +259,13 @@ function drawDataObjects(data) {
 //---------------------------------------------------------
 //	!TRIGGERS
 //---------------------------------------------------------
+var triggers = [];
 function Trigger(id) {
     this.id = (id !== null) ? id : 0;
 }
 $('#add_trigger').click( function(e) {
     e.preventDefault();
-    var proceed = true, trigger_id = $('#trigger_select').val();
+    var proceed = true, trigger_id = $('#triggers').val();
 	if (trigger_id != null && trigger_id != '' && triggers.length > 0) {
 		$.each(triggers, function(i, item) {
 			if (item.id == trigger_id)
@@ -254,11 +281,11 @@ $('#add_trigger').click( function(e) {
 		$('div#trg_ajaxStatusBox').fadeIn("slow",function() { setTimeout('fadeStatus("trg_ajaxStatusBox")',5000); });
 	}
 });
-$('a[rel=remove_trigger]').click( function(e) {
+$('a[rel=remove_trigger]').live('click', function(e) {
     e.preventDefault();
-    var proceed = false, dataStr = this.id.split("|"), trigger_id = dataStr[1];
-	if (trigger_id != null && trigger_id != '' && data_objects.length > 0) {
-		$.each(data_objects, function(i, item) {
+    var proceed = false, trigger_id = this.id;
+	if (trigger_id != null && trigger_id != '' && triggers.length > 0) {
+		$.each(triggers, function(i, item) {
 			if (item.id == trigger_id)
 				proceed = true;
 		});
@@ -280,7 +307,7 @@ function drawTriggers(data) {
 		triggers = [];
 		var outStr = '',order = 1;
 		$.each(data.result.items, function(i,item){
-			outStr += '<div class="help help-inline">'+item.trigger_label+' <a class="close" rel="remove_trigger" id="'+item.id+'"><i class="icon-remove">&times;</i></a></div>'+ "\n";
+			outStr += '<div class="help help-inline">'+item.slug+' <a class="close" rel="remove_trigger" id="'+item.id+'"><i class="icon-remove">&times;</i></a></div>'+ "\n";
 			triggers[i] = new Trigger(item.id);
 		});
 		$('div#triggers_list').append(outStr);
@@ -309,9 +336,9 @@ function drawTriggers(data) {
 function ajax_post(type, object_id, func ) {
 	
 	var prefix = '', data_obj = '{ "storyline_id": '+storyline_id+', "object_id": '+object_id+'}';
-	if (type == 'triggers')
+	if (type == 'triggers' || type == 'trigger')
 		prefix = "trg";
-	else if (type == 'data_objects')
+	else if (type == 'data_objects' || type == 'data_object')
 		prefix = "obj";
     $('#'+prefix+'_waitload').css('display','block');
 	$.post('<?php echo site_url(SITE_AREA.'/custom/storylines'); ?>/' + func +'_'+type+'/', {'object_data':data_obj}, function(data,status) {
@@ -320,9 +347,9 @@ function ajax_post(type, object_id, func ) {
 }
 function ajax_load(type) {
     var prefix = '';
-	if (type == 'triggers')
+	if (type == 'triggers' || type == 'trigger')
 		prefix = "trg";
-	else if (type == 'data_objects')
+	else if (type == 'data_objects' || type == 'data_object')
 		prefix = "obj";
     $('#'+prefix+'_waitload').css('display','block');
 	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/")); ?>/get_"+type+"/"+storyline_id, function(data,status) {
@@ -343,10 +370,13 @@ function handle_ajax_reponse(status, data, type, prefix)
 			}
 			else
 			{
-				if (type == 'trigger')
+				console.debug(type);
+				if (type == 'trigger' || type == 'triggers')
 					drawTriggers(data)
-				else if (type == 'data_objects')
+				else if (type == 'data_objects' || type == 'data_object')
 					drawDataObjects(data);
+				else if (type == 'condition')
+					draw_condition(data);
 			}
 			break;
 		case 'timeout':
@@ -382,3 +412,10 @@ function fadeModalStatus() {
     $('div#modal_ajaxStatusBox').fadeOut("normal",function() { clearTimeout(fader); $('div#modal_ajaxStatusBox').hide(); });
 }
 ajax_load('data_objects');
+ajax_load('triggers');
+$('#condition_modal').modal({
+	keyboard: false,
+	static:true,
+	background: true
+});
+$('#condition_modal').modal('hide');
