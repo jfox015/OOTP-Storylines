@@ -220,6 +220,67 @@ class Conditions extends Admin_Controller {
 	
 	//--------------------------------------------------------------------
 
+	public function save_object_conditions() 
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		if ($this->input->post('conditions_data'))
+		{
+			$items = json_decode($this->input->post('conditions_data'));
+			
+			if (is_array($items->conditions) && count($items->conditions))
+			{
+				foreach($items->conditions as $condition)
+				{
+					$data = array('var_id'		=> $items->var_id,
+						  'level_type'	 		=> $items->level_type,
+						  'condition_id'	 	=> $condition->id,
+						  'value'	 			=> $condition->value
+					);
+					$success = true;
+					if (!$this->storylines_conditions_model->count_object_conditions($items->var_id, $items->level_type, $condition->id))
+					{
+						$success = $this->storylines_conditions_model->add_object_condition($data);
+					} else {
+						$success = $this->storylines_conditions_model->update_object_condition($data);
+					}
+					if (!$success)
+					{
+						$error = true;
+						$status = 'error:'.$this->storylines_conditions_model->error;
+						break;
+					}
+				}
+			}
+			else
+			{
+				$error = true;
+				$status = "Condition Data was missing.";
+			}	
+			$json_out['result'] = "Conditions saved.";
+		}
+		else
+		{
+			$error = true;
+			$status = "Post Data was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	
+	}
+	//--------------------------------------------------------------------
+	//	!PRIVATE FUNCTIONS
+	//--------------------------------------------------------------------
+	
+	//--------------------------------------------------------------------
+
 	private function change_status($items=false, $active = 1)
 	{
 		if (!$items)

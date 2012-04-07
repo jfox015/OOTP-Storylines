@@ -52,7 +52,8 @@
 				<th><?php echo lang('sl_article_count'); ?></th>
 				<th><?php echo lang('sl_creator'); ?></th>
 				<th style="width: 11em"><?php echo lang('sl_category'); ?></th>
-				<th style="width: 10em"><?php echo lang('us_status'); ?></th>
+				<th style="width: 10em"><?php echo lang('sl_author_status'); ?></th>
+				<th style="width: 10em"><?php echo lang('sl_publish_status'); ?></th>
 			</tr>
 		</thead>
 		<?php if (isset($storylines) && is_array($storylines) && count($storylines)) : ?>
@@ -86,6 +87,30 @@
 				<td><?php echo $storyline->category_name ?></td>
 				<td><?php
 					$class = '';
+					switch ($storyline->author_status_id)
+					{
+						case 5: // Archived
+							$class = '';
+							break;
+						case 4: // Rejected
+							$class = " label-warning";
+							break;
+						case 2: // Locked
+							$class = " label-error";
+							break;
+						case 1: // open
+						case 3: // Add articles
+						default:
+							$class = " label-success";
+							break;
+					}
+					?>
+					<span class="label<?php echo($class); ?>">
+					<?php echo($storyline->author_status_name);?>
+					</span>
+				</td>
+				<td><?php
+					$class = '';
 					switch ($storyline->publish_status_id)
 					{
 						case 5: // Archived
@@ -107,7 +132,7 @@
 					}
 					?>
 					<span class="label<?php echo($class); ?>">
-					<?php echo($storyline->status_name);?>
+					<?php echo($storyline->publish_status_name);?>
 					</span>
 				</td>
 			</tr>

@@ -162,6 +162,42 @@ class Storylines_articles_model extends BF_Model
 
 	/*
 		Method:
+			get_article_predecessors()
+			
+		Returns an array of predecessor ID values.
+		
+		Parameters:
+			$article_id - Storyline Article ID int
+			
+		Return:
+			Array of result IDs
+	
+	*/
+	public function get_article_predecessors($article_id = false)
+	{
+		if ($article_id === false)
+		{
+			$this->error .= "No article ID was received.<br/>\n";
+			return false;
+		}
+		$results = array();
+		$this->db->select('predecessor_id')
+				 ->where('article_id', $article_id);
+		$query = $this->db->get('storylines_article_predecessors');
+		if ($query->num_rows() > 0) 
+		{
+			foreach($query->result() as $row)
+			{
+				array_push($results, $row->predecessor_id);
+			}
+		}
+		$query->free_result();
+		return $results;
+	}
+		//--------------------------------------------------------------------
+
+	/*
+		Method:
 			get_article_conditions()
 			
 		Returns an array of result types and values.

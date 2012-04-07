@@ -21,6 +21,13 @@ if (!function_exists('find_author_name'))
 
 	}
 }
+if (!function_exists('export_storylines'))
+{
+	function export_storylines($format = 'xml', $storylines = false)
+	{
+		return;
+	}
+}
 if (!function_exists('make_spaces'))
 {
 	function make_spaces($count = 0)

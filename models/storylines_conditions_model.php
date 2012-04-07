@@ -17,6 +17,78 @@ class Storylines_conditions_model extends BF_Model
 	//--------------------------------------------------------------------
 	// !PUBLIC METHODS
 	//--------------------------------------------------------------------
+	public function add_object_condition($data = false)
+	{
+		if ($data === false)
+		{
+			$this->error = "No data was received.";
+			return false;
+		}
+		else if (!is_array($data))
+		{
+			$this->error = "Data received was not in proper array format.";
+			return false;
+		} 
+		return $this->db->insert('storylines_conditions',$data);
+	
+	}
+	public function update_object_condition($data = false)
+	{
+		if ($data === false)
+		{
+			$this->error = "No data was received.";
+			return false;
+		}
+		else if (!is_array($data))
+		{
+			$this->error = "Data received was not in proper array format.";
+			return false;
+		} 
+		$this->db->where('var_id',$data['var_id'])
+			     ->where('level_type',$data['level_type'])
+			     ->where('condition_id',$data['condition_id']);		  
+		return $this->db->update('storylines_conditions',array('value'=>$data['value']));
+	
+	}
+	public function count_object_conditions($var_id = 0, $level_type = 1, $condition_id = 0)
+	{
+		return ($this->db->select('id')
+						  ->from('storylines_conditions')
+						  ->where('var_id',$var_id)
+						  ->where('level_type',$level_type)
+						  ->where('condition_id',$condition_id)
+						  ->count_all_results()) > 0;
+	}
+	public function get_object_conditions($var_id = 0, $level_type = 1, $condition_id = 0)
+	{
+		$conditions = array();
+		$query = $this->db->select('list_storylines_conditions.slug, storylines_conditions.value')
+						  ->join('list_storylines_conditions','list_storylines_conditions.id = storylines_conditions.condition_id')
+						  ->where('var_id',$var_id)
+						  ->where('level_type',$level_type)
+						  ->get('storylines_conditions');
+		if ($query->num_rows > 0) 
+		{
+			$conditions = $query->result();
+		} 
+		$query->free_result();
+		return $conditions;
+	}
+	public function purge_object_conditions($data)
+	{
+		if ($data === false)
+		{
+			$this->error = "No data was received.";
+			return false;
+		}
+		else if (!is_array($data))
+		{
+			$this->error = "Data received was not in proper array format.";
+			return false;
+		} 
+		return $this->db->delete('storylines_conditions',$data);
+	}
+	
 	public function batch_delete($var_id = false, $object_type = 1) 
 	{
 		if ($var_id === false)
@@ -37,7 +109,7 @@ class Storylines_conditions_model extends BF_Model
 		$this->delete($this->table);
 
 	}
-	public function get_object_conditions($object_id = false, $level_type = 3)
+	/*public function get_object_conditions($object_id = false, $level_type = 3)
 	{
 		if ($object_id === false)
 		{
@@ -55,7 +127,7 @@ class Storylines_conditions_model extends BF_Model
 		$query->free_result();
 
 		return $conditions;
-	}
+	}*/
 	
 	public function range_as_select_by_category($range = false)
 	{

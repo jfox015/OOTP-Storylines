@@ -235,31 +235,14 @@ class Custom extends Admin_Controller {
 		if (isset($storyline))
 		{
 			Template::set('storyline', $storyline);
-			if (!isset($this->storylines_articles_model))
-			{
-				$this->load->model('storylines_articles_model');
-			}
-			if (!isset($this->storylines_conditions_model))
-			{
-				$this->load->model('storylines_conditions_model');
-			}
-			if (!isset($this->storylines_data_objects_model))
-			{
-				$this->load->model('storylines_data_objects_model');
-			}
-			if (!isset($this->storylines_random_frequencies_model))
-			{
-				$this->load->model('storylines_random_frequencies_model');
-			}
-			if (!isset($this->storylines_category_model))
-			{
-				$this->load->model('storylines_category_model');
-			}
-			if (!isset($this->storylines_triggers_model))
-			{
-				$this->load->model('storylines_triggers_model');
-			}
-
+			
+			$this->load->model('storylines_articles_model');
+			$this->load->model('storylines_conditions_model');
+			$this->load->model('storylines_data_objects_model');
+			$this->load->model('storylines_random_frequencies_model');
+			$this->load->model('storylines_category_model');
+			$this->load->model('storylines_triggers_model');
+			
 			// Storyline Data sets
 			Template::set('conditions', $this->storylines_conditions_model->get_object_conditions($storyline_id, 1));
 			Template::set('data_objects', $this->storylines_model->get_data_objects($storyline_id));
@@ -275,12 +258,14 @@ class Custom extends Admin_Controller {
 			Template::set('publish_statuses', $this->storylines_publish_status_model->list_as_select());
 			Template::set('author_statuses', $this->storylines_author_status_model->list_as_select());
 			
+			// COMMENTS
 			$comments = (in_array('comments',module_list(true))) ? modules::run('comments/thread_view_with_form',$storyline->comments_thread_id) : '';
 			Template::set('comment_form', $comments);
+			
+			// ADD Conditions supportiog JS and CSS
 			Assets::add_js($this->load->view('storylines/custom/edit_form_js',array('storyline'=>$storyline),true),'inline');
-			Assets::add_js(js_path() . 'json2.js');
-			Assets::add_module_js('storylines','jquery-ui-slider.min.js');
-			Assets::add_module_css('storylines','jquery-ui-slider.css');
+			Assets::add_js(array(js_path() . 'json2.js',Template::theme_url('js/jquery-ui-1.8.13.min.js')));
+			Assets::add_css(Template::theme_url('css/flick/jjquery-ui-1.8.13.custom.css'));
 
 			Template::set_view('storylines/custom/edit_form');
 		}
@@ -354,37 +339,33 @@ class Custom extends Admin_Controller {
 	//--------------------------------------------------------------------
 	
 	//--------------------------------------------------------------------
-	
+	public function export_selected($checked = false, $format = 'xml')
+	{
+		if (!$checked)
+		{
+			return;
+		}
+		$storylnes = $this->storylines_model->get_complete_storylines($checked, false, 3);
+		export_storylines($format, $storylnes);
+	}
 	public function export()
 	{
+		
+		$format = $this->uri->segment(5);
+		$statuses = $this->uri->segment(6);
+		
+		if ((isset($format) && !empty($format)) && (isset($statuses) && !empty($statuses)))
+		{
+			$statuses = explode("|",$statuses);
+			$storylnes = $this->storylines_model->get_complete_storylines(false, false, $statuses);
+			export_storylines($format, $storylnes);
+		}
+		else
+		{
+			Template::set_message('Missing format or status selections.', 'error');
+			
+		}
 		Template::set('toolbar_title', lang('sl_export'));
-		Template::render();
-	}
-	
-	//--------------------------------------------------------------------
-	
-	public function export_xml()
-	{
-		Template::set('toolbar_title', lang('sl_export'));
-		Template::set_view('storylines/custom/export');
-		Template::render();
-	}
-	
-	//--------------------------------------------------------------------
-	
-	public function export_sql()
-	{
-		Template::set('toolbar_title', lang('sl_export'));
-		Template::set_view('storylines/custom/export');
-		Template::render();
-	}
-	
-	//--------------------------------------------------------------------
-	
-	public function export_json()
-	{
-		Template::set('toolbar_title', lang('sl_export'));
-		Template::set_view('storylines/custom/export');
 		Template::render();
 	}
 	
