@@ -261,11 +261,12 @@ class Custom extends Admin_Controller {
 			// COMMENTS
 			$comments = (in_array('comments',module_list(true))) ? modules::run('comments/thread_view_with_form',$storyline->comments_thread_id) : '';
 			Template::set('comment_form', $comments);
-			
+			Template::set_theme('admin');
 			// ADD Conditions supportiog JS and CSS
+			Assets::add_js($this->load->view('storylines/custom/conditions_js',null,true),'inline');
 			Assets::add_js($this->load->view('storylines/custom/edit_form_js',array('storyline'=>$storyline),true),'inline');
 			Assets::add_js(array(js_path() . 'json2.js',Template::theme_url('js/jquery-ui-1.8.13.min.js')));
-			Assets::add_css(Template::theme_url('css/flick/jjquery-ui-1.8.13.custom.css'));
+			Assets::add_css(Template::theme_url('css/flick/jquery-ui-1.8.13.custom.css'));
 
 			Template::set_view('storylines/custom/edit_form');
 		}
@@ -353,12 +354,15 @@ class Custom extends Admin_Controller {
 		
 		$format = $this->uri->segment(5);
 		$statuses = $this->uri->segment(6);
+		$statuses = (isset($statuses) ? $statuses : 3);
 		
-		if ((isset($format) && !empty($format)) && (isset($statuses) && !empty($statuses)))
+		if ((isset($format) && !empty($format)))
 		{
-			$statuses = explode("|",$statuses);
+			if (strpos($statuses,"|") !== false) $statuses = explode("|",$statuses);
 			$storylnes = $this->storylines_model->get_complete_storylines(false, false, $statuses);
-			export_storylines($format, $storylnes);
+			$dataOut = export_storylines($format, $storylnes);
+			$this->output->set_header($dataOut['header']);
+			$this->output->set_output($dataOut['output']);
 		}
 		else
 		{

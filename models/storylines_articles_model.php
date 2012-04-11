@@ -194,7 +194,7 @@ class Storylines_articles_model extends BF_Model
 		$query->free_result();
 		return $results;
 	}
-		//--------------------------------------------------------------------
+	//--------------------------------------------------------------------
 
 	/*
 		Method:
@@ -257,6 +257,46 @@ class Storylines_articles_model extends BF_Model
 		if ($query->num_rows() > 0) 
 		{
 			$results = $query->result();
+		}
+		$query->free_result();
+		return $results;
+	}	
+	//--------------------------------------------------------------------
+
+	/*
+		Method:
+			get_article_results()
+			
+		Returns an array of result types and values.
+		
+		Parameters:
+			$article_id - Storyline Article ID int
+			
+		Return:
+			Array of result IDs and values
+	
+	*/
+	public function get_article_results_for_form($article_id = false)
+	{
+		if ($article_id === false)
+		{
+			$this->error .= "No article ID was received.<br/>\n";
+			return false;
+		}
+		$results = array();
+		$this->db->select('storylines_article_results.id, list_storylines_results.slug, result_id, result_value')
+				 ->join('list_storylines_results','list_storylines_results.id = storylines_article_results.result_id','left outer')
+				 ->not_like("slug",'%modifier')
+				 ->not_like("slug",'%talent%')
+				 ->not_like("slug",'%change%')
+				 ->where('article_id', $article_id);
+		$query = $this->db->get('storylines_article_results');
+		if ($query->num_rows() > 0) 
+		{
+			foreach ($query->result() as $row)
+			{
+				$results[$row->slug] = $row;
+			}
 		}
 		$query->free_result();
 		return $results;

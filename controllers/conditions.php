@@ -218,6 +218,60 @@ class Conditions extends Admin_Controller {
 		$this->output->set_output(json_encode($json_out));
 	}
 	
+			
+	public function load_conditions()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		$categories = $this->uri->segment(6);
+		
+		if (isset($categories) && !empty($categories)) 
+		{
+			$json_out['result']['items'] = $this->storylines_conditions_model->range_by_category($categories);
+		}
+		else
+		{
+			$error = true;
+			$status = "Categories specifier was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	}
+		
+	public function get_conditions_list()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		$var_id = $this->uri->segment(6);
+		$level_id = $this->uri->segment(7);
+		$level_id = (isset($level_id)) ? $level_id : 1;
+		if (isset($var_id) && !empty($var_id)) 
+		{
+			$json_out['result']['items'] = $this->storylines_conditions_model->get_object_conditions($var_id,$level_id);
+		}
+		else
+		{
+			$error = true;
+			$status = "Variable ID was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	}
+	
 	//--------------------------------------------------------------------
 
 	public function save_object_conditions() 

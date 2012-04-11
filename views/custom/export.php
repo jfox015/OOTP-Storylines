@@ -28,23 +28,31 @@
 	$inline = <<<EOL
 	$("#btn_export").click(function() {
 		var err = null,
-		format = $('button[rel="format"]:checked'),
-		status = $('button[rel="status"]:checked'),
-		formats = '', statuses = '';
-		if (format.length == 0)
+		formats = $('button[rel="format"]'),
+		statuses = $('button[rel="status"]'),
+		format = '', 
+		status = '';
+		console.log(formats);
+		$.each(formats, function (i, item) {
+			if (item.classList.contains('active'))
+				format = item.id;
+		});
+		console.log(format);
+		if (format == '')
 		{
 			err = "You must select an output format.<br />";
-		} 
-		if (status.length == 0)
+		}
+
+		$.each(statuses, function (i, item) {
+			if (item.classList.contains('active')) {
+				if (status != '') status == "|";
+				status += item.id;
+			}
+		});
+		
+		if (status == '')
 		{
 			err += "You must select a publishing status.<br />";
-		} 
-		else 
-		{
-			$.each(status, function(i, item) {
-				if (statuses != '') statuses == "|";
-				statuses += item.id;
-			});
 		}
 		
 		if (err != null)
@@ -54,7 +62,7 @@
 		}
 		else
 		{
-			document.location.href='{$url}/'+format+'/'+statuses;
+			document.location.href='{$url}/'+format+'/'+status;
 		}
 	});
 EOL;

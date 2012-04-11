@@ -33,6 +33,20 @@ $lang['sl_subject']					= 'Subject';
 $lang['sl_text']					= 'Text';
 $lang['sl_reply']					= 'Reply';
 $lang['sl_in_game_message']			= 'In Game Message';
+$lang['sl_injuries_dl']				= 'Injuries/DL';
+$lang['sl_player_injured']			= 'Player is Injured';
+$lang['sl_career_ending']			= 'Career ending injury';
+$lang['sl_injury_length']			= 'Injury length (in days)';
+$lang['sl_injury_desc']				= 'Injury description';
+$lang['sl_transactions']			= 'Transactions';
+$lang['sl_retirement']				= 'Retire Player';
+$lang['sl_player_released']			= 'Release Player';
+$lang['sl_player_placed_on_trading_block']	= 'Place on Trading Block';
+$lang['sl_player_waives_ntc']		= 'Place on Waivers';
+$lang['sl_fine_player']				= 'Fine Player';
+$lang['sl_suspension_games']		= 'Suspend for (x) no. of games';
+$lang['sl_result_affects']			= 'Affects';
+
 
 $lang['sl_tokens']					= 'Tokens';
 $lang['sl_tokens_details']			= 'Token Details';

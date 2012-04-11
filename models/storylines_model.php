@@ -107,7 +107,7 @@ class Storylines_model extends BF_Model
 			if (is_array($publish_status_id))
 			{
 				$publish_id_str = "(".implode(",",$publish_status_id).")";
-				$this->where_in('publish_status_id',$publish_id_str);
+				$this->db->where_in('publish_status_id',$publish_id_str);
 			}
 			else
 			{
@@ -117,7 +117,7 @@ class Storylines_model extends BF_Model
 		$this->select('id, name, random_frequency');
 		$storylines = $this->find_all();
 		
-		if (count($storylines) > 0)
+		if (is_array($storylines) && count($storylines) > 0)
 		{
 			$this->load->model('storylines_conditions_model');
 			$this->load->model('storylines_articles_model');

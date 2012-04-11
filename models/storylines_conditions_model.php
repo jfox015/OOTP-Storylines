@@ -59,11 +59,13 @@ class Storylines_conditions_model extends BF_Model
 						  ->where('condition_id',$condition_id)
 						  ->count_all_results()) > 0;
 	}
-	public function get_object_conditions($var_id = 0, $level_type = 1, $condition_id = 0)
+	public function get_object_conditions($var_id = 0, $level_type = 1)
 	{
 		$conditions = array();
-		$query = $this->db->select('list_storylines_conditions.slug, storylines_conditions.value')
-						  ->join('list_storylines_conditions','list_storylines_conditions.id = storylines_conditions.condition_id')
+		$query = $this->db->select('list_storylines_conditions.slug, list_storylines_conditions.name, storylines_conditions.value, list_storylines_conditions_categories.name as category_name, list_storylines_conditions.type_id, list_storylines_conditions_types.name as type_name')
+						  ->join('list_storylines_conditions','list_storylines_conditions.id = storylines_conditions.condition_id','left')
+						  ->join('list_storylines_conditions_categories','list_storylines_conditions.category_id = list_storylines_conditions_categories.id','right outer')
+						  ->join('list_storylines_conditions_types','list_storylines_conditions.type_id = list_storylines_conditions_types.id','right outer')
 						  ->where('var_id',$var_id)
 						  ->where('level_type',$level_type)
 						  ->get('storylines_conditions');
@@ -109,27 +111,9 @@ class Storylines_conditions_model extends BF_Model
 		$this->delete($this->table);
 
 	}
-	/*public function get_object_conditions($object_id = false, $level_type = 3)
-	{
-		if ($object_id === false)
-		{
-			return false;
-		}
-		$this->where('level_type',$level_type);
-		$this->where('var_id',$object_id);
-		$this->select('*');
-		$query = $this->db->get('storylines_conditions');
-		$conditions = array();
-		if ($query->num_rows() > 0)
-		{
-			$conditions = $query->result();
-		}
-		$query->free_result();
 
-		return $conditions;
-	}*/
 	
-	public function range_as_select_by_category($range = false)
+	public function range_by_category($range = false, $show_inactive = false)
 	{
 		if ($range === false) {
 			return false;
@@ -141,37 +125,80 @@ class Storylines_conditions_model extends BF_Model
 		}
 		else if (is_string($range))
 		{
-			if (!strpos($range,"(") === false ) 
+			if ($range != "all")
 			{
-				$range_str = "(".$range;
-			}
-			if (!strpos($range,")") === false ) 
-			{
-				$range_str .= ")";
+				if (!strpos($range,"(") === false ) 
+				{
+					$range_str = "(".$range;
+				}
+				if (!strpos($range,")") === false ) 
+				{
+					$range_str .= ")";
+				}
 			}
 		}
-		$this->db->where_in('category_id',$range_str);
+		if (!empty($range_str))
+		{
+			$this->db->where_in('category_id',$range_str);
+		}
+		if ($show_inactive === false)
+		{
+			$this->where('active',1);
+		}
 		$arrOut = array();
-		$this->where('active',1);
+		
+		$this->db->select('id, name, slug, category_id')->order_by('category_id','asc');
+		$query = $this->db->get($this->table);
+		if ($query->num_rows() > 0)
+		{
+			$curr_cat = 0;
+			$cat_label = '';
+			$sub_array = array();
+			$category_names = $this->get_category_names();
+			foreach ($query->result() as $row)
+			{
+				if ($row->category_id != $curr_cat)
+				{
+					$curr_cat = $row->category_id;
+					$cat_label = $category_names[$curr_cat];
+					if (count($sub_array) > 0)
+					{
+						array_push($arrOut, array('label'=>$cat_label, 'options'=>$sub_array));
+						$sub_array = array();
+					}
+				}
+				if (!isset($row->name) || empty($row->name))
+				{
+					$name = $row->slug;
+				}
+				else
+				{
+					$name = $row->name;
+				}
+				array_push($sub_array,array('id'=>$row->id, 'name'=>$name));
+			}
+			if (count($sub_array) > 0)
+			{
+				array_push($arrOut, array('label'=>$cat_label, 'options'=>$sub_array));
+			}
+		}
+		$query->free_result();
+		return $arrOut;
+	}
+	public function list_as_select($show_inactive = false)
+	{
+		$arrOut = array();
+		if ($show_inactive === false)
+		{
+			$this->where('active',1);
+		}
 		$results = $this->select('id, name, slug')->find_all();
 		if (sizeof($results) > 0)
 		{
 			foreach ($results as $result)
 			{
-				$arrOut[$result->id] = $result->name;
-			}
-		}
-		return $arrOut;
-	}
-	public function list_by_range()
-	{
-		$arrOut = array();
-		$results = $this->find_all();
-		if (sizeof($results) > 0)
-		{
-			foreach ($results as $result)
-			{
-				$arrOut[$result->id] = $result->name;
+				$strName = (isset($result->name) && !empty($result->name)) ? $result->name : $result->slug;
+				$arrOut[$result->id] = $strName;
 			}
 		}
 		return $arrOut;

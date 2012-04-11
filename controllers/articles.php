@@ -210,10 +210,11 @@ class Articles extends Admin_Controller {
 			Template::set('comment_form', (in_array('comments',module_list(true))) ? modules::run('comments/thread_view_with_form',$article->comments_thread_id) : '');
 			
 			Template::set('article_conditions', $this->storylines_articles_model->get_article_conditions($article_id));
-			Template::set('article_results', $this->storylines_articles_model->get_article_results($article_id));
+			Template::set('article_results', $this->storylines_articles_model->get_article_results_for_form($article_id));
 			
+			Template::set_theme('admin');
 			Template::set_view('storylines/custom/articles/edit_article_form');
-			
+
 		}
 		else
 		{
@@ -282,6 +283,45 @@ class Articles extends Admin_Controller {
 		}
 		redirect(SITE_AREA .'/custom/storylines/edit/'.$storyline_id);
 	}
+	/*
+		Method:
+			get_article_results()
+		
+		Returns a JSON object of article results
+		
+		Parameters:
+			$article_id		- Article ID int as Segement 6
+			
+		Return:
+			JSON Array of result items
+			
+	*/
+	public function get_article_results()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		$article_id = $this->uri->segment(6);
+		
+		if (isset($article_id) && !empty($article_id)) 
+		{
+			$json_out['result']['items'] = $this->storylines_articles_model->get_article_results($article_id);
+		}
+		else
+		{
+			$error = true;
+			$status = "Article ID was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+
+	}
 	
 	//--------------------------------------------------------------------
 
@@ -295,6 +335,16 @@ class Articles extends Admin_Controller {
 			$this->form_validation->set_rules('text', lang('sl_text'), 'required|trim|xss_clean');
 			$this->form_validation->set_rules('reply', lang('sl_reply'), 'strip_tags|trim|xss_clean');
 			$this->form_validation->set_rules('in_game_message', lang('sl_in_game_message'), 'required|strip_tags|numeric|trim|xss_clean');
+		} else {
+			$this->form_validation->set_rules('injury_description', lang('sl_injury_description'), 'strip_tags|trim|max_length[325]|xss_clean');
+			$this->form_validation->set_rules('suspension_games', lang('sl_suspension_games'), 'numeric|strip_tags|trim|max_length[3]|xss_clean');
+			$this->form_validation->set_rules('injury_length', lang('sl_injury_length'), 'numeric|strip_tags|trim|max_length[4]|xss_clean');
+			$this->form_validation->set_rules('injury_cei', lang('sl_injury_cei'), 'numeric|strip_tags|trim|max_length[1]|xss_clean');
+			$this->form_validation->set_rules('injury', lang('sl_injury'), 'numeric|strip_tags|trim|max_length[1]|xss_clean');
+			$this->form_validation->set_rules('transaction', lang('sl_transaction'), 'numeric|strip_tags|trim|max_length[1]|xss_clean');
+			
+		
+		
 		}
 		if ($this->form_validation->run() === false)
 		{
