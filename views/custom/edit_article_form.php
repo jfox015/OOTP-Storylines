@@ -12,7 +12,37 @@
 		<div class="span8">
 			<div class="admin-box">
 				<h3><?php echo lang('sl_edit_article'); ?></h3>
+				
+				<div id="condition_modal" class="modal" style="display:none;">
+					<div class="modal-header">
+						<a href="#" class="close" data-dismiss="modal"></a>
+						<h3>Conditions Editor</h3>
+					</div>
+					<div class="modal-body">
+						<div id="modal_waitload" class="well center" style="display:none;">
+							<img src="<?php echo(TEMPLATE::theme_url('images/ajax-loader.gif'));?>" width="28" height="28" border="0" align="absmiddle" /><br />Operation in progress. Please wait...
+						</div>
+						<?php if (isset($conditions)) { ?>
+						<div id="modal_ajaxStatusBox" style="display:none;"><div id="modal_ajaxStatus" class="alert"></div></div>
+						<select id="condition_select"></select>
+						<a href class="btn btn-small" id="add_object_condition">Add</a>
+						<span class="help-inline"></span>
+						<?php } ?>
 
+						<table class="table table-striped table-bordered" id="conditions_table">
+						<tbody>
+						<tr><td>&nbsp;</td></tr>
+						</tbody>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<a href="#" class="btn" data-dismiss="modal"><?php echo lang('bf_action_cancel'); ?></a>
+						<a href="#" id="save_conditions" class="btn btn-primary"><?php echo lang('bf_action_save'); ?></a>
+					</div>
+				</div>
+				
+				
+				
 					<!-- GENERAL DETAILS -->
 				<fieldset>
 					<legend>Message Details</legend>
@@ -124,7 +154,7 @@
 							<span class="help-inline"><?php echo lang('sl_retirement') ?> <?php if (form_error('retirement')) echo form_error('retirement'); ?></span>
 						</div>
 					</div>
-						<!-- find player -->
+						<!-- fine player -->
 					<div class="control-group <?php echo form_error('fine_player') ? 'error' : '' ?>">
 						<label class="control-label"><?php echo lang('sl_fine_player') ?></label>
 						<div class="controls">
@@ -135,7 +165,10 @@
 						</div>
 					</div>
 					
-					<table class="table table-striped table-bordered" id="data_objects">
+					<div id="rslt_waitload" class="well center" style="display:none;">
+						<img src="<?php echo(TEMPLATE::theme_url('images/ajax-loader.gif'));?>" width="28" height="28" border="0" align="absmiddle" /><br />Operation in progress. Please wait...
+					</div>
+					<table class="table table-striped table-bordered" id="results_list_table">
 					<thead>
 					<tr>
 						<th class="column-check"><input class="check-all" type="checkbox" /></th>
@@ -150,7 +183,7 @@
 					</tr>
 					</tbody>
 					</table>
-					
+					<a href="#" class="btn btn-small" id="edit_results"><i class="icon-pencil"></i> Edit Results</a>
 				</fieldset>
 				<?php
 				endif;
@@ -176,7 +209,7 @@
 					</tr>
 					</tbody>
 					</table>
-					<a href="#" class="btn btn-small"><i class="icon-pencil"></i> Edit Conditions</a>
+					<a href="#" class="btn btn-small" id="edit_conditions"><i class="icon-pencil"></i> Edit Conditions</a>
 				
 				</fieldset>
 				
@@ -223,7 +256,6 @@
 				<legend><?php echo lang('sl_data_objects') ?></legend>
 				<table class="table table-bordered table-striped">
 				<?php
-				$trigger_str = '';
 				if (isset($characters) && is_array($characters) && count($characters)) :
 					foreach($characters as $data_object) : ?>
 					<tr>
@@ -237,6 +269,40 @@
 				?>
 				</table>
 				<?php echo anchor(SITE_AREA. '/custom/storylines/edit/'.$article->storyline_id,lang('sl_edit')); ?>
+			</fieldset>
+			
+				<!-- PREDECESSORS -->
+			<fieldset>
+				<legend><?php echo lang('sl_predecessors') ?></legend>
+				<div id="pred_waitload" class="well center" style="display:none;">
+					<img src="<?php echo(TEMPLATE::theme_url('images/ajax-loader.gif'));?>" width="28" height="28" border="0" align="absmiddle" /><br />Operation in progress. Please wait...
+				</div>
+				<table class="table table-bordered table-striped" id="predecessor_table">
+				<thead>
+					<th>Subject</th>
+					<th>Conditions</th>
+					<th>Results</th>
+				</thead>
+				<tbody>
+				<?php
+				if (isset($article_predecessors) && is_array($article_predecessors) && count($article_predecessors)) :
+					foreach($article_predecessors as $predecessor) : ?>
+					<tr>
+						<td><?php 
+						$dispSub = limit_text($prdecessor->subject,100);
+						echo($dispSub); ?></td>
+						<td><?php echo($prdecessor->condition_count); ?></td>
+						<td><?php echo($prdecessor->result_count); ?></td>
+					</tr>
+					<?php
+					endforeach;
+				else:
+					echo '<tr><td>'.lang('sl_no_predecessors').'</td></tr>';
+				endif;
+				?>
+				</tbody>
+				</table>
+				<?php echo anchor('#'.$article->storyline_id,lang('sl_edit'),array('id'=>'edit_predecessors')); ?>
 			</fieldset>
 			
 				<!-- META -->

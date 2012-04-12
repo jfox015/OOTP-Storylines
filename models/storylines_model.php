@@ -144,7 +144,7 @@ class Storylines_model extends BF_Model
 					{
 						$article->conditions = $this->storylines_conditions_model->get_object_conditions($article->id, 2);
 						$article->results = $this->storylines_articles_model->get_article_results($article->id);
-						$article->predecessors = $this->storylines_articles_model->get_article_predecessors($article->id);
+						$article->predecessors = $this->storylines_articles_model->get_article_predecessor_ids($article->id);
 					}
 				}
 				$storyline->articles = $articles;

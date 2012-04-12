@@ -105,6 +105,7 @@ $lang['sl_edit']					= 'Edit';
 $lang['sl_delete']					= 'Delete';
 $lang['sl_results']					= 'Results';
 $lang['sl_conditions']				= 'Conditions';
+$lang['sl_predecessors']			= 'Predecessors';
 $lang['sl_condition']				= 'Condition';
 $lang['sl_value']					= 'Value';
 $lang['sl_name']					= 'Name';
@@ -121,6 +122,7 @@ $lang['sl_no_categories']			= 'No categories found';
 $lang['sl_no_statuses']				= 'No statuses found';
 $lang['sl_no_conditions']			= 'No conditions found';
 $lang['sl_no_results']				= 'No results found';
+$lang['sl_no_predecessors']			= 'No predecessors found';
 
 $lang['sl_select_character']		= 'Select Character"';
 $lang['sl_action_activate']			= 'Activate';

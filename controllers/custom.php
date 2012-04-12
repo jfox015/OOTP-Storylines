@@ -250,7 +250,7 @@ class Custom extends Admin_Controller {
 			Template::set('triggers', $this->storylines_model->get_triggers($storyline_id));
 			
 			// Options Lists Data
-			Template::set('conditions_objs', $this->storylines_conditions_model->list_as_select_by_category());
+			//Template::set('conditions_objs', $this->storylines_conditions_model->list_as_select_by_category());
 			Template::set('triggers_list', $this->storylines_triggers_model->list_as_select());
 			Template::set('characters_list', $this->storylines_data_objects_model->list_as_select());
 			Template::set('frequencies', $this->storylines_random_frequencies_model->list_as_select());
@@ -263,6 +263,7 @@ class Custom extends Admin_Controller {
 			Template::set('comment_form', $comments);
 			Template::set_theme('admin');
 			// ADD Conditions supportiog JS and CSS
+			Assets::add_js($this->load->view('storylines/custom/utility_js',null,true),'inline');
 			Assets::add_js($this->load->view('storylines/custom/conditions_js',null,true),'inline');
 			Assets::add_js($this->load->view('storylines/custom/edit_form_js',array('storyline'=>$storyline),true),'inline');
 			Assets::add_js(array(js_path() . 'json2.js',Template::theme_url('js/jquery-ui-1.8.13.min.js')));
@@ -366,11 +367,9 @@ class Custom extends Admin_Controller {
 		}
 		else
 		{
-			Template::set_message('Missing format or status selections.', 'error');
-			
+			Template::set('toolbar_title', lang('sl_export'));
+			Template::render();
 		}
-		Template::set('toolbar_title', lang('sl_export'));
-		Template::render();
 	}
 	
 	//--------------------------------------------------------------------

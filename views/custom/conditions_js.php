@@ -1,4 +1,5 @@
-﻿//---------------------------------------------------------
+﻿
+//---------------------------------------------------------
 //	!CONDITIONS
 //---------------------------------------------------------
 function Condition(id, elem, value) {
@@ -15,7 +16,12 @@ function Condition_Obj(id, slug, name, description, type_id, min, max, options) 
 	this.value_range_max = (max !== null) ? max : 0;
 	this.options = (options !== null) ? options : 0;
 }
-var conditions_objs = [];
+
+var conditions_objs = [],
+conditions_selected = [],
+currDataObj = null,
+condition_level_type = 1;
+
 $('#add_object_condition').click( function(e) 
 {
 	e.preventDefault();
@@ -48,24 +54,46 @@ $('#save_conditions').click( function(e) {
     e.preventDefault();
 	
 	// PREPARE JSON OBJECT FOR POST
-	if (data_objects_conditions.length > 0) 
+	if (conditions_selected.length > 0) 
 	{
 		// Update values from form
-		var elems = $('[class="condition"]');
+		var elems = $('[class=condition]');
 		$.each(elems, function(i, item) {
 			if (find_condition(item.id) != null) {
 				var obj = conditions_objs[tem.id], value = null;
 				if (obj.type_id == 2 && (item.value == null || item.value == '')) value = 0;
 				else value = item.value;
-				data_objects_conditions[item.id].value = value;
+				conditions_selected[item.id].value = value;
 			}
 		});
 		
-		var statusClass = '', statusMess = '', data_obj = {"var_id" : currDataObj, 'level_type': condition_level_type, conditions: JSON.stringify(data_objects_conditions, null, 4)};
+		var statusClass = '', statusMess = '', 
+		data_obj = null,
+		url = '<?php echo site_url(SITE_AREA.'/custom/storylines/'); ?>';
+		if (modal_mode == "condition")
+		{
+			data_obj = {"var_id" : currDataObj, 'level_type': condition_level_type, conditions: JSON.stringify(conditions_selected, null, 4)};
+			url += 'conditions/save_object_conditions/';
+		}
+		else if (modal_mode == "result")
+		{
+			data_obj = {"article_id" : currDataObj, results: JSON.stringify(conditions_selected, null, 4)};
+			url += 'results/save_object_results/';
+		}
 		console.log(data_obj);
-		$.post('<?php echo site_url(SITE_AREA.'/custom/storylines/conditions/save_object_conditions/'); ?>', {'conditions_data':data_obj}, function(data,status) {
-			if (handle_ajax_reponse (status, data, 'condition_save', 'modal'))
-				$('#condition_modal').modal('hide')
+		console.log(url);
+		$.post(url, {'conditions_data':data_obj}, function(data,status) {
+			if (handle_ajax_reponse (status, data, 'result_save', 'modal')) {
+				if (modal_mode == "condition")
+				{
+					load_condition_list(currDataObj, condition_level_type);
+				}
+				else
+				{
+					load_result_list(currDataObj);
+				}
+				$('#condition_modal').modal('hide');
+			}
 		});
 	}
 	ajax_load('data_objects');
@@ -73,25 +101,30 @@ $('#save_conditions').click( function(e) {
 $('a[rel=delete_condition]').live('click', function(e) {
     e.preventDefault();
 	if (confirm("Are you sure you want to remove the selected condition?")) {
-		if (data_objects_conditions[this.id] != null)
+		if (conditions_selected[this.id] != null)
 		{
 			remove_condition(this.id);
 			$('#row_cond_'+this.id).remove();
 		}
-		if (data_objects_conditions.length == 0)
+		if (conditions_selected.length == 0)
 			$('#save_conditions').attr('disabled',true);
 	}
 });
 $('a[rel=delete_all]').live('click', function(e) {
     e.preventDefault();
 	if (confirm("Are you sure you want to remove all selected conditions?")) {
-		data_objects_conditions = [];
+		conditions_selected = [];
 		$('#conditions_table > tbody:last').empty();
 		$('#save_conditions').attr('disabled',true);
 	}
 });
-
-function init_conditions(object_id)
+function load_existing_conditions(object_id, level)
+{
+	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/conditions/get_conditions_list")); ?>/"+object_id+'/'+level, function(data,status) {
+		handle_ajax_reponse (status, data, 'existing_conditions', 'modal');
+	});
+}
+function init_conditions_list(object_id)
 {
 	var categories = 'all';
 	if (object_id != null)
@@ -132,7 +165,7 @@ function init_conditions(object_id)
 				break;
 		}
 	}
-	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/conditions/load_conditions")); ?>/"+categories, function(data,status) {
+	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/conditions/load_conditions_list")); ?>/"+categories, function(data,status) {
 		handle_ajax_reponse (status, data, 'conditions_select', 'cond');
 	});
 	
@@ -151,18 +184,18 @@ function init_conditions(object_id)
 */
 function remove_condition(id) {
 	var tmpList = [];
-	console.log(data_objects_conditions);
-	$.each(data_objects_conditions, function(i,item){
+	console.log(conditions_selected);
+	$.each(conditions_selected, function(i,item){
 		if (item.id != id) {
 			tmpList[item.id] = item;
 		}
 	});
-	data_objects_conditions = tmpList;
+	conditions_selected = tmpList;
 	return true;
 };
 function find_condition(condition_id)
 {
-	return (data_objects_conditions[condition_id]);
+	return (conditions_selected[condition_id]);
 };
 function draw_new_condition(data) {
 	// GET condition object
@@ -170,11 +203,12 @@ function draw_new_condition(data) {
 	var obj = ((data.result != null) ? data.result.items : data), 
 	    htmlOut = '', 
 		makeSlider = false,
-		condName = ((obj.name != null && obj.name != '') ? obj.name : obj.slug);
-	console.log(obj);
+		condName = ((obj.name != null && obj.name != '') ? obj.name : obj.slug),
+		condValue = ((obj.name != null && obj.name != '') ? obj.name : obj.slug);
+	//console.log(obj);
 	htmlOut += '<tr id="row_cond_'+ obj.id +'"><td><div class="control-group">';
 	htmlOut += ' \t<div class="controls">';
-	console.debug('obj.type_id = '+ obj.type_id);
+	//console.debug('obj.type_id = '+ obj.type_id);
 	switch (parseInt(obj.type_id)) {
 		case 1: // Value Range Slider
 			htmlOut += ' \t<label class="control-label"><a href="#" rel="tooltip" class="tooltips" data-original-title="' + obj.description + '">' + condName + '</a> '+obj.value_range_min+' - '+obj.value_range_max+'</label>';
@@ -222,7 +256,7 @@ function draw_new_condition(data) {
 		$( "#cond_"+ obj.id ).val( $( '#cond_slider_'+ obj.id ).slider( "value" ) );
 	} // END if
 	if (conditions_objs[obj.id] == null) conditions_objs[obj.id] = obj;
-	data_objects_conditions[obj.id] = new Condition(obj.id);
+	conditions_selected[obj.id] = new Condition(obj.id);
 };
 function draw_condition_select(data) 
 {
@@ -243,6 +277,13 @@ function draw_condition_select(data)
 		$('#condition_select').append(htmlOut);
 	}
 };
+function draw_condition_edit_table(data) {
+	var htmlOut = '';
+	$('#conditions_table > tbody:last').empty();
+	$.each(data.result.items, function(i,item) {
+		draw_condition_row(item);
+	});
+};
 function draw_condition_list(data) {
 	var htmlOut = '';
 	$.each(data.result.items, function(i,item) {
@@ -261,7 +302,7 @@ function draw_condition_list(data) {
 function load_condition_list(id, level)
 {
 	$('#cond_waitload').css('display','block');
-	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/conditions/get_conditions_list")); ?>/"+id+"/"+level, function(data,status) {
+	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/conditions/load_conditions_list")); ?>/"+id+"/"+level, function(data,status) {
 		handle_ajax_reponse (status, data, 'condition_list', 'cond');
 	});
 };

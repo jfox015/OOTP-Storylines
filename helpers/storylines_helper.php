@@ -20,6 +20,23 @@ if (!function_exists('find_author_name'))
 		return $ci->author_model->find_author ($id);
 
 	}
+}// ------------------------------------------------------------------------
+if (!function_exists('limit_text'))
+{
+	function limit_text($text, $limit) {
+		$strings = $text;
+		if (strlen($text) > $limit) 
+		{
+			$words = str_word_count($text, 2);
+			$pos = array_keys($words);
+			if(sizeof($pos) >$limit)
+			{
+				$text = substr($text, 0, $pos[$limit]) . '...';
+			}
+			return $text;
+		}
+		return $text;
+    }
 }
 if (!function_exists('export_storylines'))
 {

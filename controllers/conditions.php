@@ -219,7 +219,7 @@ class Conditions extends Admin_Controller {
 	}
 	
 			
-	public function load_conditions()
+	public function load_conditions_list()
 	{
 		$error = false;
 		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");

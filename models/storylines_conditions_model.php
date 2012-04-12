@@ -62,7 +62,7 @@ class Storylines_conditions_model extends BF_Model
 	public function get_object_conditions($var_id = 0, $level_type = 1)
 	{
 		$conditions = array();
-		$query = $this->db->select('list_storylines_conditions.slug, list_storylines_conditions.name, storylines_conditions.value, list_storylines_conditions_categories.name as category_name, list_storylines_conditions.type_id, list_storylines_conditions_types.name as type_name')
+		$query = $this->db->select('storylines_conditions.id, storylines_conditions.condition_id, list_storylines_conditions.slug, list_storylines_conditions.name, storylines_conditions.value, list_storylines_conditions_categories.name as category_name, list_storylines_conditions.type_id, list_storylines_conditions_types.name as type_name')
 						  ->join('list_storylines_conditions','list_storylines_conditions.id = storylines_conditions.condition_id','left')
 						  ->join('list_storylines_conditions_categories','list_storylines_conditions.category_id = list_storylines_conditions_categories.id','right outer')
 						  ->join('list_storylines_conditions_types','list_storylines_conditions.type_id = list_storylines_conditions_types.id','right outer')

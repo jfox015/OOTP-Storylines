@@ -32,12 +32,10 @@
 		statuses = $('button[rel="status"]'),
 		format = '', 
 		status = '';
-		console.log(formats);
 		$.each(formats, function (i, item) {
 			if (item.classList.contains('active'))
 				format = item.id;
 		});
-		console.log(format);
 		if (format == '')
 		{
 			err = "You must select an output format.<br />";

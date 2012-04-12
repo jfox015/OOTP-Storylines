@@ -124,8 +124,12 @@ class Storylines_articles_model extends BF_Model
 			Array of child article IDs
 	
 	*/
-	public function get_all_articles($storyline_id) 
+	public function get_all_articles($storyline_id, $except_article_id = false) 
 	{
+		if ($except_article_id !== false)
+		{
+			$this->db->where('id <> '.$except_article_id);
+		}
 		return $this->select('id')->find_all_by('storyline_id',$storyline_id);
 	}
 	//--------------------------------------------------------------------
@@ -162,7 +166,7 @@ class Storylines_articles_model extends BF_Model
 
 	/*
 		Method:
-			get_article_predecessors()
+			get_article_predecessor_ids()
 			
 		Returns an array of predecessor ID values.
 		
@@ -174,6 +178,44 @@ class Storylines_articles_model extends BF_Model
 	
 	*/
 	public function get_article_predecessors($article_id = false)
+	{
+		if ($article_id === false)
+		{
+			$this->error .= "No article ID was received.<br/>\n";
+			return false;
+		}
+		$results = array();
+		$prefix = $this->db->dbprefix;
+		$this->db->select('storylines_article_predecessors.predecessor_id, subject, 
+							(SELECT COUNT('.$prefix.'storylines_conditions.id) FROM '.$prefix.'storylines_conditions WHERE '.$prefix.'storylines_conditions.var_id = '.$prefix.'storylines_article_predecessors.predecessor_id AND level_type = 2) as condition_count,
+							(SELECT COUNT('.$prefix.'storylines_article_results.id) FROM '.$prefix.'storylines_article_results WHERE '.$prefix.'storylines_article_results.article_id = '.$prefix.'storylines_article_predecessors.predecessor_id) as result_count')
+				 ->join('storylines_articles', 'storylines_articles.id = storylines_article_predecessors.predecessor_id')
+				 ->where('article_id', $article_id);
+		$query = $this->db->get('storylines_article_predecessors');
+		if ($query->num_rows() > 0) 
+		{
+			$results = $query->result();
+		}
+		$query->free_result();
+		return $results;
+	}	
+	
+	//--------------------------------------------------------------------
+
+	/*
+		Method:
+			get_article_predecessor_ids()
+			
+		Returns an array of predecessor ID values.
+		
+		Parameters:
+			$article_id - Storyline Article ID int
+			
+		Return:
+			Array of result IDs
+	
+	*/
+	public function get_article_predecessor_ids($article_id = false)
 	{
 		if ($article_id === false)
 		{

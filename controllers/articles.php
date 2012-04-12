@@ -211,8 +211,20 @@ class Articles extends Admin_Controller {
 			
 			Template::set('article_conditions', $this->storylines_articles_model->get_article_conditions($article_id));
 			Template::set('article_results', $this->storylines_articles_model->get_article_results_for_form($article_id));
+			Template::set('article_perdecessor_ids', $this->storylines_articles_model->get_article_predecessor_ids($article_id));
+			Template::set('article_predecessors', $this->storylines_articles_model->get_article_predecessors($article_id));
+			
+			Template::set('all_articles', $this->storylines_articles_model->get_all_articles($article->storyline_id,$article->id));
 			
 			Template::set_theme('admin');
+			
+			// ADD Conditions supportiog JS and CSS
+			Assets::add_js($this->load->view('storylines/custom/utility_js',null,true),'inline');
+			Assets::add_js($this->load->view('storylines/custom/conditions_js',null,true),'inline');
+			Assets::add_js($this->load->view('storylines/custom/edit_article_form_js',array('article'=>$article),true),'inline');
+			Assets::add_js(array(js_path() . 'json2.js',Template::theme_url('js/jquery-ui-1.8.13.min.js')));
+			Assets::add_css(Template::theme_url('css/flick/jquery-ui-1.8.13.custom.css'));
+
 			Template::set_view('storylines/custom/articles/edit_article_form');
 
 		}

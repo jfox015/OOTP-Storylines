@@ -35,7 +35,6 @@
 					</div>
 				</fieldset>
 				
-				<?php if(isset($conditions_objs) && is_array($conditions_objs) && count($conditions_objs)) : ?>
 				<div id="condition_modal" class="modal" style="display:none;">
 					<div class="modal-header">
 						<a href="#" class="close" data-dismiss="modal"></a>
@@ -47,15 +46,9 @@
 						</div>
 						<?php if (isset($conditions)) { ?>
 						<div id="modal_ajaxStatusBox" style="display:none;"><div id="modal_ajaxStatus" class="alert"></div></div>
-						<div class="control-group">
-							<div class="controls">
-								<?php
-									echo form_dropdown('condition_select',$conditions_objs,'', '', ' id="condition_select"');
-								?>
-								<a href class="btn btn-small" id="add_object_condition">Add</a>
-								<span class="help-inline"></span>
-							</div>
-						</div>
+						<select id="condition_select"></select>
+						<a href class="btn btn-small" id="add_object_condition">Add</a>
+						<span class="help-inline"></span>
 						<?php } ?>
 
 						<table class="table table-striped table-bordered" id="conditions_table">
@@ -69,7 +62,6 @@
 						<a href="#" id="save_conditions" class="btn btn-primary"><?php echo lang('bf_action_save'); ?></a>
 					</div>
 				</div>
-				<?php endif; ?>
 				
 					<!-- DATA OBJECTS -->
 				<fieldset>
@@ -150,9 +142,7 @@
 					</tr>
 					</thead>
 					<tbody>
-					<tr>
-						<td>&times;</td>
-					</tr>
+					<tr><td>&times;</td></tr>
 					</tbody>
 					</table>
 					<a href="#" class="btn btn-small" id="edit_conditions"><i class="icon-pencil"></i> Edit Conditions</a>
