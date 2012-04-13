@@ -41,11 +41,30 @@
 					</div>
 				</div>
 				
-				
-				
 					<!-- GENERAL DETAILS -->
 				<fieldset>
-					<legend>Message Details</legend>
+					<legend><?php echo lang('sl_general_header'); ?></legend>
+						<!-- Title -->
+					<div class="control-group <?php echo form_error('title') ? 'error' : '' ?>">
+						 <label class="control-label" for="title"><?php echo lang('sl_title') ?></label>
+						<div class="controls">
+							<input type="text" class="span7" name="title" id="title" value="<?php echo isset($storyline) ? $storyline->title : set_value('title') ?>" />
+							<?php if (form_error('title')) echo '<span class="help-inline">'. form_error('title') .'</span>'; ?>
+						</div>
+					</div>
+
+						<!-- Description -->
+					<div class="control-group <?php echo form_error('description') ? 'error' : '' ?>">
+						 <label class="control-label"><?php echo lang('sl_description') ?></label>
+						<div class="controls">
+							<?php echo form_textarea( array( 'name' => 'description', 'id' => 'description', 'class'=>'span7','rows' => '5', 'cols' => '80', 'value' => isset($storyline) ? $storyline->description : set_value('description') ) )?>
+							<?php if (form_error('description')) echo '<span class="help-inline">'. form_error('description') .'</span>'; ?>
+						</div>
+					</div>
+				</fieldset>
+				
+				<fieldset>
+					<legend><?php echo lang('sl_message_details'); ?></legend>
 						<!-- Subject -->
 					<div class="control-group <?php echo form_error('subject') ? 'error' : '' ?>">
 						 <label class="control-label" for="subject"><?php echo lang('sl_title') ?></label>
@@ -64,7 +83,7 @@
 						</div>
 					</div>
 				
-					<legend>Interactive Response</legend>
+					<legend><?php echo lang('sl_interactive_reponse'); ?></legend>
 						<!-- Reply -->
 					<div class="control-group <?php echo form_error('reply') ? 'error' : '' ?>">
 						 <label class="control-label" for="reply"><?php echo lang('sl_reply') ?></label>
@@ -83,87 +102,6 @@
 				<!-- RESULTS -->
 				<fieldset>
 					<legend><?php echo lang('sl_results'); ?></legend>
-					<?php
-					// TODO: CODE THIS SECTION
-					// SHOW INJURY/TRANSACTIONS RESULT OPTIONS IN FULL. TRUNCATE THE REST
-					?>
-					<b><?php echo lang('sl_injries_dl'); ?></b>
-						<!-- Player is injured -->
-					<div class="control-group <?php echo form_error('injury') ? 'error' : '' ?>">
-						<label class="control-label"><?php echo lang('sl_player_injured') ?></label>
-						<div class="controls">
-							<?php
-							echo form_checkbox('injury',1, (isset($results['injury']) && $results['injury']->value == 1 ? true : set_value('injury')),' id="injury"');
-							?>
-							<span class="help-inline"><?php if (form_error('injury')) echo form_error('injury'); ?></span>
-						</div>
-					</div>
-						<!-- career ending injury -->
-					<div class="control-group <?php echo form_error('injury_cei') ? 'error' : '' ?>">
-						<label class="control-label"><?php echo lang('sl_career_ending') ?></label>
-						<div class="controls">
-							<?php
-							echo form_checkbox('injury_cei',1, (isset($results['injury_cei']) && $results['injury_cei']->value == 1 ? true : set_value('injury_cei')),' id="injury_cei"');
-							?>
-							<span class="help-inline"><?php if (form_error('injury_cei')) echo form_error('injury_cei'); ?></span>
-						</div>
-					</div>
-						<!-- injury length (in days) -->
-					<div class="control-group <?php echo form_error('injury_length') ? 'error' : '' ?>">
-						<label class="control-label"><?php echo lang('sl_injury_length') ?></label>
-						<div class="controls">
-							<input type="text" class="span6" name="injury_length" id="injury_length" value="<?php echo (isset($results['injury_length']) ? $results['injury_length']->value : set_value('injury_length')) ?>" />
-							<span class="help-inline"><?php if (form_error('injury_length')) echo form_error('injury_length'); ?></span>
-						</div>
-					</div>
-						<!-- injury description -->
-					<div class="control-group <?php echo form_error('injury_description') ? 'error' : '' ?>">
-						<label class="control-label"><?php echo lang('sl_injury_desc') ?></label>
-						<div class="controls">
-							<?php echo form_textarea( array( 'name' => 'injury_description', 'id' => 'injury_description', 'rows' => '5', 'class'=>'span6','cols' => '80', 'value' => isset($results['injury_description']) ? $results['injury_description']->value : set_value('injury_description') ) )?>
-							<span class="help-inline"><?php if (form_error('injury_description')) echo form_error('injury_description'); ?></span>
-						</div>
-					</div>
-					<b><?php echo lang('sl_transactions'); ?></b>
-					<?php 
-					$trans_selected = 0;
-					if (isset($results['player_placed_on_trading_block']) && $results['player_placed_on_trading_block']->value == 1) { $trans = $results['player_placed_on_trading_block']->id; }
-					else if (isset($results['player_released']) && $results['player_released']->value == 1) { $trans = $results['player_released']->id; }
-					else if (isset($results['player_waives_ntc']) && $results['player_waives_ntc']->value == 1) { $trans = $results['player_waives_ntc']->id; }
-					$trans = array($results['player_released']->id => lang('sl_player_released'),$results['player_waives_ntc']->id => lang('sl_player_waives_ntc'),$results['player_placed_on_trading_block']->id => lang('sl_player_placed_on_trading_block'));
-					?>
-					<!-- Transaction -->
-					<?php echo form_dropdown('transaction',$trans,($trans_selected != 0) ? $trans_selected : set_value('transaction'),'',' class="span6" id="transaction"'); ?>
-					
-						<!-- suspension -->
-					<div class="control-group <?php echo form_error('suspension_games') ? 'error' : '' ?>">
-						<label class="control-label"><?php echo lang('sl_suspension_games') ?></label>
-						<div class="controls">
-							<input type="text" class="span1" name="suspension_games" id="suspension_games" value="<?php echo (isset($results['suspension_games']) ? $results['suspension_games']->value : set_value('suspension_games')) ?>" />
-							<span class="help-inline"><?php if (form_error('suspension_games')) echo form_error('suspension_games'); ?></span>
-						</div>
-					</div>
-					
-						<!-- career ending injury -->
-					<div class="control-group <?php echo form_error('retirement') ? 'error' : '' ?>">
-						<label class="control-label"></label>
-						<div class="controls">
-							<?php
-							echo form_checkbox('retirement',1, (isset($results['retirement']) && $results['retirement']->value == 1 ? true : set_value('retirement')),' id="retirement"');
-							?>
-							<span class="help-inline"><?php echo lang('sl_retirement') ?> <?php if (form_error('retirement')) echo form_error('retirement'); ?></span>
-						</div>
-					</div>
-						<!-- fine player -->
-					<div class="control-group <?php echo form_error('fine_player') ? 'error' : '' ?>">
-						<label class="control-label"><?php echo lang('sl_fine_player') ?></label>
-						<div class="controls">
-							<?php
-							echo form_checkbox('fine_player',1, (isset($results['fine_player']) && $results['fine_player']->value == 1 ? true : set_value('fine_player')),' id="fine_player"');
-							?>
-							<span class="help-inline"><?php if (form_error('fine_player')) echo form_error('fine_player'); ?></span>
-						</div>
-					</div>
 					
 					<div id="rslt_waitload" class="well center" style="display:none;">
 						<img src="<?php echo(TEMPLATE::theme_url('images/ajax-loader.gif'));?>" width="28" height="28" border="0" align="absmiddle" /><br />Operation in progress. Please wait...
@@ -274,11 +212,9 @@
 				<!-- PREDECESSORS -->
 			<fieldset>
 				<legend><?php echo lang('sl_predecessors') ?></legend>
-				<div id="pred_waitload" class="well center" style="display:none;">
-					<img src="<?php echo(TEMPLATE::theme_url('images/ajax-loader.gif'));?>" width="28" height="28" border="0" align="absmiddle" /><br />Operation in progress. Please wait...
-				</div>
-				<table class="table table-bordered table-striped" id="predecessor_table">
+				<table class="table table-bordered table-striped">
 				<thead>
+					<th></th>
 					<th>Subject</th>
 					<th>Conditions</th>
 					<th>Results</th>
@@ -288,21 +224,21 @@
 				if (isset($article_predecessors) && is_array($article_predecessors) && count($article_predecessors)) :
 					foreach($article_predecessors as $predecessor) : ?>
 					<tr>
+						<td><input type="checkbox" name="pred_ids[]" class="condition" value="<?php echo($predecessor->predecessor_id); ?>" /></td>
 						<td><?php 
-						$dispSub = limit_text($prdecessor->subject,100);
+						$dispSub = limit_text((isset($predecessor->title) ? $predecessor->title : $predecessor->subject),100);
 						echo($dispSub); ?></td>
-						<td><?php echo($prdecessor->condition_count); ?></td>
-						<td><?php echo($prdecessor->result_count); ?></td>
+						<td><?php echo($predecessor->condition_count); ?></td>
+						<td><?php echo($predecessor->result_count); ?></td>
 					</tr>
 					<?php
 					endforeach;
 				else:
-					echo '<tr><td>'.lang('sl_no_predecessors').'</td></tr>';
+					echo '<tr><td colspan="4">'.lang('sl_no_predecessors').'</td></tr>';
 				endif;
 				?>
 				</tbody>
 				</table>
-				<?php echo anchor('#'.$article->storyline_id,lang('sl_edit'),array('id'=>'edit_predecessors')); ?>
 			</fieldset>
 			
 				<!-- META -->

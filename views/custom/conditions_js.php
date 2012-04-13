@@ -30,20 +30,24 @@ $('#add_object_condition').click( function(e)
     $('#condition_select').prev('.control-group').removeClass('control-group-error');
 	$('#condition_select').next('.help-inline').html('');
 	var val = $('#condition_select').val();
-	if (val == '') {
+	if (val == '' || val == '0' || val == '-1') {
 		$('#condition_select').prev('.control-group').addClass('control-group-error');
-		$('#condition_select').next('.help-inline').html('You must select a condition before adding');
+		$('#condition_select').next('.help-inline').html('You must select an item before adding');
 	} else {
 		if (find_condition(val)) {
 			$('#condition_select').prev('.control-group').addClass('control-group-error');
-			$('#condition_select').next('.help-inline').html('Condition is already in list. only one instance is allowed.');
+			$('#condition_select').next('.help-inline').html('Selection is already in list. only one instance is allowed per item.');
 		} else {
 			if (conditions_objs[val] == null) {
-				$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/conditions/get_condition")); ?>/"+val, function(data,status) {
+				// Construct URL. It changes based on the modals mode (condition or result)
+				var url = '<?php echo(site_url(SITE_AREA."/custom/storylines/")); ?>';
+				if (modal_mode == 'condition') url += '/conditions/get_condition/';
+				else if (modal_mode == 'result') url += '/results/get_result/';
+				$.getJSON(url+val, function(data,status) {
 					handle_ajax_reponse (status, data, 'new_condition', 'modal');
 				});
 			} else {
-				draw_condition(conditions_objs[val]);
+				draw_new_condition(conditions_objs[val]);
 			} // END if
 			$('#save_conditions').attr('disabled',false);
 		}
@@ -57,10 +61,11 @@ $('#save_conditions').click( function(e) {
 	if (conditions_selected.length > 0) 
 	{
 		// Update values from form
-		var elems = $('[class=condition]');
+		var elems = $('.condition_frm');
 		$.each(elems, function(i, item) {
-			if (find_condition(item.id) != null) {
-				var obj = conditions_objs[tem.id], value = null;
+			console.log(item);
+			if (conditions_selected[item.id] != null) {
+				var obj = conditions_objs[item.id], value = null;
 				if (obj.type_id == 2 && (item.value == null || item.value == '')) value = 0;
 				else value = item.value;
 				conditions_selected[item.id].value = value;
@@ -72,21 +77,24 @@ $('#save_conditions').click( function(e) {
 		url = '<?php echo site_url(SITE_AREA.'/custom/storylines/'); ?>';
 		if (modal_mode == "condition")
 		{
-			data_obj = {"var_id" : currDataObj, 'level_type': condition_level_type, conditions: JSON.stringify(conditions_selected, null, 4)};
-			url += 'conditions/save_object_conditions/';
+			data_obj = {"var_id" : currDataObj, "level_type": condition_level_type, "conditions": JSON.stringify(conditions_selected, null, 1)};
+			url += '/conditions/save_object_conditions/';
 		}
 		else if (modal_mode == "result")
 		{
-			data_obj = {"article_id" : currDataObj, results: JSON.stringify(conditions_selected, null, 4)};
-			url += 'results/save_object_results/';
+			data_obj = {"article_id" : currDataObj, "results": JSON.stringify(conditions_selected, null, 1)};
+			url += '/results/save_object_results/';
 		}
 		console.log(data_obj);
 		console.log(url);
-		$.post(url, {'conditions_data':data_obj}, function(data,status) {
+		$.post(url, {'post_data':data_obj}, function(data,status) {
 			if (handle_ajax_reponse (status, data, 'result_save', 'modal')) {
 				if (modal_mode == "condition")
 				{
-					load_condition_list(currDataObj, condition_level_type);
+					if (condition_level_type == 3)
+						ajax_load('data_objects');
+					else
+						load_condition_list(currDataObj, condition_level_type);
 				}
 				else
 				{
@@ -96,7 +104,6 @@ $('#save_conditions').click( function(e) {
 			}
 		});
 	}
-	ajax_load('data_objects');
 });
 $('a[rel=delete_condition]').live('click', function(e) {
     e.preventDefault();
@@ -180,7 +187,7 @@ function init_conditions_list(object_id)
 		id				- 	Int Condition ID
 		
 	Return
-		TRUE on success, FALSE on error
+		TRUE
 */
 function remove_condition(id) {
 	var tmpList = [];
@@ -197,6 +204,19 @@ function find_condition(condition_id)
 {
 	return (conditions_selected[condition_id]);
 };
+/*
+	Method:
+		draw_new_condition
+	
+	Draws a condition row to the table in the editor modal window. This serves to render both 
+	conditions and results.
+	
+	Parameters:
+		data				- 	JSON Data object. Expects items in data.results.items or data object.
+		
+	Return
+		<void>
+*/
 function draw_new_condition(data) {
 	// GET condition object
 	console.log(data);
@@ -204,20 +224,23 @@ function draw_new_condition(data) {
 	    htmlOut = '', 
 		makeSlider = false,
 		condName = ((obj.name != null && obj.name != '') ? obj.name : obj.slug),
-		condValue = ((obj.name != null && obj.name != '') ? obj.name : obj.slug);
+		type = (modal_mode == 'condition') ? obj.type_id : obj.value_type,
+		condValue = ((obj.value != null && obj.value != '') ? obj.value : false);
 	//console.log(obj);
 	htmlOut += '<tr id="row_cond_'+ obj.id +'"><td><div class="control-group">';
 	htmlOut += ' \t<div class="controls">';
 	//console.debug('obj.type_id = '+ obj.type_id);
-	switch (parseInt(obj.type_id)) {
+	switch (parseInt(type)) {
 		case 1: // Value Range Slider
 			htmlOut += ' \t<label class="control-label"><a href="#" rel="tooltip" class="tooltips" data-original-title="' + obj.description + '">' + condName + '</a> '+obj.value_range_min+' - '+obj.value_range_max+'</label>';
 			htmlOut += ' \t<div id="cond_slider_'+ obj.id +'"></div>';
-			htmlOut += ' \t<input class="condition" type="text" id="'+ obj.id + '" style="border:0; color:#1484e6; font-weight:bold;" />';
+			htmlOut += ' \t<input class="condition_frm" type="text" id="'+ obj.id + '" style="border:0; color:#1484e6; font-weight:bold;" />';
 			makeSlider = true;
 			break;
 		case 2: // Yes/No Checkbox
-			htmlOut += ' \t<input type="checkbox" class="condition" id="'+ obj.id + '" value="1" /> <a href="#" rel="tooltip" class="tooltips" data-original-title="' + obj.description + '">' + condName + '</a>';
+			htmlOut += ' \t<input type="checkbox" class="condition_frm" id="'+ obj.id + '" value="1"';
+			if (condValue !== false && condValue == 1) htmlOut += ' checked="checked"';
+			htmlOut += '/> <a href="#" rel="tooltip" class="tooltips" data-original-title="' + obj.description + '">' + condName + '</a>';
 			break;
 		case 3: // Options List
 			htmlOut += ' \t<label class="control-label"><a href="#" rel="tooltip" class="tooltips" data-original-title="' + obj.description + '">' + condName + '</a></label>';
@@ -225,16 +248,21 @@ function draw_new_condition(data) {
 			if (obj.options != null && obj.options != '' && obj.options.indexOf('|') != -1)
 				optsArr = obj.options.split('|');
 			if (optsArr.length > 0) {
-				htmlOut += ' \t<select class="condition" id="'+ obj.id + '">';
+				htmlOut += ' \t<select class="condition_frm" id="'+ obj.id + '">';
 				$.each(optsArr, function(i,item){
 					var items = item.split(":");
-					htmlOut += ' \t\t<option value="'+items[1]+'">'+items[0]+'</option>';
+					htmlOut += ' \t\t<option value="'+items[0]+'"';
+					if (condValue !== false && condValue == items[0]) htmlOut += ' selected="selected"';
+					htmlOut += ' >'+items[1]+'</option>';
 				});
 				htmlOut += ' \t</select>';
 			}
 			break;
-		case 4: // Text Field
-			htmlOut += ' \t<input type="text" class="condition" id="'+ obj.id + '" class="span4" /> <a href="#" rel="tooltip" class="tooltips" data-original-title="' + obj.description + '">' + condName + '</a>';
+		case 4: // String (Text Area)
+			htmlOut += '<label class="control-label"><a href="#" rel="tooltip" class="tooltips" data-original-title="' + obj.description + '">' + condName + '</a></label>';
+			htmlOut += ' \t<textarea class="span4" rows="5" cols="60" class="condition_frm" id="'+ obj.id + '">';
+			if (condValue !== false) htmlOut += condValue;
+			htmlOut += '</textarea>';
 			break;
 	} // END switch
 	htmlOut += ' \t</div>';
@@ -245,7 +273,7 @@ function draw_new_condition(data) {
 	if (makeSlider) {
 		$('#cond_slider_'+ obj.id).slider({
 			range: "max",
-			value: obj.value_range_min,
+			value: ((condValue !== false) ? condValue : obj.value_range_min),
 			min: obj.value_range_min,
 			max: obj.value_range_max,
 			slide: function( event, ui ) {
@@ -281,7 +309,7 @@ function draw_condition_edit_table(data) {
 	var htmlOut = '';
 	$('#conditions_table > tbody:last').empty();
 	$.each(data.result.items, function(i,item) {
-		draw_condition_row(item);
+		draw_new_condition(item);
 	});
 };
 function draw_condition_list(data) {
@@ -290,11 +318,12 @@ function draw_condition_list(data) {
 		condName = ((item.name != null && item.name != '') ? item.name : item.slug),
 		val = '';
 		htmlOut += '<tr>';
-		htmlOut += '\t<td>'+item.category_name+',/td>';
-		htmlOut += '\t<td>'+condName+',/td>';
+		htmlOut += '\t<td>'+item.category_name+'</td>';
+		htmlOut += '\t<td>'+condName+'</td>';
 		if (item.type_id == 2) val = ((item.value == 1) ? "Yes" : "No");
 		else val = item.value;
-		htmlOut += '\t<td>'+val+',/td>';
+		htmlOut += '\t<td>'+val+'</td>';
+		htmlOut += '</tr>';
 	});
 	$('#conditions_list_table > tbody:last').empty();
 	$('#conditions_list_table > tbody:last').append(htmlOut);

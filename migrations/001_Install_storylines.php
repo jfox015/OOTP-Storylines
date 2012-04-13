@@ -72,6 +72,8 @@ class Migration_Install_storylines extends Migration {
 		// Storylines Articles
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
 		$this->dbforge->add_field("`storyline_id` int(11) NOT NULL DEFAULT '0'");
+		$this->dbforge->add_field('`title` varchar(255) NOT NULL');
+		$this->dbforge->add_field('`description` LONGTEXT NOT NULL');
 		$this->dbforge->add_field("`subject` varchar(255) NOT NULL DEFAULT ''");
 		$this->dbforge->add_field("`text` LONGTEXT NOT NULL");
 		
@@ -162,7 +164,7 @@ class Migration_Install_storylines extends Migration {
 			$comments_thread_id = $this->db->insert_id();
 			$this->db->query("INSERT INTO {$prefix}comments VALUES(0, {$comments_thread_id},'This is a default comment. Do with it as you will.',".time().",1,".time().",'', 0)");
 		}
-		$this->db->query("INSERT INTO {$prefix}storylines_articles VALUES(0, {$storyline_id}, 'Test Article','<b>This is a test</b><br />Testing how this all works out.</b>',0,0,1,'',{$comments_thread_id},".time().",2,".time().",1,0)");
+		$this->db->query("INSERT INTO {$prefix}storylines_articles VALUES(0, {$storyline_id}, 'Test Article','This is a test. Testing how this all works out.','Pujols Spains akle playing catach','Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis lobortis ullamcorper bibendum. Vivamus mauris dolor, hendrerit nec sodales et, pulvinar vel neque. Vestibulum sit amet nibh lacus.',0,0,1,'',{$comments_thread_id},".time().",2,".time().",1,0)");
 		$prev_article_id = $this->db->insert_id();
 		$this->db->query("INSERT INTO {$prefix}storylines_history VALUES(0, {$prev_article_id}, 2,'Added article to storlyine','','',".time().",1)");
 		
@@ -172,7 +174,7 @@ class Migration_Install_storylines extends Migration {
 			$comments_thread_id = $this->db->insert_id();
 			$this->db->query("INSERT INTO {$prefix}comments VALUES(0, {$comments_thread_id},'This is a default comment. Do with it as you will.',".time().",1,".time().",'', 0)");
 		}
-		$this->db->query("INSERT INTO {$prefix}storylines_articles VALUES(0, {$storyline_id}, 'A Child test article','<b>This is a test</b><br />Testing how this all works out.</b>',7,14,1,'',{$comments_thread_id},".time().",3,".time().",1,0)");
+		$this->db->query("INSERT INTO {$prefix}storylines_articles VALUES(0, {$storyline_id}, 'Child Test Article 1','This is a child test. Testing how this all works out.','Pujols slams thumb,. Says good gravy!','Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis lobortis ullamcorper bibendum. Vivamus mauris dolor, hendrerit nec sodales et, pulvinar vel neque. Vestibulum sit amet nibh lacus.',7,14,1,'',{$comments_thread_id},".time().",3,".time().",1,0)");
 		$article_id = $this->db->insert_id();
 		$this->db->query("INSERT INTO {$prefix}storylines_history VALUES(0, {$article_id}, 2,'Added article to storlyine','','',".time().",1)");
 		$this->db->query("INSERT INTO {$prefix}storylines_article_predecessors VALUES(0, {$storyline_id}, {$article_id}, {$prev_article_id})");
@@ -184,7 +186,7 @@ class Migration_Install_storylines extends Migration {
 			$comments_thread_id = $this->db->insert_id();
 			$this->db->query("INSERT INTO {$prefix}comments VALUES(0, {$comments_thread_id},'This is a default comment. Do with it as you will.',".time().",1,".time().",'', 0)");
 		}
-		$this->db->query("INSERT INTO {$prefix}storylines_articles VALUES(0, {$storyline_id}, 'A second level child test Article','<b>This is a test</b><br />Testing how this all works out.</b>',7,21,1,'',{$comments_thread_id},".time().",1,".time().",1,0)");
+		$this->db->query("INSERT INTO {$prefix}storylines_articles VALUES(0, {$storyline_id}, 'A second level child test Article','This is a child test. Testing how this all works out.','Pujols wants to go see his mommy over brusied thumb.!','Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis lobortis ullamcorper bibendum. Vivamus mauris dolor, hendrerit nec sodales et, pulvinar vel neque. Vestibulum sit amet nibh lacus.',7,21,1,'',{$comments_thread_id},".time().",1,".time().",1,0)");
 		$article_id = $this->db->insert_id();
 		$this->db->query("INSERT INTO {$prefix}storylines_history VALUES(0, {$article_id}, 2,'Added article to storlyine','','',".time().",1)");
 		$this->db->query("INSERT INTO {$prefix}storylines_article_predecessors VALUES(0, {$storyline_id}, {$article_id}, {$prev_article_id})");
@@ -437,7 +439,7 @@ class Migration_Install_storylines extends Migration {
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(14,'WORLD_DATE_MAX',0,31,'', 1, '', '', 1, 8, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(15,'WORLD_DATE',0,31,'', 1, '', '', 1, 8, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(16,'IS_MINOR_LEAGUE',0,1,'yes/no', 2, '', '', 1, 4, 1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(17,'LEAGUE_LEVEL',1,10,'Select a level(Major, minors, etc)', 3, 'League Level', 'majors:1|triple_a:2|double_a:3|single_a:4|short_season_single_a:5|rookie:6|international:7|winter_league:8|college:9|high_school:10', 1, 4, 1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(17,'LEAGUE_LEVEL',1,10,'Select a level(Major, minors, etc)', 3, 'League Level', '1:majors|2:triple_a|3:double_a|4:single_a|5:short_season_single_a|6:rookie|7:international|8:winter_league|9:college|10:high_school', 1, 4, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(18,'PERSON_AGE_MIN',0,99,'', 1, '', '', 1, 2, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(19,'PERSON_AGE_MAX',0,99,'', 1, '', '', 1, 2, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(20,'PERSON_GREED_MIN',0,200,'', 1, '', '', 1, 2, 1)");
@@ -480,7 +482,7 @@ class Migration_Install_storylines extends Migration {
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(57,'PLAYER_BMI_MIN',0,99,'Player X is at least 200 lbs. (if below 183 cm in height), or at least 220 lbs. (if between 183-198 cm in height)', 0, '', '', 1, 2, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(58,'PLAYER_BMI_MAX',0,99,'Body Mass Index', 0, '', '', 1, 2, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(59,'PLAYER_IN_MINORS',0,1,'Player X is on a major or minor league roster within Team Ys organization', 2, '', '', 1, 2, 1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(60,'PLAYER_POSITION',1,16,'Select the player position', 3, 'Player Position', 'pitcher:1|catcher:2|first_base:3|second_base:4:|third_base:5|shortstop:6|left_field:7|center_field:8|right_field:9|designated_hitter:10|starter:11|reliever:12|closer:13|all_batters:14|highschool_players:15|college_players:16', 1, 2, 1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(60,'PLAYER_POSITION',1,16,'Select the player position', 3, 'Player Position', '1:pitcher|2:catcher|3:first_base|4:second_base|5:third_base|6:shortstop|7:left_field|8:center_field|9:right_field|10:designated_hitter|11:starter|12:reliever|13:closer|14:all_batters|15:highschool_players|16:college_players', 1, 2, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(61,'COACH_HANDLE_VETERANS_MIN',0,200,'Manager has a Handle Veterans rating of at least/below X or higher (on the 1-200 scale)', 1, 'Coach Handles Veterans - Minimum Value', '', 1, 6, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(62,'COACH_HANDLE_VETERANS_MAX',0,200,'', 1, 'Coach Handles Veterans - Maximum Value', '', 1, 6, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(63,'COACH_HANDLE_ROOKIES_MIN',0,200,'Manager has a Handle Rookies rating of at least X (on the 1-200 scale)', 1, '', '', 1, 6, 1)");
@@ -501,7 +503,7 @@ class Migration_Install_storylines extends Migration {
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(78,'OWNER_FISCAL_MAX',0,10,'', 1, '', '', 1, 7, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(79,'STORYLINE_HAPPENS_ONLY_ONCE',0,1,'', 2, '', '', 1, 8, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(80,'MIN_USAGE_INTERVAL_DAYS',0,1,'', 2, '', '', 1, 8, 1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(81,'WORLD_DAY_OF_WEEK',1,7,'Sunday is 1', 3, 'Day of the Week', 'Sunday:1|Monday:2|Tuesday:3|Wednesday:4|Thursday:5|Friday:6|Saturday:7', 1, 8, 1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(81,'WORLD_DAY_OF_WEEK',1,7,'Sunday is 1', 3, 'Day of the Week', '1:Sunday|2:Monday|3:Tuesday|4:Wednesday|5:Thursday|6:Friday|7:Saturday', 1, 8, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(82,'PERSON_BMI_MAX',0,1,'', 2, '', '', 1, 2, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(83,'PERSON_BMI_MIN',0,1,'', 2, '', '', 1, 2, 1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_conditions VALUES(84,'PERSON_FOREIGN',0,1,'', 2, '', '', 1, 2, 1)");
@@ -663,43 +665,43 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('list_storylines_results');
 		
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'retirement', 'Retire Player','',2,2,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'injury', 'Injury','Yes/No',1,2,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'injury_description', '','',1,4,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'injury_length', '','',1,4,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'injury_cei', '','',1,2,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'morale_modifier', '','',4,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'suspension_games', '','',2,2,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'talent_increase', '','',4,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'talent_decrease', '','',4,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_local_popularity_modifier', '','',3,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_national_popularity_modifier', '','',3,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_weight_modifier', '','',3,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'team_fan_interest_modifier', '','',5,01,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'team_fan_loyalty_modifier', '','',5,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'team_market_size_modifier', '','',5,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'team_focus_changes', '','',5,3,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_placed_on_trading_block', '','',2,2,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_released', '','',2,2,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_waives_ntc', '','',2,2,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'team_chemistry', '','',5,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_intelligence_modifier', '','',3,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_leader_modifier', '','',3,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_work_ethic_modifier', '','',3,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_greed_modifier', '','',3,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_loyalty_modifier', '','',3,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_play_for_winner_modifier', '','',3,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_pressure_modifier', '','',4,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_speed_modifier', '','',4,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'player_defense_modifier', '','',4,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'pitching_stamina_modifier', '','',4,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'pitching_control_modifier', '','',4,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'pitching_movement_modifier', '','',4,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'pitching_velocity_modifier', '','',4,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'hitting_contact_modifier', '','',4,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'hitting_power_modifier', '','',4,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'hitting_eye_modifier', '','',4,1,0,0,'','',1)");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(0, 'fine_player', '','',2,2,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(1, 'retirement', 'Retire Player','',2,2,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(2, 'injury', 'Injury','Yes/No',1,2,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(3, 'injury_description', '','',1,4,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(4, 'injury_length', '','',1,4,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(5, 'injury_cei', '','',1,2,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(6, 'morale_modifier', '','',4,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(7, 'suspension_games', '','',2,2,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(8, 'talent_increase', '','',4,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(9, 'talent_decrease', '','',4,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(10, 'player_local_popularity_modifier', '','',3,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(11, 'player_national_popularity_modifier', '','',3,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(12, 'player_weight_modifier', '','',3,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(13, 'team_fan_interest_modifier', '','',5,01,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(14, 'team_fan_loyalty_modifier', '','',5,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(15, 'team_market_size_modifier', '','',5,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(16, 'team_focus_changes', '','',5,3,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(17, 'player_placed_on_trading_block', '','',2,2,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(18, 'player_released', '','',2,2,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(19, 'player_waives_ntc', '','',2,2,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(20, 'team_chemistry', '','',5,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(21, 'player_intelligence_modifier', '','',3,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(22, 'player_leader_modifier', '','',3,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(23, 'player_work_ethic_modifier', '','',3,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(24, 'player_greed_modifier', '','',3,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(25, 'player_loyalty_modifier', '','',3,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(26, 'player_play_for_winner_modifier', '','',3,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(27, 'player_pressure_modifier', '','',4,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(28, 'player_speed_modifier', '','',4,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(29, 'player_defense_modifier', '','',4,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(30, 'pitching_stamina_modifier', '','',4,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(31, 'pitching_control_modifier', '','',4,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(32, 'pitching_movement_modifier', '','',4,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(33, 'pitching_velocity_modifier', '','',4,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(34, 'hitting_contact_modifier', '','',4,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(35, 'hitting_power_modifier', '','',4,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(36, 'hitting_eye_modifier', '','',4,1,0,0,'','',1)");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_results VALUES(37, 'fine_player', '','',2,2,0,0,'','',1)");
 		
 		// Storylines Articles Results Categories
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');

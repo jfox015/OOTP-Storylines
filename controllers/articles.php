@@ -333,6 +333,44 @@ class Articles extends Admin_Controller {
 		$this->output->set_header('Content-type: application/json'); 
 		$this->output->set_output(json_encode($json_out));
 
+	}	/*
+		Method:
+			get_article_predecessors()
+		
+		Returns a JSON object of article predecessors
+		
+		Parameters:
+			$article_id		- Article ID int as Segement 6
+			
+		Return:
+			JSON Array of result items
+			
+	*/
+	public function get_article_predecessors()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		$article_id = $this->uri->segment(6);
+		
+		if (isset($article_id) && !empty($article_id)) 
+		{
+			$json_out['result']['items'] = $this->storylines_articles_model->get_article_predecessors($article_id);
+		}
+		else
+		{
+			$error = true;
+			$status = "Article ID was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+
 	}
 	
 	//--------------------------------------------------------------------
@@ -354,9 +392,6 @@ class Articles extends Admin_Controller {
 			$this->form_validation->set_rules('injury_cei', lang('sl_injury_cei'), 'numeric|strip_tags|trim|max_length[1]|xss_clean');
 			$this->form_validation->set_rules('injury', lang('sl_injury'), 'numeric|strip_tags|trim|max_length[1]|xss_clean');
 			$this->form_validation->set_rules('transaction', lang('sl_transaction'), 'numeric|strip_tags|trim|max_length[1]|xss_clean');
-			
-		
-		
 		}
 		if ($this->form_validation->run() === false)
 		{
@@ -369,6 +404,7 @@ class Articles extends Admin_Controller {
 					'in_game_message'=>($this->input->post('in_game_message')) ? $this->input->post('in_game_message') : 1
 		);
 
+		$success = null;
 		if ($type == 'insert')
 		{
 			$thread_id = 0;
@@ -382,12 +418,30 @@ class Articles extends Admin_Controller {
 			}
 			$data = $data + array('storyline_id'=>$this->input->post('storyline_id'),
 								  'comments_thread_id'=>$thread_id);
-			return $this->storylines_articles_model->insert($data);
+			$success = $this->storylines_articles_model->insert($data);
+			$id = $this->db->insert_id();
 		}
 		else	// Update
 		{
-			return $this->storylines_articles_model->update($id, $data);
+			$success = $this->storylines_articles_model->update($id, $data);
 		}
+		// SET or update article predecessors
+		if ($success && $id != 0 && $this->input->post('pred_ids'))
+		{
+			$id_list = (array)$this->input->post('pred_ids');
+			$pred_ids = array();
+			if (is_array($id_list) && count($id_list))
+			{
+				foreach ($id_list as $pred_id)
+				{
+					array_push($pred_ids, array('storyline_id'=>$this->input->post('storyline_id'),
+												'article_id' => $id,
+												'predecessor_id' => $pred_id));
+				}
+				$success = $this->storylines_articles_model->set_article_predecessors($pred_ids);
+			}
+		}
+		return $success;
 	}
 }
 // End main module class

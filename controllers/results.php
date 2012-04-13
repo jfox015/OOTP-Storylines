@@ -188,6 +188,32 @@ class Results extends Admin_Controller {
 		Template::set_view('storylines/custom/result_form');
 		Template::render();
 	}
+	
+	public function get_result()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		$result_id = $this->uri->segment(6);
+		if (isset($result_id) && !empty($result_id)) 
+		{
+			$json_out['result']['items'] = $this->storylines_results_model->find($result_id);
+		}
+		else
+		{
+			$error = true;
+			$status = "Result ID was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	}
+	
 	public function load_results_list()
 	{
 		$error = false;
@@ -211,14 +237,14 @@ class Results extends Admin_Controller {
 		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
 		
 		$article_id = $this->uri->segment(6);
-		if (isset($var_id) && !empty($var_id)) 
+		if (isset($article_id) && !empty($article_id))
 		{
 			$json_out['result']['items'] = $this->storylines_results_model->get_results($article_id);
 		}
 		else
 		{
 			$error = true;
-			$status = "Variable ID was missing.";
+			$status = "Article ID was missing.";
 		}
 		if ($error) 
 		{ 
@@ -231,6 +257,62 @@ class Results extends Admin_Controller {
 	}
 	
 	
+	//--------------------------------------------------------------------
+
+	public function save_object_results() 
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		if ($this->input->post('post_data'))
+		{
+			$items = json_decode($this->input->post('post_data'));
+			
+			if (is_array($items->results) && count($items->results))
+			{
+				foreach($items->results as $results)
+				{
+					$data = array('article_id'		=> $items->article_id,
+						  'result_id'	 		=> $results->id,
+						  'value'	 			=> $results->value
+					);
+					$success = true;
+					if (!$this->storylines_results_model->count_object_results($items->article_id, $result->id))
+					{
+						$success = $this->storylines_results_model->add_object_result($data);
+					} else {
+						$success = $this->storylines_results_model->update_object_result($data);
+					}
+					if (!$success)
+					{
+						$error = true;
+						$status = 'error:'.$this->storylines_results_model->error;
+						break;
+					}
+				}
+			}
+			else
+			{
+				$error = true;
+				$status = "Result Data was missing.";
+			}	
+			$json_out['result'] = "Results saved.";
+		}
+		else
+		{
+			$error = true;
+			$status = "Post Data was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	
+	}
 	//--------------------------------------------------------------------
 
 	public function change_status($items=false, $active = 1)

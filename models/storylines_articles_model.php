@@ -186,7 +186,7 @@ class Storylines_articles_model extends BF_Model
 		}
 		$results = array();
 		$prefix = $this->db->dbprefix;
-		$this->db->select('storylines_article_predecessors.predecessor_id, subject, 
+		$this->db->select('storylines_article_predecessors.predecessor_id, title, subject, 
 							(SELECT COUNT('.$prefix.'storylines_conditions.id) FROM '.$prefix.'storylines_conditions WHERE '.$prefix.'storylines_conditions.var_id = '.$prefix.'storylines_article_predecessors.predecessor_id AND level_type = 2) as condition_count,
 							(SELECT COUNT('.$prefix.'storylines_article_results.id) FROM '.$prefix.'storylines_article_results WHERE '.$prefix.'storylines_article_results.article_id = '.$prefix.'storylines_article_predecessors.predecessor_id) as result_count')
 				 ->join('storylines_articles', 'storylines_articles.id = storylines_article_predecessors.predecessor_id')
@@ -198,6 +198,42 @@ class Storylines_articles_model extends BF_Model
 		}
 		$query->free_result();
 		return $results;
+	}		//--------------------------------------------------------------------
+
+	/*
+		Method:
+			set_article_predecessors()
+			
+		Set the passed articles predecessors using an array of predecessor ID values.
+		
+		Parameters:
+			$article_id - Storyline Article ID int
+			
+		Return:
+			Array of result IDs
+	
+	*/
+	public function set_article_predecessors($article_id = false, $data = false)
+	{
+		if ($article_id === false)
+		{
+			$this->error .= "No article ID was received.<br/>\n";
+			return false;
+		}
+		if ($data === false)
+		{
+			$this->error .= "No data array was received.<br/>\n";
+			return false;
+		}
+		// CLEAN OUT EXISTING PREDECESSORS
+		$this->db->where('article_id',$article_id);
+		$this->db->delete('storylines_article_predecessors');
+		
+		foreach ($data as $predecessor)
+		{
+			$this->db->insert('storylines_article_predecessors',$predecessor);
+		}
+		return true;
 	}	
 	
 	//--------------------------------------------------------------------

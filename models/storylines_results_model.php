@@ -98,12 +98,12 @@ class Storylines_results_model extends BF_Model
 	public function get_results($article_id = false)
 	{
 		$conditions = array();
-		$query = $this->db->select('storylines_results.id, storylines_results.result_id, storylines_results.slug, storylines_results.name, storylines_results.value, list_storylines_result_categories.name as category_name, list_storylines_results.type_id, list_storylines_result_types.name as type_name')
-						  ->join('list_storylines_results','list_storylines_results.id = storylines_results.result_id','left')
+		$query = $this->db->select('storylines_article_results.id, storylines_article_results.result_id, list_storylines_results.slug, list_storylines_results.name, storylines_article_results.result_value, list_storylines_result_categories.name as category_name, list_storylines_results.value_type, list_storylines_result_value_types.name as type_name')
+						  ->join('list_storylines_results','list_storylines_results.id = storylines_article_results.result_id','left')
 						  ->join('list_storylines_result_categories','list_storylines_results.category_id = list_storylines_result_categories.id','right outer')
-						  ->join('list_storylines_result_types','list_storylines_results.type_id = list_storyline_results_types.id','right outer')
+						  ->join('list_storylines_result_value_types','list_storylines_results.value_type = list_storylines_result_value_types.id','right outer')
 						  ->where('article_id',$article_id)
-						  ->get('storylines_results');
+						  ->get('storylines_article_results');
 		if ($query->num_rows > 0) 
 		{
 			$conditions = $query->result();
@@ -112,6 +112,60 @@ class Storylines_results_model extends BF_Model
 		return $conditions;
 	}
 	
+	/*
+		Method: add_object_result()
+
+		Adds a result for the specified article ID.
+
+		Parameters:
+			$data	- Data array object
+
+		Returns:
+			TRUE on success, FALSE on error
+	*/
+	public function add_object_result($data = false)
+	{
+		if ($data === false)
+		{
+			$this->error = "No data was received.";
+			return false;
+		}
+		else if (!is_array($data))
+		{
+			$this->error = "Data received was not in proper array format.";
+			return false;
+		} 
+		return $this->db->insert('storylines_results',$data);
+	}
+	
+	/*
+		Method: update_object_condition()
+
+		Updates an existing result for the specified article ID.
+
+		Parameters:
+			$data	- Data array object
+
+		Returns:
+			TRUE on success, FALSE on error
+	*/
+	public function update_object_condition($data = false)
+	{
+		if ($data === false)
+		{
+			$this->error = "No data was received.";
+			return false;
+		}
+		else if (!is_array($data))
+		{
+			$this->error = "Data received was not in proper array format.";
+			return false;
+		} 
+		$this->db->where('article_id',$data['article_id'])
+			     ->where('result_id',$data['result_id']);		  
+		return $this->db->update('storylines_results',array('value'=>$data['value']));
+	
+	}
 	public function categories_as_select()
 	{
 		return $this->data_as_select('list_storylines_result_categories');
@@ -121,6 +175,7 @@ class Storylines_results_model extends BF_Model
 	{
 		return $this->data_as_select('list_storylines_result_value_types');
 	}
+	
 	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
 	//--------------------------------------------------------------------

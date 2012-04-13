@@ -47,6 +47,8 @@ $lang['sl_fine_player']				= 'Fine Player';
 $lang['sl_suspension_games']		= 'Suspend for (x) no. of games';
 $lang['sl_result_affects']			= 'Affects';
 
+$lang['sl_message_details']			= 'Message Details';
+$lang['sl_interactive_reponse']		= 'Interactive Response';
 
 $lang['sl_tokens']					= 'Tokens';
 $lang['sl_tokens_details']			= 'Token Details';

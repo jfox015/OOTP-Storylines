@@ -7,7 +7,7 @@ var modal_mode = 'condition';
 	Method:
 		ajax_post
 	
-	performs and ajax call to the servert to either add or remove a data object.
+	performs and ajax call to the server to either add or remove a data object.
 	
 	Parameters:
 		data_object_id	- 	Int Object ID
@@ -28,6 +28,18 @@ function ajax_post(type, object_id, func ) {
 		handle_ajax_reponse (status, data, type, prefix);
 	});
 }
+/*
+	Method:
+		ajax_load
+	
+	Performs and ajax call to the server to either load a set of data results.
+	
+	Parameters:
+		type 	-	The type of data set ot load (trigger or data object)
+		
+	Return
+		TRUE on success, FALSE on error
+*/
 function ajax_load(type) {
     var prefix = '';
 	if (type == 'triggers' || type == 'trigger')
@@ -39,6 +51,22 @@ function ajax_load(type) {
 		handle_ajax_reponse (status, data, type, prefix);
 	});
 }
+/*
+	Method:
+		handle_ajax_reponse
+	
+	Parses the response of the ajax call and routes the following actions based on a successful or 
+	failed results.
+	
+	Parameters:
+		status 	-	The Ajax status string
+		data 	-	JSON data object
+		type 	-	The type of data set ot load (trigger or data object)
+		prefix 	-	Wait load div prefix
+		
+	Return
+		TRUE on success, FALSE on error
+*/
 function handle_ajax_reponse(status, data, type, prefix)
 {
 	var statusMess = '', statusClass = '';
@@ -61,6 +89,10 @@ function handle_ajax_reponse(status, data, type, prefix)
 					drawTriggers(data)
 				else if (type == 'data_objects' || type == 'data_object')
 					drawDataObjects(data);
+				else if (type == 'predecessors_list')
+					draw_predecessor_list(data, true);
+				else if (type == 'predecessors')
+					draw_predecessor_list(data);
 				else if (type == 'new_condition')
 					draw_new_condition(data);
 				else if (type == 'existing_conditions')

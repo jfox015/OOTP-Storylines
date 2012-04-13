@@ -279,11 +279,11 @@ class Conditions extends Admin_Controller {
 		$error = false;
 		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
 		
-		if ($this->input->post('conditions_data'))
+		if ($this->input->post('post_data'))
 		{
-			$items = json_decode($this->input->post('conditions_data'));
+			$items = json_decode($this->input->post('post_data'));
 			
-			if (is_array($items->conditions) && count($items->conditions))
+			if (isset($items->conditions) && is_array($items->conditions) && count($items->conditions))
 			{
 				foreach($items->conditions as $condition)
 				{

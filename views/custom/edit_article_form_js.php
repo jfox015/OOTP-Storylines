@@ -1,21 +1,11 @@
 ﻿//--------------------------------------------------------
-//	!PREDECESSORS
-//--------------------------------------------------------
-function load_predecessor_list(id)
-{
-	$('#pred_waitload').css('display','block');
-	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/results/get_results_list")); ?>/"+id, function(data,status) {
-		handle_ajax_reponse (status, data, 'existing_conditions', 'rslt');
-	});
-};
-//--------------------------------------------------------
 //	!RESULTS
 //--------------------------------------------------------
 function load_existing_results(id)
 {
 	$('#cond_waitload').css('display','block');
 	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/results/get_results_list")); ?>/"+id, function(data,status) {
-		handle_ajax_reponse (status, data, 'existing_conditions', 'rslt');
+		handle_ajax_reponse (status, data, 'predecessor', 'rslt');
 	});
 };
 function load_result_list(id)
@@ -44,6 +34,8 @@ $('#edit_results').live('click',function(e) {
 	e.preventDefault();
 	currDataObj = article_id;
 	condition_level_type = -1;
+	conditions_selected = [];
+	conditions_objs = [];
 	modal_mode = 'result';
 	init_results();
 	load_existing_results(currDataObj);
@@ -60,8 +52,9 @@ function init_results()
 //---------------------------------------------------------
 //	!CONDITIONS
 //---------------------------------------------------------
-
 $('#edit_conditions').live('click', function(e) {
+	conditions_selected = [];
+	conditions_objs = [];
 	modal_mode = 'condition';
 	currDataObj = article_id;
 	condition_level_type = 2;
@@ -77,9 +70,8 @@ $('#edit_conditions').live('click', function(e) {
 var article_id = <?php echo ($article->id); ?>,
 	storyline_id = <?php echo ($article->storyline_id); ?>,
 	pageChanged = false;
-load_condition_list(article_id,2);
+load_existing_conditions(article_id,2);
 load_result_list(article_id);
-load_predecessor_list(article_id);
 $('#condition_modal').modal({
 	keyboard: false,
 	static:true,

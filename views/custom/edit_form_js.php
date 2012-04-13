@@ -18,7 +18,9 @@ function Data_Object(id, elem, order, conditions) {
     this.conditions = (conditions !== null) ? conditions : [];
 }
 $("a[rel=edit_object_cond]").live('click', function(e) {
-    e.preventDefault();
+	e.preventDefault();
+	conditions_selected = [];
+	conditions_objs = [];
 	modal_mode = 'condition';
 	currDataObj = this.id;
 	condition_level_type = 3;
@@ -177,6 +179,9 @@ function load_existing_conditions(object_id, level)
 //---------------------------------------------------------
 
 $('#edit_conditions').live('click', function(e) {
+	e.preventDefault();
+	conditions_selected = [];
+	conditions_objs = [];
 	modal_mode = 'condition';
 	currDataObj = storyline_id;
 	condition_level_type = 1;
