@@ -85,22 +85,22 @@ function handle_ajax_reponse(status, data, type, prefix)
 			}
 			else
 			{
+				//Storyline form data returns
 				if (type == 'trigger' || type == 'triggers')
 					drawTriggers(data)
 				else if (type == 'data_objects' || type == 'data_object')
 					drawDataObjects(data);
-				else if (type == 'predecessors_list')
-					draw_predecessor_list(data, true);
-				else if (type == 'predecessors')
-					draw_predecessor_list(data);
+				// Modal window returns
 				else if (type == 'new_condition')
 					draw_new_condition(data);
 				else if (type == 'existing_conditions')
 					draw_condition_edit_table(data);
-				else if (type == 'condition_list')
-					draw_condition_list(data);
 				else if (type == 'conditions_select')
 					draw_condition_select(data);
+				else if (type == 'result_list')
+					draw_result_list(data);
+				else if (type == 'condition_list')
+					draw_condition_list(data);
 				else if (type == 'condition_save' || type == 'result_save')
 				{
 					$('#'+prefix+'_waitload').css('display','none');

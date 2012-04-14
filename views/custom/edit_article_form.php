@@ -65,9 +65,10 @@
 				
 				<fieldset>
 					<legend><?php echo lang('sl_message_details'); ?></legend>
+					
 						<!-- Subject -->
 					<div class="control-group <?php echo form_error('subject') ? 'error' : '' ?>">
-						 <label class="control-label" for="subject"><?php echo lang('sl_title') ?></label>
+						 <label class="control-label" for="subject"><?php echo lang('sl_subject') ?></label>
 						<div class="controls">
 							<input type="text" class="span6" name="subject" id="subject" value="<?php echo isset($article) ? $article->subject : set_value('title') ?>" />
 							<?php if (form_error('subject')) echo '<span class="help-inline">'. form_error('subject') .'</span>'; ?>
@@ -82,19 +83,22 @@
 							<?php if (form_error('text')) echo '<span class="help-inline">'. form_error('text') .'</span>'; ?>
 						</div>
 					</div>
+					
+						<!-- Game Message Type -->
+					<?php echo form_dropdown('in_game_message',$game_message_types,isset($article) ? $article->in_game_message : set_value('in_game_message'),lang('sl_in_game_message'),' class="span6" id="in_game_message"'); ?>
 				
 					<legend><?php echo lang('sl_interactive_reponse'); ?></legend>
+					
 						<!-- Reply -->
 					<div class="control-group <?php echo form_error('reply') ? 'error' : '' ?>">
 						 <label class="control-label" for="reply"><?php echo lang('sl_reply') ?></label>
 						<div class="controls">
 							<input type="text" class="span6" name="reply" id="reply" value="<?php echo isset($article) ? $article->reply : set_value('reply') ?>" />
 							<?php if (form_error('reply')) echo '<span class="help-inline">'. form_error('reply') .'</span>'; ?>
+							<br /><?php echo lang('sl_reply_note'); ?>
 						</div>
 					</div>
-						<!-- Game Message Type -->
-					<?php echo form_dropdown('in_game_message',$game_message_types,isset($article) ? $article->in_game_message : set_value('in_game_message'),lang('sl_in_game_message'),' class="span6" id="in_game_message"'); ?>
-				
+					
 				</fieldset>
 				
 				<?php if (isset($results) && is_array($results) && count($results)) : ?>
@@ -136,8 +140,8 @@
 					<table class="table table-striped table-bordered" id="conditions_list_table">
 					<thead>
 					<tr>
-						<th class="column-check"><input class="check-all" type="checkbox" /></th>
-						<th width="75%"><?php echo lang('sl_condition'); ?></th>
+						<th width="40%"><?php echo lang('sl_category'); ?></th>
+						<th width="40%"><?php echo lang('sl_condition'); ?></th>
 						<th><?php echo lang('sl_value'); ?></th>
 					</tr>
 					</thead>
@@ -168,6 +172,7 @@
 			<fieldset>
 				<div class="well">
 					<input type="submit" name="submit" id="submit" class="btn btn-primary btn-large" value="<?php echo lang('bf_action_save') ?>" />
+					<input type="hidden" name="storyline_id" value="<?php echo $storyline->id; ?>" />
 				</div>
 			</fieldset>
 		
@@ -215,21 +220,40 @@
 				<table class="table table-bordered table-striped">
 				<thead>
 					<th></th>
-					<th>Subject</th>
+					<th>Title [Subject]</th>
 					<th>Conditions</th>
 					<th>Results</th>
 				</thead>
 				<tbody>
 				<?php
-				if (isset($article_predecessors) && is_array($article_predecessors) && count($article_predecessors)) :
-					foreach($article_predecessors as $predecessor) : ?>
+				if (isset($all_articles) && is_array($all_articles) && count($all_articles)) :
+					foreach($all_articles as $tmp_article) : ?>
 					<tr>
-						<td><input type="checkbox" name="pred_ids[]" class="condition" value="<?php echo($predecessor->predecessor_id); ?>" /></td>
-						<td><?php 
-						$dispSub = limit_text((isset($predecessor->title) ? $predecessor->title : $predecessor->subject),100);
+						<?php 
+						$checked = (isset($article_perdecessor_ids) && is_array($article_perdecessor_ids) && in_array($tmp_article->id, $article_perdecessor_ids) ? ' checked="checked"' : '');
+						$icon_class = '';
+						switch ($tmp_article->in_game_message)
+						{
+							case 1: // LEAGUE NEWS
+								$icon_class  = 'icon-list-alt';
+								break;
+							case 2: // PERSONAL MESSAGE
+								$icon_class  = 'icon-inbox';
+								break;
+							case 3: // NO MESSAGE (Replies)
+								$icon_class  = 'icon-remove';
+								break;
+							
+						}
+						?>
+						<td><input type="checkbox" name="pred_ids[]" class="condition" value="<?php echo($tmp_article->id); ?>"<?php echo($checked); ?> /></td>
+						<td>
+						<i class="<?php echo $icon_class; ?>"></i> 
+						<?php 
+						$dispSub = limit_text((isset($tmp_article->title) ? $tmp_article->title : $tmp_article->subject),100);
 						echo($dispSub); ?></td>
-						<td><?php echo($predecessor->condition_count); ?></td>
-						<td><?php echo($predecessor->result_count); ?></td>
+						<td><?php echo($tmp_article->condition_count); ?></td>
+						<td><?php echo($tmp_article->result_count); ?></td>
 					</tr>
 					<?php
 					endforeach;
@@ -249,7 +273,7 @@
 				if (isset($article->id) && !empty($article->id)) : ?>		
 				<tr>
 					<td>Article ID:</td>
-					<td><?php echo date('m/d/Y h:i:s', $article->id); ?></td>
+					<td><?php echo $article->id; ?></td>
 				</tr>
 				<?php endif;
 				
@@ -296,7 +320,7 @@
 				<tr>
 					<td>Created:</td>
 					<td><?php echo date('m/d/Y h:i:s', $article->created_on); ?> by 
-					<?php echo anchor(SITE_AREA.'/users/profile/'.$article->created_by,find_author_name($article->created_by)); ?></td>
+					<?php echo anchor('/users/profile/'.$article->created_by,find_author_name($article->created_by)); ?></td>
 				</tr>
 				<?php endif;
 				

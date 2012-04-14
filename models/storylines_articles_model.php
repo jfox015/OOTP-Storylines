@@ -124,7 +124,39 @@ class Storylines_articles_model extends BF_Model
 			Array of child article IDs
 	
 	*/
-	public function get_all_articles($storyline_id, $except_article_id = false) 
+	public function get_all_articles($storyline_id, $except_article_id = false, $include_content = true) 
+	{
+		if ($except_article_id !== false)
+		{
+			$this->db->where('id <> '.$except_article_id);
+		}
+		$select = '';
+		if ($except_article_id !== false)
+		{
+			$select = 'text, description, reply,';
+		}
+		$prefix = $this->db->dbprefix;
+		return $this->select($select.'storylines_articles.id, title, in_game_message, subject, 
+							(SELECT COUNT('.$prefix.'storylines_conditions.id) FROM '.$prefix.'storylines_conditions WHERE '.$prefix.'storylines_conditions.var_id = '.$prefix.'storylines_articles.id AND level_type = 2) as condition_count,
+							(SELECT COUNT('.$prefix.'storylines_article_results.id) FROM '.$prefix.'storylines_article_results WHERE '.$prefix.'storylines_article_results.article_id = '.$prefix.'storylines_articles.id) as result_count')
+							->find_all_by('storyline_id',$storyline_id);
+	}		
+	//--------------------------------------------------------------------
+
+	/*
+		Method:
+			get_alL_article_ids()
+			
+		Returns an array of article child IDs.
+		
+		Parameters:
+			$article_id - Storyline Article ID int
+			
+		Return:
+			Array of child article IDs
+	
+	*/
+	public function get_all_article_ids($storyline_id, $except_article_id = false) 
 	{
 		if ($except_article_id !== false)
 		{

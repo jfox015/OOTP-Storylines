@@ -1,18 +1,30 @@
 ﻿//--------------------------------------------------------
 //	!RESULTS
 //--------------------------------------------------------
+/*
+	Method:
+		 load_existing_results()
+	
+	Draws results already added to the Result editor table
+*/
 function load_existing_results(id)
 {
 	$('#cond_waitload').css('display','block');
 	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/results/get_results_list")); ?>/"+id, function(data,status) {
-		handle_ajax_reponse (status, data, 'predecessor', 'rslt');
+		handle_ajax_reponse (status, data, 'existing_conditions', 'rslt');
 	});
 };
+/*
+	Method:
+		 load_result_list()
+	
+	Draws results for the article to the table in the editor form
+*/
 function load_result_list(id)
 {
 	$('#cond_waitload').css('display','block');
 	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/results/get_results_list")); ?>/"+ id, function(data,status) {
-		handle_ajax_reponse (status, data, 'condition_list', 'cond');
+		handle_ajax_reponse (status, data, 'result_list', 'rslt');
 	});
 };
 function draw_result_list(data) {
@@ -42,6 +54,12 @@ $('#edit_results').live('click',function(e) {
 	$('#condition_modal h3').html('Results Editor');
 	$('#condition_modal').modal('show');
 });
+/*
+	Method:
+		 init_results()
+	
+	Populates the select box in the Result Editor Modal with the results options
+*/
 function init_results()
 {
 	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/results/load_results_list")); ?>", function(data,status) {

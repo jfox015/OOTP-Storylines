@@ -212,9 +212,9 @@ class Articles extends Admin_Controller {
 			Template::set('article_conditions', $this->storylines_articles_model->get_article_conditions($article_id));
 			Template::set('article_results', $this->storylines_articles_model->get_article_results_for_form($article_id));
 			Template::set('article_perdecessor_ids', $this->storylines_articles_model->get_article_predecessor_ids($article_id));
-			Template::set('article_predecessors', $this->storylines_articles_model->get_article_predecessors($article_id));
+			//Template::set('article_predecessors', $this->storylines_articles_model->get_article_predecessors($article_id));
 			
-			Template::set('all_articles', $this->storylines_articles_model->get_all_articles($article->storyline_id,$article->id));
+			Template::set('all_articles', $this->storylines_articles_model->get_all_articles($article->storyline_id,$article->id,false));
 			
 			Template::set_theme('admin');
 			

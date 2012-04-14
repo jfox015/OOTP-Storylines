@@ -11,7 +11,10 @@
     <?php echo form_open($this->uri->uri_string(), 'class="form-horizontal"'); ?>
 
     <fieldset>
-			<!-- Title -->
+		<legend><?php echo lang('sl_general_header'); ?></legend>
+		<span><?php echo lang('sl_general_note'); ?>
+		
+		<!-- Title -->
         <div class="control-group <?php echo form_error('title') ? 'error' : '' ?>">
              <label class="control-label" for="title"><?php echo lang('sl_title') ?></label>
             <div class="controls">

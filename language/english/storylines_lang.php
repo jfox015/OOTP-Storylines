@@ -7,6 +7,7 @@ $lang['md_settings_error']			= 'There was an error saving your settings.';
 $lang['mod_unauthorized']			= 'Unauthorized. Sorry you do not have the appropriate permission to this area.';
 
 $lang['sl_general_header']			= 'General Details';
+$lang['sl_general_note']			= 'These fields are not used within the game. They are only for SLE organization purposes.';
 
 $lang['sl_storyline']				= 'Storyline';
 $lang['sl_custom_header']			= 'Storylines';
@@ -32,6 +33,7 @@ $lang['sl_edit_article']			= 'Edit Article';
 $lang['sl_subject']					= 'Subject';
 $lang['sl_text']					= 'Text';
 $lang['sl_reply']					= 'Reply';
+$lang['sl_reply_note']				= 'Add a message that the user can choose from only if the preceeding article is a Personal Message that prompts the user to take an action. When populated, the In game Message for this article should be set to &quot;No Message&quot; and both the <b>subject</b> and <b>text</b> should be the same as this value.';
 $lang['sl_in_game_message']			= 'In Game Message';
 $lang['sl_injuries_dl']				= 'Injuries/DL';
 $lang['sl_player_injured']			= 'Player is Injured';
@@ -48,7 +50,7 @@ $lang['sl_suspension_games']		= 'Suspend for (x) no. of games';
 $lang['sl_result_affects']			= 'Affects';
 
 $lang['sl_message_details']			= 'Message Details';
-$lang['sl_interactive_reponse']		= 'Interactive Response';
+$lang['sl_interactive_reponse']		= 'Interactive Response (OOTP 13 and up only)';
 
 $lang['sl_tokens']					= 'Tokens';
 $lang['sl_tokens_details']			= 'Token Details';

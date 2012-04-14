@@ -214,9 +214,9 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('list_storylines_articles_message_types');
 		
-		$this->db->query("INSERT INTO {$prefix}list_storylines_articles_message_types VALUES(0,'No Message')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_articles_message_types VALUES(0,'League News')");
-		$this->db->query("INSERT INTO {$prefix}list_storylines_articles_message_types VALUES(0,'Personal Message')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_articles_message_types VALUES(1,'League News')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_articles_message_types VALUES(2,'Personal Message')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_articles_message_types VALUES(3,'No Message')");
 		
 		// Storylines Triggers List
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');

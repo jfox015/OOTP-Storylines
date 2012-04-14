@@ -664,18 +664,14 @@ class Custom extends Admin_Controller {
 	{
 		$db_prefix = $this->db->dbprefix;
 
-		if ($type == 'insert')
+		if ($type == 'update')
 		{
-			$this->form_validation->set_rules('title', lang('sl_title'), 'required|trim|max_length[255]|xss_clean');
-			$this->form_validation->set_rules('description', lang('sl_description'), 'required|trim|xss_clean');
-			$this->form_validation->set_rules('category_id', lang('sl_category'), 'required|trim|number|max_length[2]|xss_clean');
+		
 		}
-		else
-		{
-			$this->form_validation->set_rules('title', lang('sl_title'), 'required|trim|max_length[255]|xss_clean');
-			$this->form_validation->set_rules('description', lang('sl_description'), 'required|trim|xss_clean');
-			$this->form_validation->set_rules('category_id', lang('sl_category'), 'required|trim|number|max_length[2]|xss_clean');
-		}
+		$this->form_validation->set_rules('title', lang('sl_title'), 'required|trim|max_length[255]|xss_clean');
+		$this->form_validation->set_rules('description', lang('sl_description'), 'required|trim|xss_clean');
+		$this->form_validation->set_rules('category_id', lang('sl_category'), 'required|trim|numeric|max_length[3]|xss_clean');
+		$this->form_validation->set_rules('tags', lang('sl_tags'), 'trim|max_length[255]|xss_clean');
 
 		if ($this->form_validation->run() === false)
 		{
@@ -685,9 +681,9 @@ class Custom extends Admin_Controller {
 					'title'=>$this->input->post('title'),
 					'description'=>$this->input->post('description'),
 					'category_id'=>($this->input->post('category_id') ? $this->input->post('category_id') : 1),
+					'tags'=>($this->input->post('tags') ? $this->input->post('tags') : ''),
 					'publish_status_id'=>($this->input->post('publish_status_id') ? $this->input->post('publish_status_id') : 1),
 					'author_status_id'=>($this->input->post('author_status_id') ? $this->input->post('author_status_id') : 1),
-					'tags'=>($this->input->post('tags') ? $this->input->post('tags') : ''),
 					'modified_by'=>$this->current_user->id
 		);
 

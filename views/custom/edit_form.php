@@ -180,7 +180,7 @@
 					<label class="control-label"><?php echo lang('sl_category') ?></label>
 					<div class="controls">
 						<?php 
-						echo form_dropdown('category_id',$categories,set_value('category_id'));
+						echo form_dropdown('category_id',$categories,(isset($storyline) ? $storyline->category_id : set_value('category_id')));
 						?>
 						<?php if (form_error('category_id')) echo '<span class="help-inline">'. form_error('category_id') .'</span>'; ?>
 					</div>
@@ -271,7 +271,7 @@
 				<tr>
 					<td>Created:</td>
 					<td><?php echo date('m/d/Y h:i:s', $storyline->created_on); ?> by 
-					<?php echo anchor(SITE_AREA.'/users/profile/'.$storyline->created_by,find_author_name($storyline->created_by)); ?></td>
+					<?php echo anchor('/users/profile/'.$storyline->created_by,find_author_name($storyline->created_by)); ?></td>
 				</tr>
 				<?php endif;
 				if (isset($storyline->modified_on) && !empty($storyline->modified_on)) : ?>		

@@ -327,11 +327,12 @@ function draw_condition_list(data) {
 	});
 	$('#conditions_list_table > tbody:last').empty();
 	$('#conditions_list_table > tbody:last').append(htmlOut);
+	$('#cond_waitload').css('display','none');
 };
 function load_condition_list(id, level)
 {
 	$('#cond_waitload').css('display','block');
-	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/conditions/load_conditions_list")); ?>/"+id+"/"+level, function(data,status) {
+	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/conditions/get_conditions_list")); ?>/"+id+"/"+level, function(data,status) {
 		handle_ajax_reponse (status, data, 'condition_list', 'cond');
 	});
 };
