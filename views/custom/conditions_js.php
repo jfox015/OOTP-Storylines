@@ -80,7 +80,7 @@ $('#save_conditions').click( function(e) {
 		}
 		else if (modal_mode == "result")
 		{
-			data_obj = {"article_id" : currDataObj, "results": objs };
+			data_obj = JSON.stringify({"article_id" : currDataObj, "results": objs },true,4);
 			url += '/results/save_object_results/';
 		}
 		console.log(data_obj);
@@ -261,9 +261,7 @@ function draw_new_condition(data) {
 			break;
 		case 4: // String (Text Area)
 			htmlOut += '<label class="control-label"><a href="#" rel="tooltip" class="tooltips" data-original-title="' + obj.description + '">' + condName + '</a></label>';
-			htmlOut += ' \t<textarea class="span4" rows="5" cols="60" class="condition_frm" id="'+ obj.id + '">';
-			if (condValue !== false) htmlOut += condValue;
-			htmlOut += '</textarea>';
+			htmlOut += ' \t<input type="text" class="span4 condition_frm" id="'+ obj.id + '" value="'+ ((condValue !== false) ? condValue :"")+'" />';
 			break;
 	} // END switch
 	htmlOut += ' \t</div>';

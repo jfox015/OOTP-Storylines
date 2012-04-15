@@ -106,7 +106,12 @@
 
 				<!-- RESULTS -->
 				<fieldset>
-					<legend style="margin-bottom:0px;"><?php echo lang('sl_results'); ?></legend>
+					<legend style="margin-bottom:0px;"><?php echo lang('sl_results'); ?>
+					<div class="help-inline right">
+						<a href="#" class="btn btn-small" id="edit_results"><i class="icon-pencil"></i> Edit Results</a>
+					</div>
+
+					</legend>
 					
 					<div id="rslt_waitload" class="well center" style="display:none;">
 						<img src="<?php echo(TEMPLATE::theme_url('images/ajax-loader.gif'));?>" width="28" height="28" border="0" align="absmiddle" /><br />Operation in progress. Please wait...
@@ -114,10 +119,9 @@
 					<table class="table table-striped table-bordered" id="results_list_table">
 					<thead>
 					<tr>
-						<th class="column-check"><input class="check-all" type="checkbox" /></th>
-						<th width="75%"><?php echo lang('sl_result_affects'); ?></th>
-						<th width="75%"><?php echo lang('sl_result'); ?></th>
-						<th><?php echo lang('sl_value'); ?></th>
+						<th width="15%"><?php echo lang('sl_result_affects'); ?></th>
+						<th width="25%"><?php echo lang('sl_results'); ?></th>
+						<th width="55%"><?php echo lang('sl_value'); ?></th>
 					</tr>
 					</thead>
 					<tbody>
@@ -126,7 +130,6 @@
 					</tr>
 					</tbody>
 					</table>
-					<a href="#" class="btn btn-small" id="edit_results"><i class="icon-pencil"></i> Edit Results</a>
 				</fieldset>
 				<?php
 				endif;
@@ -135,16 +138,20 @@
 
 				<!-- CONDITIONS -->
 				<fieldset>
-					<legend style="margin-bottom:0px;"><?php echo lang('sl_conditions'); ?></legend>
+					<legend style="margin-bottom:0px;"><?php echo lang('sl_conditions'); ?>
+					<div class="help-inline right">
+						<a href="#" class="btn btn-small" id="edit_conditions"><i class="icon-pencil"></i> Edit Conditions</a>
+					</div>
+					</legend>
 					<div id="cond_waitload" class="well center" style="display:none;">
 						<img src="<?php echo(TEMPLATE::theme_url('images/ajax-loader.gif'));?>" width="28" height="28" border="0" align="absmiddle" /><br />Operation in progress. Please wait...
 					</div>
 					<table class="table table-striped table-bordered" id="conditions_list_table">
 					<thead>
 					<tr>
-						<th width="40%"><?php echo lang('sl_category'); ?></th>
-						<th width="40%"><?php echo lang('sl_condition'); ?></th>
-						<th><?php echo lang('sl_value'); ?></th>
+						<th width="15%"><?php echo lang('sl_category'); ?></th>
+						<th width="55%"><?php echo lang('sl_condition'); ?></th>
+						<th width="25%"><?php echo lang('sl_value'); ?></th>
 					</tr>
 					</thead>
 					<tbody>
@@ -153,8 +160,7 @@
 					</tr>
 					</tbody>
 					</table>
-					<a href="#" class="btn btn-small" id="edit_conditions"><i class="icon-pencil"></i> Edit Conditions</a>
-				
+
 				</fieldset>
 				<div style="display:block:height:12px; clear: both;">&nbsp;</div>
 
@@ -254,7 +260,7 @@
 						<i class="<?php echo $icon_class; ?>"></i> 
 						<?php 
 						$dispSub = limit_text((isset($tmp_article->title) ? $tmp_article->title : $tmp_article->subject),100);
-						echo($dispSub); ?></td>
+						echo anchor(SITE_AREA.'/custom/storylines/articles/edit/'.$tmp_article->id,$dispSub); ?></td>
 						<td><?php echo($tmp_article->condition_count); ?></td>
 						<td><?php echo($tmp_article->result_count); ?></td>
 					</tr>
@@ -266,6 +272,9 @@
 				?>
 				</tbody>
 				</table>
+				<a class="btn btn-small" href="#" id="add_successive_article">
+					<i class="icon-plus"></i> <?php echo lang('sl_add_successive_article'); ?></i>
+				</a>
 			</fieldset>
 			
 				<!-- META -->

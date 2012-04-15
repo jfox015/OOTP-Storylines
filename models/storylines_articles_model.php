@@ -361,8 +361,9 @@ class Storylines_articles_model extends BF_Model
 			return false;
 		}
 		$results = array();
-		$this->db->select('id, result_id, result_value')
-				 ->where('article_id', $article_id);
+		$this->db->select('storylines_article_results.id, result_id, result_value, value_type')
+				->join('list_storylines_results','list_storylines_results.id = storylines_article_results.result_id','right outer')
+				->where('article_id', $article_id);
 		$query = $this->db->get('storylines_article_results');
 		if ($query->num_rows() > 0) 
 		{

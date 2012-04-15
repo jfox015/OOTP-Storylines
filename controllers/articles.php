@@ -127,7 +127,8 @@ class Articles extends Admin_Controller {
 		$this->auth->restrict('Storylines.Content.Add');
 
 		$storyline_id = $this->uri->segment(6);
-		
+		$predecessor_id = $this->uri->segment(7);
+
 		if ($this->input->post('submit'))
 		{
 			if ($id = $this->save_article())
@@ -152,6 +153,7 @@ class Articles extends Admin_Controller {
         
 		Template::set('game_message_types', $this->storylines_articles_model->get_game_message_types());
 		Template::set('storyline_id', $storyline_id);
+		Template::set('predecessor_id', (isset($predecessor_id) && !empty($predecessor_id)? $predecessor_id : ''));
 		Template::set('toolbar_title', lang('sl_create_article'));
 		Template::set_view('storylines/custom/create_article_form');
 		Template::render();
@@ -379,25 +381,21 @@ class Articles extends Admin_Controller {
 	{
 		$db_prefix = $this->db->dbprefix;
 
-		if ($type == 'insert')
-		{
-			$this->form_validation->set_rules('subject', lang('sl_subject'), 'required|trim|max_length[255]|xss_clean');
-			$this->form_validation->set_rules('text', lang('sl_text'), 'required|trim|xss_clean');
-			$this->form_validation->set_rules('reply', lang('sl_reply'), 'strip_tags|trim|xss_clean');
-			$this->form_validation->set_rules('in_game_message', lang('sl_in_game_message'), 'required|strip_tags|numeric|trim|xss_clean');
-		} else {
-			$this->form_validation->set_rules('injury_description', lang('sl_injury_description'), 'strip_tags|trim|max_length[325]|xss_clean');
-			$this->form_validation->set_rules('suspension_games', lang('sl_suspension_games'), 'numeric|strip_tags|trim|max_length[3]|xss_clean');
-			$this->form_validation->set_rules('injury_length', lang('sl_injury_length'), 'numeric|strip_tags|trim|max_length[4]|xss_clean');
-			$this->form_validation->set_rules('injury_cei', lang('sl_injury_cei'), 'numeric|strip_tags|trim|max_length[1]|xss_clean');
-			$this->form_validation->set_rules('injury', lang('sl_injury'), 'numeric|strip_tags|trim|max_length[1]|xss_clean');
-			$this->form_validation->set_rules('transaction', lang('sl_transaction'), 'numeric|strip_tags|trim|max_length[1]|xss_clean');
-		}
+		$this->form_validation->set_rules('title', lang('sl_title'), 'required|trim|max_length[255]|xss_clean');
+		$this->form_validation->set_rules('description', lang('sl_description'), 'trim|strip_tags|xss_clean');
+		$this->form_validation->set_rules('subject', lang('sl_subject'), 'required|trim|max_length[255]|xss_clean');
+		$this->form_validation->set_rules('text', lang('sl_text'), 'required|trim|strip_tags|xss_clean');
+		$this->form_validation->set_rules('reply', lang('sl_reply'), 'strip_tags|trim|xss_clean');
+		$this->form_validation->set_rules('in_game_message', lang('sl_in_game_message'), 'required|strip_tags|numeric|trim|xss_clean');
+		$this->form_validation->set_rules('predecessor_id', lang('sl_predecessor'), 'strip_tags|numeric|trim|max_length[11]|xss_clean');
+
 		if ($this->form_validation->run() === false)
 		{
 			return false;
 		}
 		$data = array(
+					'title'=>$this->input->post('title'),
+					'description'=>$this->input->post('description'),
 					'subject'=>$this->input->post('subject'),
 					'text'=>$this->input->post('text'),
 					'reply'=>$this->input->post('reply'),
@@ -425,10 +423,20 @@ class Articles extends Admin_Controller {
 		{
 			$success = $this->storylines_articles_model->update($id, $data);
 		}
-		// SET or update article predecessors
-		if ($success && $id != 0 && $this->input->post('pred_ids'))
+
+		$id_list = false;
+		if ($this->input->post('predecessor_id'))
 		{
-			$id_list = (array)$this->input->post('pred_ids');
+			$id_list = array($this->input->post('predecessor_id'));
+
+		}
+		else if ($this->input->post('pred_ids'))
+		{
+			$id_list =  $this->input->post('pred_ids');
+		}
+		// SET or update article predecessors
+		if ($success && $id != 0 && $id_list !== false)
+		{
 			$pred_ids = array();
 			if (is_array($id_list) && count($id_list))
 			{

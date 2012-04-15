@@ -255,63 +255,52 @@ class Results extends Admin_Controller {
 		$this->output->set_header('Content-type: application/json'); 
 		$this->output->set_output(json_encode($json_out));
 	}
-	
-	
+
+
 	//--------------------------------------------------------------------
 
-	public function save_object_results() 
+	public function save_object_results()
 	{
 		$error = false;
 		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
-		
+
 		if ($this->input->post('post_data'))
 		{
 			$items = json_decode($this->input->post('post_data'));
-			
-			if (is_array($items->results) && count($items->results))
+
+			if (isset($items->results) && is_array($items->results) && count($items->results))
 			{
-				foreach($items->results as $results)
+				$this->storylines_results_model->delete_object_results($items->article_id);
+				foreach($items->results as $result)
 				{
-					$data = array('article_id'		=> $items->article_id,
-						  'result_id'	 		=> $results->id,
-						  'value'	 			=> $results->value
+					$data = array('article_id'	=> $items->article_id,
+						'result_id'	 			=> $result->id,
+						'result_value'	 		=> $result->value
 					);
-					$success = true;
-					if (!$this->storylines_results_model->count_object_results($items->article_id, $result->id))
-					{
-						$success = $this->storylines_results_model->add_object_result($data);
-					} else {
-						$success = $this->storylines_results_model->update_object_result($data);
-					}
-					if (!$success)
-					{
-						$error = true;
-						$status = 'error:'.$this->storylines_results_model->error;
-						break;
-					}
+					$success = $this->storylines_results_model->add_object_result($data);
 				}
 			}
 			else
 			{
 				$error = true;
-				$status = "Result Data was missing.";
-			}	
-			$json_out['result'] = "Results saved.";
+				$status = "Condition Data was missing.";
+			}
+			$json_out['result'] = "Conditions saved.";
 		}
 		else
 		{
 			$error = true;
 			$status = "Post Data was missing.";
 		}
-		if ($error) 
-		{ 
+		if ($error)
+		{
 			$json_out['code'] = 301;
-			$json_out['status'] = "error:".$status; 
+			$json_out['status'] = "error:".$status;
 			$json_out['result'] = 'An error occured.';
 		}
-		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_header('Content-type: application/json');
 		$this->output->set_output(json_encode($json_out));
-	
+
 	}
 	//--------------------------------------------------------------------
 

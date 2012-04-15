@@ -116,6 +116,7 @@ $lang['sl_value']					= 'Value';
 $lang['sl_name']					= 'Name';
 $lang['sl_name_note']				= 'Name for use in editor only';
 $lang['sl_frequency']				= 'Frequency';
+$lang['sl_add_successive_article']	= 'Add successive article';
 
 $lang['sl_no_storyline_found']		= 'The selected Storyline could nto be found.';
 $lang['sl_no_articles']				= 'No articles were found';

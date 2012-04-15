@@ -177,13 +177,14 @@ class Storylines_conditions_model extends BF_Model
 			{
 				if ($row->category_id != $curr_cat)
 				{
-					$curr_cat = $row->category_id;
-					$cat_label = $category_names[$curr_cat];
 					if (count($sub_array) > 0)
 					{
 						array_push($arrOut, array('label'=>$cat_label, 'options'=>$sub_array));
 						$sub_array = array();
 					}
+					$curr_cat = $row->category_id;
+					$cat_label = $category_names[$curr_cat];
+
 				}
 				if (!isset($row->name) || empty($row->name))
 				{

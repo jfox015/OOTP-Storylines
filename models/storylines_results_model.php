@@ -135,11 +135,21 @@ class Storylines_results_model extends BF_Model
 			$this->error = "Data received was not in proper array format.";
 			return false;
 		} 
-		return $this->db->insert('storylines_results',$data);
+		return $this->db->insert('storylines_article_results',$data);
 	}
-	
+	public function delete_object_results($article_id = false)
+	{
+		if ($article_id === false)
+		{
+			$this->error = "No article ID was received.";
+			return false;
+		}
+		return $this->db->where('article_id',$article_id)
+					 	->delete('storylines_article_results');
+	}
+
 	/*
-		Method: update_object_condition()
+		Method: update_object_result()
 
 		Updates an existing result for the specified article ID.
 
@@ -149,7 +159,7 @@ class Storylines_results_model extends BF_Model
 		Returns:
 			TRUE on success, FALSE on error
 	*/
-	public function update_object_condition($data = false)
+	public function update_object_result($data = false)
 	{
 		if ($data === false)
 		{
@@ -163,7 +173,7 @@ class Storylines_results_model extends BF_Model
 		} 
 		$this->db->where('article_id',$data['article_id'])
 			     ->where('result_id',$data['result_id']);		  
-		return $this->db->update('storylines_results',array('value'=>$data['value']));
+		return $this->db->update('storylines_article_results',array('value'=>$data['value']));
 	
 	}
 	public function categories_as_select()

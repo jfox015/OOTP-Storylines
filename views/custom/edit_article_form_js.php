@@ -33,11 +33,11 @@ function draw_result_list(data) {
 		condName = ((item.name != null && item.name != '') ? item.name : item.slug),
 		val = '';
 		htmlOut += '<tr>';
-		htmlOut += '\t<td>'+item.category_name+',/td>';
-		htmlOut += '\t<td>'+condName+',/td>';
-		if (item.type_id == 2) val = ((item.value == 1) ? "Yes" : "No");
-		else val = item.value;
-		htmlOut += '\t<td>'+val+',/td>';
+		htmlOut += '\t<td>'+item.category_name+'</td>';
+		htmlOut += '\t<td>'+condName+'</td>';
+		if (item.value_type == 2) val = ((item.result_value == 1) ? "Yes" : "No");
+		else val = item.result_value;
+		htmlOut += '\t<td>'+val+'</td>';
 	});
 	$('#results_list_table > tbody:last').empty();
 	$('#results_list_table > tbody:last').append(htmlOut);
@@ -67,10 +67,15 @@ function init_results()
 	});
 	
 };
+$('#add_successive_article').live('click', function(e) {
+	e.preventDefault();
+	document.location.href = '<?php echo site_url(SITE_AREA.'/custom/storylines/articles/create/'); ?>/'+storyline_id+'/'+article_id;
+});
 //---------------------------------------------------------
 //	!CONDITIONS
 //---------------------------------------------------------
 $('#edit_conditions').live('click', function(e) {
+	e.preventDefault();
 	conditions_selected = [];
 	conditions_objs = [];
 	modal_mode = 'condition';
