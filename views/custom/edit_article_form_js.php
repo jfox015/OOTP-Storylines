@@ -7,7 +7,7 @@
 	
 	Draws results already added to the Result editor table
 */
-function load_article_results(id)
+function load_existing_results(id)
 {
 	$('#cond_waitload').css('display','block');
 	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/results/get_results_list")); ?>/"+id, function(data,status) {
