@@ -285,6 +285,7 @@ class Conditions extends Admin_Controller {
 			
 			if (isset($items->conditions) && is_array($items->conditions) && count($items->conditions))
 			{
+				$this->storylines_conditions_model->delete_object_conditions($items->var_id, $items->level_type);
 				foreach($items->conditions as $condition)
 				{
 					$data = array('var_id'		=> $items->var_id,
@@ -292,19 +293,7 @@ class Conditions extends Admin_Controller {
 						  'condition_id'	 	=> $condition->id,
 						  'value'	 			=> $condition->value
 					);
-					$success = true;
-					if (!$this->storylines_conditions_model->count_object_conditions($items->var_id, $items->level_type, $condition->id))
-					{
-						$success = $this->storylines_conditions_model->add_object_condition($data);
-					} else {
-						$success = $this->storylines_conditions_model->update_object_condition($data);
-					}
-					if (!$success)
-					{
-						$error = true;
-						$status = 'error:'.$this->storylines_conditions_model->error;
-						break;
-					}
+					$success = $this->storylines_conditions_model->add_object_condition($data);
 				}
 			}
 			else

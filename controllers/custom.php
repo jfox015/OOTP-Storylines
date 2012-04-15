@@ -248,7 +248,8 @@ class Custom extends Admin_Controller {
 			Template::set('data_objects', $this->storylines_model->get_data_objects($storyline_id));
 			Template::set('articles', $this->storylines_articles_model->build_article_tree($storyline_id));
 			Template::set('triggers', $this->storylines_model->get_triggers($storyline_id));
-			
+			Template::set('unique_status', $this->storylines_model->get_unique_status($storyline_id));
+
 			// Options Lists Data
 			//Template::set('conditions_objs', $this->storylines_conditions_model->list_as_select_by_category());
 			Template::set('triggers_list', $this->storylines_triggers_model->list_as_select());
@@ -700,11 +701,13 @@ class Custom extends Admin_Controller {
 			}
 			$data = $data + array('comments_thread_id'=>$thread_id,'created_by'=>$this->current_user->id);
 			return $this->storylines_model->insert($data);
+
 		}
 		else	// Update
 		{
 			return $this->storylines_model->update($id, $data);
 		}
+
 	}
 }
 // End main module class

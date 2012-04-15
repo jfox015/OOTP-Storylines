@@ -56,20 +56,18 @@ $('#add_object_condition').click( function(e)
 
 $('#save_conditions').click( function(e) {
     e.preventDefault();
-	
+	var elems = $('.condition_frm');
 	// PREPARE JSON OBJECT FOR POST
-	if (conditions_selected.length > 0) 
+	console.log(elems);
+	if (elems.length > 0)
 	{
+		var objs = [];
 		// Update values from form
-		var elems = $('.condition_frm');
 		$.each(elems, function(i, item) {
-			console.log(item);
-			if (conditions_selected[item.id] != null) {
-				var obj = conditions_objs[item.id], value = null;
-				if (obj.type_id == 2 && (item.value == null || item.value == '')) value = 0;
-				else value = item.value;
-				conditions_selected[item.id].value = value;
-			}
+			var tmpobj = conditions_objs[item.id], value = null;
+			if (tmpobj.type_id == 2 && (item.value == null || item.value == '')) value = 0;
+			else value = item.value;
+			objs.push({'id':item.id,'value':value});
 		});
 		
 		var statusClass = '', statusMess = '', 
@@ -77,12 +75,12 @@ $('#save_conditions').click( function(e) {
 		url = '<?php echo site_url(SITE_AREA.'/custom/storylines/'); ?>';
 		if (modal_mode == "condition")
 		{
-			data_obj = {"var_id" : currDataObj, "level_type": condition_level_type, "conditions": JSON.stringify(conditions_selected, null, 1)};
+			data_obj = JSON.stringify({"var_id" : currDataObj, "level_type": condition_level_type, "conditions": objs},true,4);
 			url += '/conditions/save_object_conditions/';
 		}
 		else if (modal_mode == "result")
 		{
-			data_obj = {"article_id" : currDataObj, "results": JSON.stringify(conditions_selected, null, 1)};
+			data_obj = {"article_id" : currDataObj, "results": objs };
 			url += '/results/save_object_results/';
 		}
 		console.log(data_obj);
@@ -110,10 +108,11 @@ $('a[rel=delete_condition]').live('click', function(e) {
 	if (confirm("Are you sure you want to remove the selected condition?")) {
 		if (conditions_selected[this.id] != null)
 		{
-			remove_condition(this.id);
+			//remove_condition(this.id);
 			$('#row_cond_'+this.id).remove();
 		}
-		if (conditions_selected.length == 0)
+		var elems = $('.condition_frm');
+		if (elems.length == 0)
 			$('#save_conditions').attr('disabled',true);
 	}
 });
@@ -130,13 +129,18 @@ function load_existing_conditions(object_id, level)
 	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/conditions/get_conditions_list")); ?>/"+object_id+'/'+level, function(data,status) {
 		handle_ajax_reponse (status, data, 'existing_conditions', 'modal');
 	});
+}function load_article_conditions(object_id, level)
+{
+	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/conditions/get_conditions_list")); ?>/"+object_id+'/'+level, function(data,status) {
+		handle_ajax_reponse (status, data, 'article_conditions', 'modal');
+	});
 }
 function init_conditions_list(object_id)
 {
 	var categories = 'all';
 	if (object_id != null)
 	{
-		switch(object_id)
+		switch(parseInt(object_id))
 		{
 			// PLAYERS/PERSON
 			case 2:
@@ -172,6 +176,7 @@ function init_conditions_list(object_id)
 				break;
 		}
 	}
+	$('#save_conditions').attr('disabled',true);
 	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/conditions/load_conditions_list")); ?>/"+categories, function(data,status) {
 		handle_ajax_reponse (status, data, 'conditions_select', 'cond');
 	});
@@ -191,7 +196,6 @@ function init_conditions_list(object_id)
 */
 function remove_condition(id) {
 	var tmpList = [];
-	console.log(conditions_selected);
 	$.each(conditions_selected, function(i,item){
 		if (item.id != id) {
 			tmpList[item.id] = item;
@@ -219,22 +223,19 @@ function find_condition(condition_id)
 */
 function draw_new_condition(data) {
 	// GET condition object
-	console.log(data);
-	var obj = ((data.result != null) ? data.result.items : data), 
+	var obj = ((data.result != null) ? data.result.items : data),
 	    htmlOut = '', 
 		makeSlider = false,
 		condName = ((obj.name != null && obj.name != '') ? obj.name : obj.slug),
 		type = (modal_mode == 'condition') ? obj.type_id : obj.value_type,
 		condValue = ((obj.value != null && obj.value != '') ? obj.value : false);
-	//console.log(obj);
 	htmlOut += '<tr id="row_cond_'+ obj.id +'"><td><div class="control-group">';
 	htmlOut += ' \t<div class="controls">';
-	//console.debug('obj.type_id = '+ obj.type_id);
 	switch (parseInt(type)) {
 		case 1: // Value Range Slider
 			htmlOut += ' \t<label class="control-label"><a href="#" rel="tooltip" class="tooltips" data-original-title="' + obj.description + '">' + condName + '</a> '+obj.value_range_min+' - '+obj.value_range_max+'</label>';
 			htmlOut += ' \t<div id="cond_slider_'+ obj.id +'"></div>';
-			htmlOut += ' \t<input class="condition_frm" type="text" id="'+ obj.id + '" style="border:0; color:#1484e6; font-weight:bold;" />';
+			htmlOut += ' \t<span id="val_'+ obj.id + '" style="color:#0073EA;font-weight:bold;"></span><input type="hidden" class="condition_frm" id="'+ obj.id + '" value="" />\n';
 			makeSlider = true;
 			break;
 		case 2: // Yes/No Checkbox
@@ -278,13 +279,14 @@ function draw_new_condition(data) {
 			max: obj.value_range_max,
 			slide: function( event, ui ) {
 				$( "#"+ obj.id ).val( ui.value );
+				$( "#val_"+ obj.id ).html( ui.value );
 			}
 		});
-		$( "#"+ obj.id ).val(obj.value_range_min);
-		$( "#cond_"+ obj.id ).val( $( '#cond_slider_'+ obj.id ).slider( "value" ) );
+		$( "#"+ obj.id ).val(((condValue !== false) ? condValue : obj.value_range_min));
+		$( "#val_"+ obj.id ).html(((condValue !== false) ? condValue : obj.value_range_min));
 	} // END if
 	if (conditions_objs[obj.id] == null) conditions_objs[obj.id] = obj;
-	conditions_selected[obj.id] = new Condition(obj.id);
+	//conditions_selected[obj.id] = new Condition(obj.id);
 };
 function draw_condition_select(data) 
 {
@@ -311,6 +313,7 @@ function draw_condition_edit_table(data) {
 	$.each(data.result.items, function(i,item) {
 		draw_new_condition(item);
 	});
+	$('#save_conditions').attr('disabled',false);
 };
 function draw_condition_list(data) {
 	var htmlOut = '';

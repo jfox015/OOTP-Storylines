@@ -43,7 +43,7 @@
 				
 					<!-- GENERAL DETAILS -->
 				<fieldset>
-					<legend><?php echo lang('sl_general_header'); ?></legend>
+					<legend style="margin-bottom:0px;"><?php echo lang('sl_general_header'); ?></legend>
 						<!-- Title -->
 					<div class="control-group <?php echo form_error('title') ? 'error' : '' ?>">
 						 <label class="control-label" for="title"><?php echo lang('sl_title') ?></label>
@@ -64,7 +64,7 @@
 				</fieldset>
 				
 				<fieldset>
-					<legend><?php echo lang('sl_message_details'); ?></legend>
+					<legend style="margin-bottom:0px;"><?php echo lang('sl_message_details'); ?></legend>
 					
 						<!-- Subject -->
 					<div class="control-group <?php echo form_error('subject') ? 'error' : '' ?>">
@@ -87,7 +87,7 @@
 						<!-- Game Message Type -->
 					<?php echo form_dropdown('in_game_message',$game_message_types,isset($article) ? $article->in_game_message : set_value('in_game_message'),lang('sl_in_game_message'),' class="span6" id="in_game_message"'); ?>
 				
-					<legend><?php echo lang('sl_interactive_reponse'); ?></legend>
+					<legend style="margin-bottom:0px;"><?php echo lang('sl_interactive_reponse'); ?></legend>
 					
 						<!-- Reply -->
 					<div class="control-group <?php echo form_error('reply') ? 'error' : '' ?>">
@@ -100,12 +100,13 @@
 					</div>
 					
 				</fieldset>
-				
+
 				<?php if (isset($results) && is_array($results) && count($results)) : ?>
-				
+				<div style="display:block:height:12px; clear: both;">&nbsp;</div>
+
 				<!-- RESULTS -->
 				<fieldset>
-					<legend><?php echo lang('sl_results'); ?></legend>
+					<legend style="margin-bottom:0px;"><?php echo lang('sl_results'); ?></legend>
 					
 					<div id="rslt_waitload" class="well center" style="display:none;">
 						<img src="<?php echo(TEMPLATE::theme_url('images/ajax-loader.gif'));?>" width="28" height="28" border="0" align="absmiddle" /><br />Operation in progress. Please wait...
@@ -130,10 +131,11 @@
 				<?php
 				endif;
 				?>
-				
-					<!-- CONDITIONS -->
+				<div style="display:block:height:12px; clear: both;">&nbsp;</div>
+
+				<!-- CONDITIONS -->
 				<fieldset>
-					<legend><?php echo lang('sl_conditions'); ?></legend>
+					<legend style="margin-bottom:0px;"><?php echo lang('sl_conditions'); ?></legend>
 					<div id="cond_waitload" class="well center" style="display:none;">
 						<img src="<?php echo(TEMPLATE::theme_url('images/ajax-loader.gif'));?>" width="28" height="28" border="0" align="absmiddle" /><br />Operation in progress. Please wait...
 					</div>
@@ -154,11 +156,12 @@
 					<a href="#" class="btn btn-small" id="edit_conditions"><i class="icon-pencil"></i> Edit Conditions</a>
 				
 				</fieldset>
-				
+				<div style="display:block:height:12px; clear: both;">&nbsp;</div>
+
 				<?php if (isset($comment_form) && !empty($comment_form)) : ?>
 					<!-- COMMENTS -->
 				<fieldset>
-					<legend><?php echo lang('sl_comments'); ?></legend>
+					<legend style="margin-bottom:0px;"><?php echo lang('sl_comments'); ?></legend>
 					<?php echo ($comment_form); ?>
 				</fieldset>
 				<?php

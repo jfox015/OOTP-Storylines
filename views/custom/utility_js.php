@@ -99,7 +99,7 @@ function handle_ajax_reponse(status, data, type, prefix)
 					draw_condition_select(data);
 				else if (type == 'result_list')
 					draw_result_list(data);
-				else if (type == 'condition_list')
+				else if (type == 'condition_list' || type == 'article_conditions')
 					draw_condition_list(data);
 				else if (type == 'condition_save' || type == 'result_save')
 				{

@@ -85,10 +85,10 @@ if (data.result.items.length > 0) {
 			outStr += '<td><a href="#" rel="tooltip" class="tooltips" title="'+ item.description +'">'+ item.name +'</a></td>' + "\n";
 			outStr += '<td>'+ item.condition_count +'</td>' + "\n";
 			outStr += '<td>' + "\n";
-			outStr += '<a class="btn btn-small" href="#" rel="edit_object_cond" id="'+ storyline_id + '|'+ item.id +'">' + "\n";
+			outStr += '<a class="btn btn-small" href="#" rel="edit_object_cond" id="'+ item.id +'">' + "\n";
 			outStr += '<i class="icon-edit"></i><?php echo lang('sl_edit'); ?>' + "\n";
 			outStr += '</a>' + "\n";
-			outStr += '<a class="btn btn-small" href="#" rel="remove_data_object" id="'+ storyline_id + '|'+ item.id +'">' + "\n";
+			outStr += '<a class="btn btn-small" href="#" rel="remove_data_object" id="'+ item.id +'">' + "\n";
 			outStr += '<i class=" icon-remove"></i> <?php echo lang('sl_delete'); ?>' + "\n";
 			outStr += '</a>' + "\n";
 			outStr += '</td>' + "\n";
@@ -167,12 +167,6 @@ function drawTriggers(data) {
 	} else {
 		$('div#triggers_list').append('<?php echo lang('sl_no_triggers'); ?>');
     }
-}
-function load_existing_conditions(object_id, level)
-{
-	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/results/get_results_list")); ?>/"+object_id, function(data,status) {
-		handle_ajax_reponse (status, data, 'existing_results', 'modal');
-	});
 }
 //---------------------------------------------------------
 //	!CONDITIONS

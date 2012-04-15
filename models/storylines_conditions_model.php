@@ -59,10 +59,22 @@ class Storylines_conditions_model extends BF_Model
 						  ->where('condition_id',$condition_id)
 						  ->count_all_results()) > 0;
 	}
+	public function delete_object_conditions($var_id = false, $level_type = 1)
+	{
+		if ($var_id === false)
+		{
+			$this->error = "No item ID was received.";
+			return false;
+		}
+		return $this->db->where('var_id',$var_id)
+						  ->where('level_type',$level_type)
+						  ->delete('storylines_conditions');
+	}
+
 	public function get_object_conditions($var_id = 0, $level_type = 1)
 	{
 		$conditions = array();
-		$query = $this->db->select('storylines_conditions.id, storylines_conditions.condition_id, list_storylines_conditions.slug, list_storylines_conditions.name, storylines_conditions.value, list_storylines_conditions_categories.name as category_name, list_storylines_conditions.type_id, list_storylines_conditions_types.name as type_name')
+		$query = $this->db->select('storylines_conditions.id, storylines_conditions.condition_id, list_storylines_conditions.slug, list_storylines_conditions.options, list_storylines_conditions.value_range_max, list_storylines_conditions.value_range_min, list_storylines_conditions.name, storylines_conditions.value, list_storylines_conditions_categories.name as category_name, list_storylines_conditions.type_id, list_storylines_conditions_types.name as type_name')
 						  ->join('list_storylines_conditions','list_storylines_conditions.id = storylines_conditions.condition_id','left')
 						  ->join('list_storylines_conditions_categories','list_storylines_conditions.category_id = list_storylines_conditions_categories.id','right outer')
 						  ->join('list_storylines_conditions_types','list_storylines_conditions.type_id = list_storylines_conditions_types.id','right outer')
@@ -123,18 +135,24 @@ class Storylines_conditions_model extends BF_Model
 		{
 			$range_str = "(".implode(",",$range).")";
 		}
-		else if (is_string($range))
+		else if (is_string($range) && strpos($range,",") !== false)
 		{
-			if ($range != "all")
+
+			if (!strpos($range,"(") === false )
 			{
-				if (!strpos($range,"(") === false ) 
-				{
-					$range_str = "(".$range;
-				}
-				if (!strpos($range,")") === false ) 
-				{
-					$range_str .= ")";
-				}
+				$range_str = "(";
+			}
+			$range_str .= $range;
+			if (!strpos($range,")") === false )
+			{
+				$range_str .= ")";
+			}
+	}
+		else
+		{
+			if ($range != "all" )
+			{
+				$this->db->where('category_id',intval(trim($range)));
 			}
 		}
 		if (!empty($range_str))
@@ -143,7 +161,7 @@ class Storylines_conditions_model extends BF_Model
 		}
 		if ($show_inactive === false)
 		{
-			$this->where('active',1);
+			$this->db->where('active',1);
 		}
 		$arrOut = array();
 		

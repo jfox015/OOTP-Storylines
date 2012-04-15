@@ -7,7 +7,7 @@
 	
 	Draws results already added to the Result editor table
 */
-function load_existing_results(id)
+function load_article_results(id)
 {
 	$('#cond_waitload').css('display','block');
 	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/results/get_results_list")); ?>/"+id, function(data,status) {
@@ -88,7 +88,7 @@ $('#edit_conditions').live('click', function(e) {
 var article_id = <?php echo ($article->id); ?>,
 	storyline_id = <?php echo ($article->storyline_id); ?>,
 	pageChanged = false;
-load_existing_conditions(article_id,2);
+load_article_conditions(article_id,2);
 load_result_list(article_id);
 $('#condition_modal').modal({
 	keyboard: false,

@@ -15,7 +15,7 @@
 			
 					<!-- GENERAL DETAILS -->
 				<fieldset>
-					<legend><?php echo lang('sl_general_header'); ?></legend>
+					<legend style="margin-bottom:0px;"><?php echo lang('sl_general_header'); ?></legend>
 						<!-- Title -->
 					<div class="control-group <?php echo form_error('title') ? 'error' : '' ?>">
 						 <label class="control-label" for="title"><?php echo lang('sl_title') ?></label>
@@ -62,10 +62,10 @@
 						<a href="#" id="save_conditions" class="btn btn-primary"><?php echo lang('bf_action_save'); ?></a>
 					</div>
 				</div>
-				
+				<div style="display:block:height:12px; clear: both;">&nbsp;</div>
 					<!-- DATA OBJECTS -->
 				<fieldset>
-					<legend><?php echo lang('sl_data_objects'); ?></legend>
+					<legend style="margin-bottom:0px;"><?php echo lang('sl_data_objects'); ?></legend>
 					<div class="help-inline">
 						<?php echo form_dropdown('data_object_select',$characters_list,'' ,'',' id="data_object_select"'); ?>
 						<span class="help-inline">
@@ -92,15 +92,16 @@
 					</tbody>
 					</table>
 				</fieldset>
-					
+				<div style="display:block:height:12px; clear: both;">&nbsp;</div>
 					<!-- ARTICLES -->
 				<fieldset>
-					<legend><?php echo lang('sl_articles'); ?></legend>
-					<div class="help-inline">
-						<a class="btn btn-small" href="<?php echo site_url(SITE_AREA.'/custom/storylines/articles/create/'.$storyline->id); ?>" id="add_article">
-							<i class="icon-plus"></i> <?php echo lang('sl_add_article'); ?>
-						</a>
-					</div>
+					<legend style="margin-bottom:0px;"><?php echo lang('sl_articles'); ?>
+						<div class="help-inline right">
+							<a class="btn btn-small" href="<?php echo site_url(SITE_AREA.'/custom/storylines/articles/create/'.$storyline->id); ?>" id="add_article">
+								<i class="icon-plus"></i> <?php echo lang('sl_add_article'); ?>
+							</a>
+						</div></legend>
+
 					<table class="table table-striped table-bordered" id="articles">
 					<thead>
 					<tr>
@@ -126,17 +127,21 @@
 					</tbody>
 					</table>
 				</fieldset>
-			
+				<div style="display:block:height:12px; clear: both;">&nbsp;</div>
 					<!-- CONDITIONS -->
 				<fieldset>
-					<legend><?php echo lang('sl_conditions'); ?></legend>
+					<legend style="margin-bottom:0px;"><?php echo lang('sl_conditions'); ?>
+						<div class="help-inline right">
+							<a href="#" class="btn btn-small" id="edit_conditions"><i class="icon-pencil"></i> Edit Conditions</a>
+						</div>
+					</legend>
 					<div id="cond_waitload" class="well center" style="display:none;">
 						<img src="<?php echo(TEMPLATE::theme_url('images/ajax-loader.gif'));?>" width="28" height="28" border="0" align="absmiddle" /><br />Operation in progress. Please wait...
 					</div>
 					<table class="table table-striped table-bordered" id="conditions_list_table">
 					<thead>
 					<tr>
-						<th class="column-check"><input class="check-all" type="checkbox" /></th>
+						<th><?php echo lang('sl_category'); ?></th>
 						<th width="75%"><?php echo lang('sl_condition'); ?></th>
 						<th><?php echo lang('sl_value'); ?></th>
 					</tr>
@@ -145,14 +150,14 @@
 					<tr><td>&times;</td></tr>
 					</tbody>
 					</table>
-					<a href="#" class="btn btn-small" id="edit_conditions"><i class="icon-pencil"></i> Edit Conditions</a>
-				
+
 				</fieldset>
-				
+
 				<?php if (isset($comment_form) && !empty($comment_form)) : ?>
-					<!-- COMMENTS -->
+				<div style="display:block:height:12px; clear: both;">&nbsp;</div>
+				<!-- COMMENTS -->
 				<fieldset>
-					<legend><?php echo lang('sl_comments'); ?></legend>
+					<legend style="margin-bottom:0px;"><?php echo lang('sl_comments'); ?></legend>
 					<?php echo ($comment_form); ?>
 				</fieldset>
 				<?php
@@ -214,11 +219,17 @@
 				<?php endif; ?>
 				
 			</fieldset>
-			
+
 				<!-- FREQUENCY -->
 			<fieldset>
 				<legend><?php echo lang('sl_frequency') ?></legend>
-						<!-- Category -->
+				<!--div class="control-group">
+					<div class="controls">
+						<?php $checked = (isset($unique_status) && $unique_status == 1) ? 'checked="checked"' : ''; ?>
+						<input type="checkbox" name="use_only_once" value="1"<?php echo $checked; ?> /> <?php echo lang('sl_use_once') ?>
+					</div>
+				</div-->
+					<!-- frequencies -->
 				<?php if (isset($frequencies) && is_array($frequencies) && count($frequencies)) : ?>
 				<div class="control-group <?php echo form_error('random_frequency') ? 'error' : '' ?>">
 					<label class="control-label"><?php echo lang('sl_frequency') ?></label>

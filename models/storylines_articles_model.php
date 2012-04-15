@@ -47,7 +47,7 @@ class Storylines_articles_model extends BF_Model
 		// Pull all starting articles without predecessors first
 		$articles = $this->get_parent_articles($storyline_id);
 
-		if (count($articles))
+		if (isset($articles) && is_array($articles) && count($articles) > 0)
 		{
 			foreach ($articles as $article)
 			{

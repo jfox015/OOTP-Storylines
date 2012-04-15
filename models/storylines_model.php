@@ -174,6 +174,26 @@ class Storylines_model extends BF_Model
 		return parent::find_all();
 	}
 	//---------------------------------------------------------
+	public function get_unique_status($storyline_id = false)
+	{
+		if ($storyline_id === false)
+		{
+			return false;
+		}
+		$query = $this->db->select('value')
+				  ->where('var_id',$storyline_id)
+				  ->where('level_type',1)
+				  ->where('condition_id',79)
+				  ->get('storylines_conditions');
+		$value = 0;
+		if ($query->num_rows() > 0)
+		{
+			$row = $query->row();
+			$value = $row->value;
+		}
+		$query->free_result();
+		return $value;
+	}
 
 	//---------------------------------------------------------
 	//	!DATA OBJECT AND TRIGGER AJAX FUNCTIONS
@@ -221,11 +241,11 @@ class Storylines_model extends BF_Model
 			return false;
 		}
 		$dbprefix = $this->db->dbprefix;
-		$query = $this->db->select('storylines_data_objects.id, list_storylines_data_objects.name, list_storylines_data_objects.slug, list_storylines_data_objects.description, (SELECT COUNT('.$dbprefix.'storylines_conditions.id) FROM '.$dbprefix.'storylines_conditions LEFT JOIN '.$dbprefix.'storylines_data_objects ON '.$dbprefix.'storylines_data_objects.id = '.$dbprefix.'storylines_conditions.var_id WHERE '.$dbprefix.'storylines_conditions.level_type =2) as condition_count')
+		$query = $this->db->select('storylines_data_objects.id, list_storylines_data_objects.name, list_storylines_data_objects.slug, list_storylines_data_objects.description, (SELECT COUNT('.$dbprefix.'storylines_conditions.id) FROM '.$dbprefix.'storylines_conditions WHERE '.$dbprefix.'storylines_conditions.var_id = '.$dbprefix.'storylines_data_objects.id AND '.$dbprefix.'storylines_conditions.level_type = 3) as condition_count')
 				 ->join('list_storylines_data_objects','list_storylines_data_objects.id = storylines_data_objects.object_id','right outer')
 				 ->where('storyline_id',$storyline_id)
 				 ->get('storylines_data_objects');
-		
+		//echo($this->db->last_query()."<br />");
 		$data_objects = array();
 		if ($query->num_rows() > 0) 
 		{
