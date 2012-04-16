@@ -9,7 +9,7 @@ class Storylines_articles_model extends BF_Model
 	protected $table		= 'storylines_articles';
 	protected $key			= 'id';
 	protected $soft_deletes	= true;
-	protected $date_format	= 'datetime';
+	protected $date_format	= 'int';
 	protected $set_created	= true;
 	protected $set_modified = true;
 	
@@ -46,12 +46,14 @@ class Storylines_articles_model extends BF_Model
 		
 		// Pull all starting articles without predecessors first
 		$articles = $this->get_parent_articles($storyline_id);
-
+		//echo("articles length = ".sizeof($articles));
 		if (isset($articles) && is_array($articles) && count($articles) > 0)
 		{
 			foreach ($articles as $article)
 			{
+				//echo("parent article id = ".$article->id);
 				$article->children = $this->get_article_children_details($article->id);
+				//echo("children length = ".sizeof($article->children));
 			}
 		}
 		return $articles;
@@ -561,18 +563,23 @@ class Storylines_articles_model extends BF_Model
 			return false;
 		}
 		$children = array();
-		$str_ids = "(".implode(",",$this->get_article_children($article_id)).")";
-		if ($str_ids != "()") 
+		$str_ids = implode(",",($this->get_article_children($article_id)));
+		//echo('Str ids = '.$str_ids.'<br />');
+		if (!empty($str_ids))
 		{
 			$this->db->select('id, storyline_id, subject, wait_days_min, wait_days_max, in_game_message, comments_thread_id, created_on, modified_on, deleted')
 					->where('deleted',0)
-					->where_in('id',$str_ids);
+					->where('id IN ('.$str_ids.')');
 			$child_results = $this->db->get($this->table);
+
+			//echo($this->db->last_query().'<br />');
+			//echo('num children of artilce '.$article_id.' = '.$child_results->num_rows().'<br />');
 			if ($child_results->num_rows() > 0)
 			{			
 				foreach ($child_results->result() as $child)
 				{	
-					$child->children = $this->get_article_children($child->id);
+					$child->children = $this->get_article_children_details($child->id);
+					//echo('Article '.$child->id.' children count = '.sizeof($child->children).'<br />');
 					array_push($children,$child);
 				}
 			}

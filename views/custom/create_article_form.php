@@ -82,7 +82,14 @@
 	
 	<div class="form-actions">
 		<input type="hidden" name="storyline_id" value="<?php echo $storyline_id; ?>" />
-		<input type="hidden" name="predecessor_id" value="<?php echo $predecessor_id; ?>" />
+		<?php
+		if (isset($predecessor_id) && !empty($predecessor_id))
+		{
+		?>
+			<input type="hidden" name="predecessor_id" value="<?php echo $predecessor_id; ?>" />
+		<?php
+		};
+		?>
 		<input type="submit" name="submit" class="btn btn-primary" value="<?php echo lang('bf_action_save') .' '. lang('sl_article') ?>" />
 	</div>
 	

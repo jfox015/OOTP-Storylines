@@ -106,7 +106,7 @@
 					<thead>
 					<tr>
 						<th class="column-check"><input class="check-all" type="checkbox" /></th>
-						<th width="50%"><?php echo lang('sl_title'); ?></th>
+						<th width="65%"><?php echo lang('sl_title'); ?></th>
 						<th><?php echo lang('sl_actions'); ?></th>
 					</tr>
 					</thead>

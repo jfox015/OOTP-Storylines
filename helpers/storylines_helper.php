@@ -282,9 +282,10 @@ if (!function_exists('make_spaces'))
 	{
 		$str_out = '';
 		$i = $count;
-		while ($i > 0)
+		while ($i > $count)
 		{
-			$str_out .= "&nbsp;&nbsp;";
+			$str_out .= "&nbsp;&nbsp;&nbsp;&nbsp;";
+			$i--;
 		}
 		return $str_out;
 	}
@@ -305,14 +306,14 @@ if (!function_exists('draw_articles'))
 			
 				$space = '';
 				if ($level > 1) { $space = make_spaces($level); }
-				$link_edit = site_url(SITE_AREA.'/custom/storylines/articles/edit/'.$article->id,$space.$level.".".$count." - ".$article->subject);
+				$link_edit = site_url(SITE_AREA.'/custom/storylines/articles/edit/'.$article->id);
 				$id = $article->id;
-				$storyline_id = $article->storyline_id;
-				$subject = $article->subject;
-				$details = lang('sl_details');
+				//$storyline_id = $article->storyline_id;
+				$subject = $space.$level.".".$count." - ".$article->subject;
+				//$details = lang('sl_details');
 				$edit = lang('sl_edit');
 				$delete = lang('sl_delete');
-				$html_out = <<<EOL
+				$html_out .= <<<EOL
 				<tr>
 					<td>
 						<input type="checkbox" name="checked[]" value="{$id}" />
@@ -328,11 +329,12 @@ if (!function_exists('draw_articles'))
 					</td>
 				</tr>
 EOL;
-				if (isset($article->children) && is_array($article->children) && sizeof($article->children) > 0) 
+				$count++;
+				if (isset($article->children) && is_array($article->children) && sizeof($article->children) > 0)
 				{
 					$html_out .= draw_articles($article->children, $level++);
 				}
-				$count++;
+
 			}
 		}
 		return $html_out;

@@ -139,7 +139,7 @@ class Articles extends Admin_Controller {
 				$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_create').' '.$this->current_user->display_name, 'storylines/articles');
 
 				Template::set_message('Storyline Article successfully created.', 'success');
-				$dest = '/custom/stoylines/edit/'.$storyline_id;
+				$dest = '/custom/storylines/edit/'.$storyline_id;
 				if ($this->input->post('edit_after_create')) {
 					$dest = '/custom/stoylines/articles/edit/'.$id;
 				}
@@ -147,13 +147,16 @@ class Articles extends Admin_Controller {
 			}
 			else
 			{
-				Template::set_message('There was a problem creating the storyline: '. $this->storylines_articles_model->error);
+				Template::set_message('There was a problem creating the article: '. $this->storylines_articles_model->error);
 			}
 		}
         
 		Template::set('game_message_types', $this->storylines_articles_model->get_game_message_types());
 		Template::set('storyline_id', $storyline_id);
-		Template::set('predecessor_id', (isset($predecessor_id) && !empty($predecessor_id)? $predecessor_id : ''));
+		if (isset($predecessor_id) && !empty($predecessor_id))
+		{
+			Template::set('predecessor_id',$predecessor_id);
+		}
 		Template::set('toolbar_title', lang('sl_create_article'));
 		Template::set_view('storylines/custom/create_article_form');
 		Template::render();
@@ -399,7 +402,7 @@ class Articles extends Admin_Controller {
 					'subject'=>$this->input->post('subject'),
 					'text'=>$this->input->post('text'),
 					'reply'=>$this->input->post('reply'),
-					'in_game_message'=>($this->input->post('in_game_message')) ? $this->input->post('in_game_message') : 1
+					'in_game_message'=>($this->input->post('in_game_message')) ? (int)$this->input->post('in_game_message') : 1
 		);
 
 		$success = null;
@@ -414,13 +417,15 @@ class Articles extends Admin_Controller {
 				}
 				$thread_id = $this->comments_model->new_comments_thread();
 			}
-			$data = $data + array('storyline_id'=>$this->input->post('storyline_id'),
-								  'comments_thread_id'=>$thread_id);
+			$data = $data + array('storyline_id'=>(int)$this->input->post('storyline_id'),
+								  'comments_thread_id'=>$thread_id,
+								  'created_by'=>$this->current_user->id);
 			$success = $this->storylines_articles_model->insert($data);
 			$id = $this->db->insert_id();
 		}
 		else	// Update
 		{
+			$data = $data + array('modified_by'=>$this->current_user->id);
 			$success = $this->storylines_articles_model->update($id, $data);
 		}
 
@@ -449,7 +454,7 @@ class Articles extends Admin_Controller {
 				$success = $this->storylines_articles_model->set_article_predecessors($pred_ids);
 			}
 		}
-		return $success;
+		return $id;
 	}
 }
 // End main module class
