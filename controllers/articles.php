@@ -46,8 +46,8 @@ class Articles extends Admin_Controller {
 		$users = $this->author_model->get_users_select();
 		Template::set('users', $users);
 		
-        $storyline_id = $this->uri->segment(5);
-		$offset = $this->uri->segment(6);
+        $storyline_id = $this->uri->segment(6);
+		$offset = $this->uri->segment(7);
 
         // Do we have any actions?
         if ($action = $this->input->post('submit'))
@@ -75,39 +75,40 @@ class Articles extends Admin_Controller {
             case 'author':
                 $author_id = (int)$this->input->get('author_id');
                 $where['storylines_articles.created_by'] = $author_id;
-                foreach ($users as $user)
+                foreach ($users as $user_id => $display_name)
                 {
-                    if ($user->user_id == $author_id)
+                    if ($user_id == $author_id)
                     {
-                        Template::set('filter_author', $user->username);
+                        Template::set('filter_author', $display_name);
                         break;
                     }
                 }
                 break;
             default:
-                $where['storylines_articles.category_id'] = 1;
-                $this->user_model->where('storylines.deleted', 0);
+                $this->user_model->where('storylines_articles.deleted', 0);
                 break;
         }
-
+		$where['storylines_articles.storyline_id'] = $storyline_id;
         $this->load->helper('ui/ui');
 		$dbprefix = $this->db->dbprefix;
         $this->storylines_articles_model->limit($this->limit, $offset)->where($where);
-        $this->storylines_articles_model->select('storylines_articles_model.id, sub, created_by, created_on, modified_on, modified_by');
+        $this->storylines_articles_model->select('storylines_articles.id, title, subject, created_by, created_on, modified_on, modified_by,
+												(SELECT COUNT('.$dbprefix.'storylines_conditions.id) FROM '.$dbprefix.'storylines_conditions WHERE '.$dbprefix.'storylines_conditions.var_id = '.$dbprefix.'storylines_articles.id AND level_type = 2) as condition_count,
+												(SELECT COUNT('.$dbprefix.'storylines_article_results.id) FROM '.$dbprefix.'storylines_article_results WHERE '.$dbprefix.'storylines_article_results.article_id = '.$dbprefix.'storylines_articles.id) as result_count');
 
-        Template::set('storylines', $this->storylines_articles_model->find_all());
+        Template::set('articles', $this->storylines_articles_model->find_all());
 
         // Pagination
         $this->load->library('pagination');
 
         $this->storylines_articles_model->where($where);
-        $total_stories = $this->storylines_articles_model->count_all();
+        $total_articles = $this->storylines_articles_model->count_all();
 		
 
         $this->pager['base_url'] = site_url(SITE_AREA .'/custom/storylines/articles');
-        $this->pager['total_rows'] = $total_stories;
+        $this->pager['total_rows'] = $total_articles;
         $this->pager['per_page'] = $this->limit;
-        $this->pager['uri_segment']	= 5;
+        $this->pager['uri_segment']	= 7;
 
         $this->pagination->initialize($this->pager);
 
@@ -115,6 +116,7 @@ class Articles extends Admin_Controller {
 		Template::set('current_url', current_url());
         Template::set('filter', $filter);
 
+        Template::set_view('storylines/custom/articles');
         Template::set('toolbar_title', lang('sl_articles'));
         Template::render();
     }
@@ -141,7 +143,7 @@ class Articles extends Admin_Controller {
 				Template::set_message('Storyline Article successfully created.', 'success');
 				$dest = '/custom/storylines/edit/'.$storyline_id;
 				if ($this->input->post('edit_after_create')) {
-					$dest = '/custom/stoylines/articles/edit/'.$id;
+					$dest = '/custom/storylines/articles/edit/'.$id;
 				}
 				Template::redirect(SITE_AREA .$dest);	
 			}
@@ -206,9 +208,9 @@ class Articles extends Admin_Controller {
 			Template::set('article', $article);
 			
 			Template::set('characters', $this->storylines_model->get_data_objects($article->storyline_id));
-			Template::set('tokens', $this->storylines_tokens_model->list_as_select_by_category());
-			Template::set('conditions', $this->storylines_conditions_model->list_as_select_by_category());
-			Template::set('results', $this->storylines_results_model->find_all());
+			//Template::set('tokens', $this->storylines_tokens_model->list_as_select_by_category());
+			//Template::set('conditions', $this->storylines_conditions_model->list_as_select_by_category());
+			//Template::set('results', $this->storylines_results_model->find_all());
 			Template::set('game_message_types', $this->storylines_articles_model->get_game_message_types());
 			
 			Template::set('storyline', $this->storylines_model->find($article->storyline_id));
@@ -216,7 +218,7 @@ class Articles extends Admin_Controller {
 			
 			Template::set('article_conditions', $this->storylines_articles_model->get_article_conditions($article_id));
 			Template::set('article_results', $this->storylines_articles_model->get_article_results_for_form($article_id));
-			Template::set('article_perdecessor_ids', $this->storylines_articles_model->get_article_predecessor_ids($article_id));
+			Template::set('article_predecessor_ids', $this->storylines_articles_model->get_article_predecessor_ids($article_id));
 			//Template::set('article_predecessors', $this->storylines_articles_model->get_article_predecessors($article_id));
 			
 			Template::set('all_articles', $this->storylines_articles_model->get_all_articles($article->storyline_id,$article->id,false));
@@ -259,7 +261,7 @@ class Articles extends Admin_Controller {
 			}
 		}
 
-		if (!empty($items))
+		if (is_array($items) && count($items))
 		{
 			$this->auth->restrict('Storylines.Content.Manage');
 
@@ -278,7 +280,7 @@ class Articles extends Admin_Controller {
 						$user = $this->user_model->find($this->current_user->id);
 						$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->current_user->username : ($this->settings_lib->item('auth.use_usernames') ? $user->username : $user->email);
 						$this->activity_model->log_activity($this->current_user->id, lang('us_log_delete') . ': '.$log_name, 'storylines');
-						Template::set_message('The Storyline was successfully deleted.', 'success');
+						Template::set_message('The article was successfully deleted.', 'success');
 						
 						if (in_array('comments',module_list(true))) {
 							modules::run('comments/purge_thread',$item->comments_thread_id);
@@ -298,7 +300,13 @@ class Articles extends Admin_Controller {
 		{
 				Template::set_message(lang('us_empty_id'), 'error');
 		}
-		redirect(SITE_AREA .'/custom/storylines/edit/'.$storyline_id);
+		if ($storyline_id != -1) {
+			redirect(SITE_AREA .'/custom/storylines/edit/'.$storyline_id);
+		}
+		else
+		{
+			redirect(SITE_AREA .'/custom/storylines/');
+		}
 	}
 	/*
 		Method:
@@ -382,7 +390,7 @@ class Articles extends Admin_Controller {
 
 	private function save_article($type='insert', $id = 0)
 	{
-		$db_prefix = $this->db->dbprefix;
+		//$db_dbprefix = $this->db->dbdbprefix;
 
 		$this->form_validation->set_rules('title', lang('sl_title'), 'required|trim|max_length[255]|xss_clean');
 		$this->form_validation->set_rules('description', lang('sl_description'), 'trim|strip_tags|xss_clean');
@@ -390,7 +398,7 @@ class Articles extends Admin_Controller {
 		$this->form_validation->set_rules('text', lang('sl_text'), 'required|trim|strip_tags|xss_clean');
 		$this->form_validation->set_rules('reply', lang('sl_reply'), 'strip_tags|trim|xss_clean');
 		$this->form_validation->set_rules('in_game_message', lang('sl_in_game_message'), 'required|strip_tags|numeric|trim|xss_clean');
-		$this->form_validation->set_rules('predecessor_id', lang('sl_predecessor'), 'strip_tags|numeric|trim|max_length[11]|xss_clean');
+		$this->form_validation->set_rules('predecessor_id', lang('sl_predecessor'), 'strip_tags|numeric|trim|xss_clean');
 
 		if ($this->form_validation->run() === false)
 		{
@@ -420,13 +428,13 @@ class Articles extends Admin_Controller {
 			$data = $data + array('storyline_id'=>(int)$this->input->post('storyline_id'),
 								  'comments_thread_id'=>$thread_id,
 								  'created_by'=>$this->current_user->id);
-			$success = $this->storylines_articles_model->insert($data);
+			$id_success = $this->storylines_articles_model->insert($data);
 			$id = $this->db->insert_id();
 		}
 		else	// Update
 		{
 			$data = $data + array('modified_by'=>$this->current_user->id);
-			$success = $this->storylines_articles_model->update($id, $data);
+			$id_success = $this->storylines_articles_model->update($id, $data);
 		}
 
 		$id_list = false;
@@ -439,8 +447,9 @@ class Articles extends Admin_Controller {
 		{
 			$id_list =  $this->input->post('pred_ids');
 		}
+		//echo("id_list length = ".sizeof($id_list)."<br />\n");
 		// SET or update article predecessors
-		if ($success && $id != 0 && $id_list !== false)
+		if ($id_success !== false && $id_list !== false)
 		{
 			$pred_ids = array();
 			if (is_array($id_list) && count($id_list))
@@ -451,7 +460,10 @@ class Articles extends Admin_Controller {
 												'article_id' => $id,
 												'predecessor_id' => $pred_id));
 				}
-				$success = $this->storylines_articles_model->set_article_predecessors($pred_ids);
+				$success = $this->storylines_articles_model->set_article_predecessors($id,$pred_ids);
+				$this->load->model('storylines_history_model');
+				$this->storylines_history_model->insert(array('var_id'=>$id,'object_type'=>2,'added'=>'Predecessor(s): '.implode(",",$id_list),'created_by'=>$this->current_user->id));
+
 			}
 		}
 		return $id;

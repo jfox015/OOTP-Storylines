@@ -46,14 +46,14 @@ class Storylines_articles_model extends BF_Model
 		
 		// Pull all starting articles without predecessors first
 		$articles = $this->get_parent_articles($storyline_id);
-		//echo("articles length = ".sizeof($articles));
+		//echo("articles length = ".sizeof($articles)."<br />\n");
 		if (isset($articles) && is_array($articles) && count($articles) > 0)
 		{
 			foreach ($articles as $article)
 			{
-				//echo("parent article id = ".$article->id);
+				//echo("parent article id = ".$article->id."<br />\n");
 				$article->children = $this->get_article_children_details($article->id);
-				//echo("children length = ".sizeof($article->children));
+				//echo("children length = ".sizeof($article->children)."<br />\n");
 			}
 		}
 		return $articles;
@@ -135,10 +135,10 @@ class Storylines_articles_model extends BF_Model
 		$select = '';
 		if ($except_article_id !== false)
 		{
-			$select = 'text, description, reply,';
+			$select = 'storylines_articles.text, storylines_articles.description, storylines_articles.wait_days_min, storylines_articles.wait_days_max, storylines_articles.comments_thread_id, storylines_articles.created_on, storylines_articles.created_by, storylines_articles.modified_on, storylines_articles.deleted, storylines_articles.modified_by, storylines_articles.reply,';
 		}
 		$prefix = $this->db->dbprefix;
-		return $this->select($select.'storylines_articles.id, title, in_game_message, subject, 
+		return $this->select($select.'storylines_articles.id, storylines_articles.title, in_game_message, storylines_articles.subject,
 							(SELECT COUNT('.$prefix.'storylines_conditions.id) FROM '.$prefix.'storylines_conditions WHERE '.$prefix.'storylines_conditions.var_id = '.$prefix.'storylines_articles.id AND level_type = 2) as condition_count,
 							(SELECT COUNT('.$prefix.'storylines_article_results.id) FROM '.$prefix.'storylines_article_results WHERE '.$prefix.'storylines_article_results.article_id = '.$prefix.'storylines_articles.id) as result_count')
 							->find_all_by('storyline_id',$storyline_id);
@@ -488,7 +488,7 @@ class Storylines_articles_model extends BF_Model
 			$this->error .= "No article ID was received to retrieve details.<br/>\n";
 			return false;
 		}
-		return $this->select('subject, storyline_id, wait_days_min, wait_days_max, in_game_message, comment_thread_id, created_on, modified_on, deleted')
+		return $this->select('title, subject, storyline_id, wait_days_min, wait_days_max, in_game_message, comment_thread_id, created_on, modified_on, deleted')
 					->find($article_id);
 	}
 	/*
@@ -537,7 +537,7 @@ class Storylines_articles_model extends BF_Model
 		$this->db->join('storylines_article_predecessors','storylines_article_predecessors.article_id = storylines_articles.id','left outer')
 				 ->where('storylines_article_predecessors.article_id IS NULL')
 				 ->where('storylines_articles.deleted',0);
-		$articles = $this->select('storylines_articles.id, storylines_articles.storyline_id, subject, wait_days_min, wait_days_max, in_game_message, comments_thread_id, created_on, modified_on, deleted')->find_all_by('storylines_articles.storyline_id',$storyline_id);
+		$articles = $this->select('storylines_articles.id, storylines_articles.storyline_id, title, subject, wait_days_min, wait_days_max, in_game_message, comments_thread_id, created_on, modified_on, deleted')->find_all_by('storylines_articles.storyline_id',$storyline_id);
 		
 		return $articles;
 	}
@@ -567,7 +567,7 @@ class Storylines_articles_model extends BF_Model
 		//echo('Str ids = '.$str_ids.'<br />');
 		if (!empty($str_ids))
 		{
-			$this->db->select('id, storyline_id, subject, wait_days_min, wait_days_max, in_game_message, comments_thread_id, created_on, modified_on, deleted')
+			$this->db->select('id, storyline_id, title, subject, wait_days_min, wait_days_max, in_game_message, comments_thread_id, created_on, modified_on')
 					->where('deleted',0)
 					->where('id IN ('.$str_ids.')');
 			$child_results = $this->db->get($this->table);

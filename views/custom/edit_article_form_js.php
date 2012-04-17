@@ -9,7 +9,6 @@
 */
 function load_existing_results(id)
 {
-	$('#cond_waitload').css('display','block');
 	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/results/get_results_list")); ?>/"+id, function(data,status) {
 		handle_ajax_reponse (status, data, 'existing_conditions', 'rslt');
 	});
@@ -22,7 +21,7 @@ function load_existing_results(id)
 */
 function load_result_list(id)
 {
-	$('#cond_waitload').css('display','block');
+	$('#rslt_waitload').css('display','block');
 	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/results/get_results_list")); ?>/"+ id, function(data,status) {
 		handle_ajax_reponse (status, data, 'result_list', 'rslt');
 	});

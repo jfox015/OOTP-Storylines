@@ -21,11 +21,11 @@
 		<tfoot>
 			<tr>
 				<td colspan="6">
-					<?php echo lang('bf_with_selected') ?>
-					<input type="submit" name="submit" class="btn" value="<?php echo lang('sl_action_activate') ?>">
-					<input type="submit" name="submit" class="btn" value="<?php echo lang('sl_action_deactivate') ?>">
-					<input type="submit" name="submit" class="btn-danger" id="delete-me" value="<?php echo lang('bf_action_delete') ?>" onclick="return confirm('<?php echo lang('sl_delete_confirm'); ?>')">
-				</td>
+				<?php echo lang('bf_with_selected') ?>
+				<input type="submit" name="submit" class="btn-success" value="<?php echo lang('sl_action_activate') ?>">
+				<input type="submit" name="submit" class="btn-warning" value="<?php echo lang('sl_action_deactivate') ?>">
+				<input type="submit" name="submit" class="btn-danger" id="delete-me" value="<?php echo lang('bf_action_delete') ?>" onclick="return confirm('<?php echo lang('sl_delete_confirm'); ?>')">
+			</td>
 			</tr>
 		</tfoot>
 		<?php endif; ?>

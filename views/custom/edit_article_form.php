@@ -22,12 +22,10 @@
 						<div id="modal_waitload" class="well center" style="display:none;">
 							<img src="<?php echo(TEMPLATE::theme_url('images/ajax-loader.gif'));?>" width="28" height="28" border="0" align="absmiddle" /><br />Operation in progress. Please wait...
 						</div>
-						<?php if (isset($conditions)) { ?>
 						<div id="modal_ajaxStatusBox" style="display:none;"><div id="modal_ajaxStatus" class="alert"></div></div>
 						<select id="condition_select"></select>
 						<a href class="btn btn-small" id="add_object_condition">Add</a>
 						<span class="help-inline"></span>
-						<?php } ?>
 
 						<table class="table table-striped table-bordered" id="conditions_table">
 						<tbody>
@@ -48,7 +46,7 @@
 					<div class="control-group <?php echo form_error('title') ? 'error' : '' ?>">
 						 <label class="control-label" for="title"><?php echo lang('sl_title') ?></label>
 						<div class="controls">
-							<input type="text" class="span7" name="title" id="title" value="<?php echo isset($storyline) ? $storyline->title : set_value('title') ?>" />
+							<input type="text" class="span7" name="title" id="title" value="<?php echo isset($article) ? $article->title : set_value('title') ?>" />
 							<?php if (form_error('title')) echo '<span class="help-inline">'. form_error('title') .'</span>'; ?>
 						</div>
 					</div>
@@ -57,7 +55,7 @@
 					<div class="control-group <?php echo form_error('description') ? 'error' : '' ?>">
 						 <label class="control-label"><?php echo lang('sl_description') ?></label>
 						<div class="controls">
-							<?php echo form_textarea( array( 'name' => 'description', 'id' => 'description', 'class'=>'span7','rows' => '5', 'cols' => '80', 'value' => isset($storyline) ? $storyline->description : set_value('description') ) )?>
+							<?php echo form_textarea( array( 'name' => 'description', 'id' => 'description', 'class'=>'span7','rows' => '5', 'cols' => '80', 'value' => isset($article) ? $article->description : set_value('description') ) )?>
 							<?php if (form_error('description')) echo '<span class="help-inline">'. form_error('description') .'</span>'; ?>
 						</div>
 					</div>
@@ -70,7 +68,7 @@
 					<div class="control-group <?php echo form_error('subject') ? 'error' : '' ?>">
 						 <label class="control-label" for="subject"><?php echo lang('sl_subject') ?></label>
 						<div class="controls">
-							<input type="text" class="span6" name="subject" id="subject" value="<?php echo isset($article) ? $article->subject : set_value('title') ?>" />
+							<input type="text" class="span7" name="subject" id="subject" value="<?php echo isset($article) ? $article->subject : set_value('title') ?>" />
 							<?php if (form_error('subject')) echo '<span class="help-inline">'. form_error('subject') .'</span>'; ?>
 						</div>
 					</div>
@@ -79,7 +77,7 @@
 					<div class="control-group <?php echo form_error('text') ? 'error' : '' ?>">
 						 <label class="control-label"><?php echo lang('sl_text') ?></label>
 						<div class="controls">
-							<?php echo form_textarea( array( 'name' => 'text', 'id' => 'text', 'class'=>'span6','rows' => '5', 'cols' => '80', 'value' => isset($article) ? $article->text : set_value('text') ) )?>
+							<?php echo form_textarea( array( 'name' => 'text', 'id' => 'text', 'class'=>'span7','rows' => '5', 'cols' => '80', 'value' => isset($article) ? $article->text : set_value('text') ) )?>
 							<?php if (form_error('text')) echo '<span class="help-inline">'. form_error('text') .'</span>'; ?>
 						</div>
 					</div>
@@ -93,15 +91,14 @@
 					<div class="control-group <?php echo form_error('reply') ? 'error' : '' ?>">
 						 <label class="control-label" for="reply"><?php echo lang('sl_reply') ?></label>
 						<div class="controls">
-							<input type="text" class="span6" name="reply" id="reply" value="<?php echo isset($article) ? $article->reply : set_value('reply') ?>" />
+							<input type="text" class="span7" name="reply" id="reply" value="<?php echo isset($article) ? $article->reply : set_value('reply') ?>" />
 							<?php if (form_error('reply')) echo '<span class="help-inline">'. form_error('reply') .'</span>'; ?>
-							<br /><?php echo lang('sl_reply_note'); ?>
+							
 						</div>
 					</div>
-					
+					<div class="well"><?php echo lang('sl_reply_note'); ?></div>
 				</fieldset>
 
-				<?php if (isset($results) && is_array($results) && count($results)) : ?>
 				<div style="display:block:height:12px; clear: both;">&nbsp;</div>
 
 				<!-- RESULTS -->
@@ -110,7 +107,6 @@
 					<div class="help-inline right">
 						<a href="#" class="btn btn-small" id="edit_results"><i class="icon-pencil"></i> Edit Results</a>
 					</div>
-
 					</legend>
 					
 					<div id="rslt_waitload" class="well center" style="display:none;">
@@ -131,9 +127,7 @@
 					</tbody>
 					</table>
 				</fieldset>
-				<?php
-				endif;
-				?>
+
 				<div style="display:block:height:12px; clear: both;">&nbsp;</div>
 
 				<!-- CONDITIONS -->
@@ -239,7 +233,7 @@
 					foreach($all_articles as $tmp_article) : ?>
 					<tr>
 						<?php 
-						$checked = (isset($article_perdecessor_ids) && is_array($article_perdecessor_ids) && in_array($tmp_article->id, $article_perdecessor_ids) ? ' checked="checked"' : '');
+						$checked = (isset($article_predecessor_ids) && is_array($article_predecessor_ids) && in_array($tmp_article->id, $article_predecessor_ids) ? ' checked="checked"' : '');
 						$icon_class = '';
 						switch ($tmp_article->in_game_message)
 						{

@@ -58,7 +58,7 @@ $('#save_conditions').click( function(e) {
     e.preventDefault();
 	var elems = $('.condition_frm');
 	// PREPARE JSON OBJECT FOR POST
-	console.log(elems);
+	//console.log(elems);
 	if (elems.length > 0)
 	{
 		var objs = [];
@@ -106,11 +106,7 @@ $('#save_conditions').click( function(e) {
 $('a[rel=delete_condition]').live('click', function(e) {
     e.preventDefault();
 	if (confirm("Are you sure you want to remove the selected condition?")) {
-		if (conditions_selected[this.id] != null)
-		{
-			//remove_condition(this.id);
-			$('#row_cond_'+this.id).remove();
-		}
+		$('#row_cond_'+this.id).remove();
 		var elems = $('.condition_frm');
 		if (elems.length == 0)
 			$('#save_conditions').attr('disabled',true);
@@ -119,7 +115,6 @@ $('a[rel=delete_condition]').live('click', function(e) {
 $('a[rel=delete_all]').live('click', function(e) {
     e.preventDefault();
 	if (confirm("Are you sure you want to remove all selected conditions?")) {
-		conditions_selected = [];
 		$('#conditions_table > tbody:last').empty();
 		$('#save_conditions').attr('disabled',true);
 	}
@@ -235,7 +230,14 @@ function draw_new_condition(data) {
 		case 1: // Value Range Slider
 			htmlOut += ' \t<label class="control-label"><a href="#" rel="tooltip" class="tooltips" data-original-title="' + obj.description + '">' + condName + '</a> '+obj.value_range_min+' - '+obj.value_range_max+'</label>';
 			htmlOut += ' \t<div id="cond_slider_'+ obj.id +'"></div>';
-			htmlOut += ' \t<span id="val_'+ obj.id + '" style="color:#0073EA;font-weight:bold;"></span><input type="hidden" class="condition_frm" id="'+ obj.id + '" value="" />\n';
+			htmlOut += ' \t<div id="val_'+ obj.id + '" style="color:#0073EA;font-weight:bold;display:inline-block;float:left;"></div>';
+			if (condName.indexOf('modifier') != -1) {
+				htmlOut += '<div class="btn-group" style="display:inline-block;float:right;padding-left:15px;" data-toggle="buttons-radio">';
+				htmlOut += ' \t\t<button class="btn active" id="positive">+</button>';
+				htmlOut += ' \t\t<button class="btn" id="negative">-</button>';
+				htmlOut += ' \t</div>';
+			}
+			htmlOut += '<input type="hidden" class="condition_frm" id="'+ obj.id + '" value="" />\n';
 			makeSlider = true;
 			break;
 		case 2: // Yes/No Checkbox
@@ -311,7 +313,8 @@ function draw_condition_edit_table(data) {
 	$.each(data.result.items, function(i,item) {
 		draw_new_condition(item);
 	});
-	$('#save_conditions').attr('disabled',false);
+	if (data.result.items.length > 0)
+		$('#save_conditions').attr('disabled',false);
 };
 function draw_condition_list(data) {
 	var htmlOut = '';

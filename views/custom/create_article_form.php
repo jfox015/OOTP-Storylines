@@ -61,11 +61,10 @@
              <label class="control-label" for="reply"><?php echo lang('sl_reply') ?></label>
             <div class="controls">
                 <input type="text" class="span6" name="reply" id="reply" value="<?php echo set_value('reply') ?>" />
-				<?php if (form_error('reply')) echo '<span class="help-inline">'. form_error('reply') .'</span>'; ?><br />
-				<?php echo lang('sl_reply_note'); ?>
+				<?php if (form_error('reply')) echo '<span class="help-inline">'. form_error('reply') .'</span>'; ?>
             </div>
         </div>
-		
+		<div class="well"><?php echo lang('sl_reply_note'); ?></div>
 		
 			<!-- Edit after creating -->
 		<div class="control-group <?php echo form_error('edit_after_create') ? 'error' : '' ?>">

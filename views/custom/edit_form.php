@@ -82,8 +82,8 @@
 					<thead>
 					<tr>
 						<th class="column-check"><input class="check-all" type="checkbox" /></th>
-						<th width="45%"><?php echo lang('sl_title'); ?></th>
-						<th width="20%"><?php echo lang('sl_conditions'); ?></th>
+						<th width="50%"><?php echo lang('sl_name'); ?></th>
+						<th width="15%"><?php echo lang('sl_conditions'); ?></th>
 						<th><?php echo lang('sl_actions'); ?></th>
 					</tr>
 					</thead>
@@ -105,8 +105,8 @@
 					<table class="table table-striped table-bordered" id="articles">
 					<thead>
 					<tr>
-						<th class="column-check"><input class="check-all" type="checkbox" /></th>
-						<th width="65%"><?php echo lang('sl_title'); ?></th>
+						<th><?php echo lang('sl_type'); ?></th>
+						<th width="70%"><?php echo lang('sl_title'); ?></th>
 						<th><?php echo lang('sl_actions'); ?></th>
 					</tr>
 					</thead>
@@ -280,14 +280,14 @@
 				<?php 
 				if (isset($storyline->created_on) && !empty($storyline->created_on)) : ?>		
 				<tr>
-					<td>Created:</td>
+					<td><?php echo lang('sl_created'); ?>:</td>
 					<td><?php echo date('m/d/Y h:i:s', $storyline->created_on); ?> by 
 					<?php echo anchor('/users/profile/'.$storyline->created_by,find_author_name($storyline->created_by)); ?></td>
 				</tr>
 				<?php endif;
 				if (isset($storyline->modified_on) && !empty($storyline->modified_on)) : ?>		
 				<tr>
-					<td>Modified</td>
+					<td><?php echo lang('sl_modified'); ?>:</td>
 					<td><?php echo date('m/d/Y h:i:s', $storyline->modified_on) .'<div class="help-inline">('. anchor(SITE_AREA.'/custom/storylines/history/1/'.$storyline->id,'History') .')</div>'; ?></td>
 				</tr>
 				<?php endif; ?>		

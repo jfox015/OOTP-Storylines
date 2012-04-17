@@ -69,13 +69,14 @@ class Storylines_results_model extends BF_Model
 			{
 				if ($row->category_id != $curr_cat)
 				{
-					$curr_cat = $row->category_id;
-					$cat_label = $category_names[$curr_cat];
 					if (count($sub_array) > 0)
 					{
 						array_push($arrOut, array('label'=>$cat_label, 'options'=>$sub_array));
 						$sub_array = array();
 					}
+					$curr_cat = $row->category_id;
+					$cat_label = $category_names[$curr_cat];
+					
 				}
 				if (!isset($row->name) || empty($row->name))
 				{
@@ -98,7 +99,7 @@ class Storylines_results_model extends BF_Model
 	public function get_results($article_id = false)
 	{
 		$conditions = array();
-		$query = $this->db->select('storylines_article_results.id, storylines_article_results.result_id, list_storylines_results.slug, list_storylines_results.name, storylines_article_results.result_value, list_storylines_result_categories.name as category_name, list_storylines_results.value_type, list_storylines_result_value_types.name as type_name')
+		$query = $this->db->select('storylines_article_results.id, storylines_article_results.result_id, list_storylines_results.slug, list_storylines_results.name, storylines_article_results.result_value, list_storylines_result_categories.name as category_name, list_storylines_results.options, list_storylines_results.value_range_min, list_storylines_results.value_range_max, list_storylines_results.value_type, list_storylines_result_value_types.name as type_name')
 						  ->join('list_storylines_results','list_storylines_results.id = storylines_article_results.result_id','left')
 						  ->join('list_storylines_result_categories','list_storylines_results.category_id = list_storylines_result_categories.id','right outer')
 						  ->join('list_storylines_result_value_types','list_storylines_results.value_type = list_storylines_result_value_types.id','right outer')

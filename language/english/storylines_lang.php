@@ -19,8 +19,8 @@ $lang['sl_action_archive']			= 'Archive';
 $lang['sl_article_count']			= 'Articles';
 $lang['sl_creator']					= 'Created By';
 $lang['sl_delete_confirm']			= 'Are you sure you want to deleted the selected items? This will permanently remove items from the database. This action cannot be undone!\n\nDo you want to proceed?';
-$lang['sl_no_matches_found']		= 'No storylines were found that match your selection.';
-$lang['sl_no_article_matches']		= 'No articles were found that match your selection.';
+$lang['sl_no_matches_found']		= 'No items were found that match your selection.';
+$lang['sl_no_article_matches']		= 'No items were found that match your selection.';
 
 $lang['sl_create_storyline']		= 'Create Storyline';
 $lang['sl_title']					= 'Title';
@@ -48,6 +48,8 @@ $lang['sl_player_waives_ntc']		= 'Place on Waivers';
 $lang['sl_fine_player']				= 'Fine Player';
 $lang['sl_suspension_games']		= 'Suspend for (x) no. of games';
 $lang['sl_result_affects']			= 'Affects';
+$lang['sl_created']					= 'Created';
+$lang['sl_modified']				= 'Modified';
 
 $lang['sl_message_details']			= 'Message Details';
 $lang['sl_interactive_reponse']		= 'Interactive Response (OOTP 13 and up only)';
@@ -55,14 +57,17 @@ $lang['sl_interactive_reponse']		= 'Interactive Response (OOTP 13 and up only)';
 $lang['sl_tokens']					= 'Tokens';
 $lang['sl_tokens_details']			= 'Token Details';
 
+$lang['sl_edit_trigger']			= 'Edit Trigger';
 $lang['sl_trigger_details']			= 'Trigger Details';
 $lang['sl_activate_note']			= 'Make item active for use in the editor';
 $lang['sl_deactivate_note']			= 'Deactivate this item to prevent use in editor';
 
 $lang['sl_result_details']			= 'Result Details';
 $lang['sl_create_result']			= 'Create Result';
+$lang['sl_results_details']			= 'Result Details';
 $lang['sl_edit_result']				= 'Edit Result';
 $lang['sl_rules']					= 'Rules';
+$lang['sl_rules_note']				= 'Add extra validation rules here.';
 $lang['sl_value_type']				= 'Value Type';
 
 $lang['sl_conditions_details']		= 'Condition Details';

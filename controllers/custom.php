@@ -357,17 +357,28 @@ class Custom extends Admin_Controller {
 		$format = $this->uri->segment(5);
 		$statuses = $this->uri->segment(6);
 		$statuses = (isset($statuses) ? $statuses : 3);
+		$dataOut = array();
 		
 		if ((isset($format) && !empty($format)))
 		{
 			if (strpos($statuses,"|") !== false) $statuses = explode("|",$statuses);
 			$storylnes = $this->storylines_model->get_complete_storylines(false, false, $statuses);
 			$dataOut = export_storylines($format, $storylnes);
+		}	
+		if (isset($dataOut['header']) && !empty($dataOut['header']))
+		{
+			$this->output->set_header("Cache-Control: no-cache");
+			$this->output->set_header("Pragma: no-cache");
+			$this->output->set_header('Content-Disposition: attachment; filename=storylines.'.$format);
 			$this->output->set_header($dataOut['header']);
 			$this->output->set_output($dataOut['output']);
 		}
 		else
 		{
+			if (isset($dataOut['output']) && !empty($dataOut['output']))
+			{
+				Template::set_message($dataOut['output'],$dataOut['status']);
+			}
 			Template::set('toolbar_title', lang('sl_export'));
 			Template::render();
 		}

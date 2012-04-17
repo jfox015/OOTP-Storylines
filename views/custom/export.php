@@ -1,6 +1,6 @@
 <div class="container-fluid">
 	<div class="row-fluid">
-		<div class="span12">
+		<div class="span5">
 			<div class="notification error" style="display:none;">
 				&nsbp;
 			</div>
@@ -20,6 +20,12 @@
 			</p>
 			<button class="btn btn-primary" href="#" id="btn_export">Export Now</button>
 		</div><!--/span-->
+		<div class="span7">
+			<h3>Export Guide</h3>
+			<p>
+			TODO: Add export instructions here.
+			</p>
+		</span>
 	</div>
 </div>
 

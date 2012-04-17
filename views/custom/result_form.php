@@ -25,7 +25,7 @@
 
 			<!-- Name -->
         <div class="control-group <?php echo form_error('name') ? 'error' : '' ?>">
-             <label class="control-label" for="name"><?php echo lang('us_date') ?></label>
+             <label class="control-label" for="name"><?php echo lang('sl_name') ?></label>
             <div class="controls">
                 <input type="text" class="span8" name="name" id="name" value="<?php echo (isset($result) && isset($result->name)) ? $result->name : set_value('name') ?>" />
 				<span class="help-inline"><?php if (form_error('name')) echo form_error('name'); else echo lang('sl_name_note'); ?></span>
@@ -34,7 +34,7 @@
 
 			<!-- Description -->
         <div class="control-group <?php echo form_error('description') ? 'error' : '' ?>">
-             <label class="control-label"><?php echo lang('us_body') ?></label>
+             <label class="control-label"><?php echo lang('sl_description') ?></label>
             <div class="controls">
                 <?php echo form_textarea( array( 'class' => 'editor', 'class' => "span8", 'name' => 'description', 'id' => 'description', 'rows' => '8', 'cols' => '80', 'value' => isset($result) ? $result->description : set_value('description') ) )?>
 				<span class="help-inline"><?php if (form_error('description')) echo form_error('description'); else echo lang('sl_description_note'); ?></span>

@@ -46,26 +46,39 @@
 	<table class="table table-striped">
 		<thead>
 			<tr>
-				<th class="column-check"><input class="check-all" type="checkbox" /></th>
-				<th style="width: 3em"><?php echo lang('bf_id'); ?></th>
-				<th><?php echo lang('bf_title'); ?></th>
-				<th><?php echo lang('sl_article_count'); ?></th>
-				<th><?php echo lang('sl_creator'); ?></th>
-				<th style="width: 11em"><?php echo lang('sl_category'); ?></th>
-				<th style="width: 10em"><?php echo lang('sl_author_status'); ?></th>
-				<th style="width: 10em"><?php echo lang('sl_publish_status'); ?></th>
+				<th style="width: 5%" class="column-check"><input class="check-all" type="checkbox" /></th>
+				<th style="width: 5%"><?php echo lang('bf_id'); ?></th>
+				<th style="width: 25%"><?php echo lang('sl_title'); ?></th>
+				<th style="width: 5%"><?php echo lang('sl_article_count'); ?></th>
+				<th style="width: 10%"><?php echo lang('sl_creator'); ?></th>
+				<th style="width: 10%"><?php echo lang('sl_category'); ?></th>
+				<th style="width: 15%"><?php echo lang('sl_author_status'); ?></th>
+				<th style="width: 15%"><?php echo lang('sl_publish_status'); ?></th>
 			</tr>
 		</thead>
 		<?php if (isset($storylines) && is_array($storylines) && count($storylines)) : ?>
 		<tfoot>
 			<tr>
-				<td colspan="6">
+				<td colspan="8">
 					<?php echo lang('bf_with_selected') ?>
-					<input type="submit" name="submit" class="btn btn-success" value="<?php echo lang('sl_action_approve') ?>">
-					<input type="submit" name="submit" class="btn btn-warning" value="<?php echo lang('sl_action_review') ?>">
-					<input type="submit" name="submit" class="btn btn-danger" value="<?php echo lang('sl_action_reject') ?>">
-					<input type="submit" name="submit" class="btn btn-primary" value="<?php echo lang('sl_action_archive') ?>">
-					<input type="submit" name="submit" class="btn btn-danger" id="delete-me" value="<?php echo lang('bf_action_delete') ?>" onclick="return confirm('<?php echo lang('sl_delete_confirm'); ?>')">
+					<input type="submit" name="submit" class="btn-success" value="<?php echo lang('sl_action_approve') ?>">
+					<input type="submit" name="submit" class="btn-warning" value="<?php echo lang('sl_action_review') ?>">
+					<input type="submit" name="submit" class="btn-danger" value="<?php echo lang('sl_action_reject') ?>">
+					<input type="submit" name="submit" class="btn-primary" value="<?php echo lang('sl_action_archive') ?>">
+					<input type="submit" name="submit" class="btn-danger" id="delete-me" value="<?php echo lang('bf_action_delete') ?>" onclick="return confirm('<?php echo lang('sl_delete_confirm'); ?>')">
+					<?php
+					if ($filter=='')
+					{ ?>
+					<div class="help-inline btn-group">
+					  <button class="btn dropdown-toggle" data-toggle="dropdown">Export As... <span class="caret"></span></button>
+					  <ul class="dropdown-menu">
+						<li><?php echo anchor(SITE_AREA.'/custom/storylines/export/xml/3','XML'); ?></li>
+						<li><?php echo anchor(SITE_AREA.'/custom/storylines/export/sql/3','SQL'); ?></li>
+						<li><?php echo anchor(SITE_AREA.'/custom/storylines/export/json/3','JSON'); ?></li>
+					  </ul>
+					</div><!-- /btn-group --><?php 
+					}
+					?>
 				</td>
 			</tr>
 		</tfoot>

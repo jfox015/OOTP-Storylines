@@ -42,19 +42,22 @@ if (!function_exists('export_storylines'))
 {
 	function export_storylines($format = 'xml', $storylines = false)
 	{
-		$outArr = array('header'=>'','output'=>'');
+		$outArr = array('header'=>'','output'=>'','status'=>'');
 		$strOut = '';
 		$t = "\t";
 		$n = "\n";
-		if ($storylines === false || !is+array($storylines) || count($storylines) == 0)
+		if ($storylines === false || !is_array($storylines) || count($storylines) == 0)
 		{
-			return false;
+			$outArr['output'] = "No storyline data found to export";
+			$outArr['status'] = "Warning";
+			return $outArr;
 		}
 		switch ($format)
 		{
 			case 'json':
 				$outArr['header'] = 'Content-type: application/json'; 
 				$outArr['output'] = json_encode($storylines);
+				$outArr['status'] = "success";
 				break;
 			
 			case 'sql':
@@ -62,7 +65,7 @@ if (!function_exists('export_storylines'))
 				foreach ($storylines as $storyline)
 				{
 					$strOut .= 'INSERT INTO storylines (name, description, random_frequency, category_id, publish_status_id, authoring_status_id, created_on, modified_on, created_by, modified_by) VALUES ('.
-					'"'.addslashes(trim((string) $storyline->name)).'", "'.addslashes(trim((string)$storyline->description)).'", "'.$storyline->random_frequency.'", "'.$storyline->category_id.'", "'.$storyline->publish_status_id.'", "'.$storyline->authoring_status_id.
+					'"'.addslashes(trim((string) $storyline->title)).'", "'.addslashes(trim((string)$storyline->description)).'", "'.$storyline->random_frequency.'", "'.$storyline->category_id.'", "'.$storyline->publish_status_id.'", "'.$storyline->author_status_id.
 					'", "'.$storyline->created_on.'", "'.$storyline->modified_on.'", "'.$storyline->created_by.'", "'.$storyline->modified_by.');'.$n;
 					$strOut .= 'SET @new_sl_id = LAST_INSERT_ID();'.$n;
 					
@@ -87,7 +90,7 @@ if (!function_exists('export_storylines'))
 					{
 						foreach ($storyline->data_objects as $data_object)
 						{
-							$strOut .= 'INSERT INTO storylines_data_objects (id, storyline_id, object_id, object_num) VALUES (0, @new_sl_id, '.$data_object->id.', '.$data_object->num.');'.$n;
+							$strOut .= 'INSERT INTO storylines_data_objects (id, storyline_id, object_id, object_num) VALUES (0, @new_sl_id, '.$data_object->id.', '.$data_object->object_num.');'.$n;
 							$strOut .= 'SET @new_do_id = LAST_INSERT_ID();'.$n;
 
 							// add conditions to object
@@ -118,7 +121,7 @@ if (!function_exists('export_storylines'))
 							{
 								foreach ($article->predecessors as $predecessor)
 								{
-									$strOut .= 'INSERT INTO storylines_article_predecessors (id, storyline_id, article_id, predecessor_id) VALUES (0, @new_sl_id, @new_art_id, '.$predecessor->predecessor_id.');'.$n;
+									$strOut .= 'INSERT INTO storylines_article_predecessors (id, storyline_id, article_id, predecessor_id) VALUES (0, @new_sl_id, @new_art_id, '.$predecessor.');'.$n;
 								}
 							}
 							// add conditions to article
@@ -142,12 +145,13 @@ if (!function_exists('export_storylines'))
 				}
 				$outArr['header'] = 'Content-type: text/sql'; 
 				$outArr['output'] = $strOut;
+				$outArr['status'] = "success";
 				break;
 
 			case 'xml':
 			default:
 				$strOut .= '<?xml version="1.0" encoding="ISO-8859-1"?>'.$n.$n;
-				$strOut .= '<STORYLINE_DATABASE xmlver="1.1" Beta" fileversion="OOTPDev "'.date('Y-m-d H:i:s').'">'.$n.$n;
+				$strOut .= '<STORYLINE_DATABASE xmlver="1.3 Beta" fileversion="OOTPDev '.date('Y-m-d H:i:s').'" generator="SLE Community 0.1">'.$n.$n;
 				$strOut .= $t.'<STORYLINES>'.$n;
 				foreach ($storylines as $storyline)
 				{
@@ -205,19 +209,19 @@ if (!function_exists('export_storylines'))
 							$strOut .= $t.$t.$t.$t.'<ARTICLE type="'.$article->id.'"';
 							// add previous ids to article
 							$predecessorStr = '';
-							if (isset($article->predecessors) && is_array($article->predecessors) && count($article->predecessors))
+							if (isset($article->predecessors) && is_array($article->predecessors) && count($article->predecessors) > 0)
 							{
 								foreach ($article->predecessors as $predecessor)
 								{
 									if (!empty($predecessorStr)) $predecessorStr .= ",";
-									$predecessorStr .= $predecessor->predecessor_id;
+									$predecessorStr .= $predecessor;
 								}
 							}
 							if (!empty($predecessorStr)) $strOut .= ' previous_ids="'.$predecessorStr.'"';
 					
-							if (intval($article->wait_days_min) > 0) 		$strOut .= ' wait_days_min="'.$article->wait_days_min.'"';
-							if (intval($article->wait_days_max) > 0) 		$strOut .= ' wait_days_max="'.$article->wait_days_max.'"';
-							if (intval($article->in_game_message) != 1) 	$strOut .= ' in_game_message="'.$article->in_game_message.'"';
+							if (isset($article->wait_days_min) && intval($article->wait_days_min) > 0) 		$strOut .= ' wait_days_min="'.$article->wait_days_min.'"';
+							if (isset($article->wait_days_max) && intval($article->wait_days_max) > 0) 		$strOut .= ' wait_days_max="'.$article->wait_days_max.'"';
+							if (isset($article->in_game_message) && intval($article->in_game_message) > 0) 	$strOut .= ' in_game_message="'.$article->in_game_message.'"';
 							
 							// add conditions to article
 							if (isset($article->conditions) && is_array($article->conditions) && count($article->conditions))
@@ -227,7 +231,6 @@ if (!function_exists('export_storylines'))
 									$strOut .= ' '.$condition->name.'="'.$condition->value.'"';
 								}
 							}
-							$strOut .= '>'.$n;
 							
 							// add results to article
 							$inj_desc = '';
@@ -249,7 +252,7 @@ if (!function_exists('export_storylines'))
 							
 							// add misc data to article
 							$strOut .= $t.$t.$t.$t.$t.'<SUBJECT>'.htmlspecialchars(trim($article->subject)).'</SUBJECT>'.$n;
-							$strOut .= $t.$t.$t.$t.$t.'<TEXT>'.htmlspecialchars(trim($article->text)).'</TEXT>'.$n;
+							$strOut .= (isset($article->text) ? $t.$t.$t.$t.$t.'<TEXT>'.htmlspecialchars(trim($article->text)).'</TEXT>'.$n : '');
 							if (isset($article->reply) && !empty($article->reply)) 
 							{
 								$strOut .= $t.$t.$t.$t.$t.'<REPLY>'.htmlspecialchars(trim($article->reply)).'</REPLY>'.$n;
@@ -271,6 +274,7 @@ if (!function_exists('export_storylines'))
 				
 				$outArr['header'] = 'Content-type: text/xml'; 
 				$outArr['output'] = $strOut;
+				$outArr['status'] = "success";
 				break;
 		}
 		return $outArr;
@@ -281,18 +285,18 @@ if (!function_exists('make_spaces'))
 	function make_spaces($count = 0)
 	{
 		$str_out = '';
-		$i = $count;
-		while ($i > $count)
+		$i = 1;
+		while ($i < $count)
 		{
-			$str_out .= "&nbsp;&nbsp;&nbsp;&nbsp;";
-			$i--;
+			$str_out .= "&nbsp;---&nbsp;";
+			$i++;
 		}
 		return $str_out;
 	}
 }
 if (!function_exists('draw_articles'))
 {
-	function draw_articles($articles = false, $level = 1)
+	function draw_articles($articles = false, $parent = 1, $level = 1)
 	{
 		if ($articles === false)
 		{
@@ -308,17 +312,29 @@ if (!function_exists('draw_articles'))
 				if ($level > 1) { $space = make_spaces($level); }
 				$link_edit = site_url(SITE_AREA.'/custom/storylines/articles/edit/'.$article->id);
 				$id = $article->id;
-				//$storyline_id = $article->storyline_id;
-				$subject = $space.$level.".".$count." - ".$article->subject;
-				//$details = lang('sl_details');
+				$title = $space.$parent.'.'.$level;
+				if ($level > 1) { $title .= '.'.$count; }
+				$title .= ' - '.(isset($article->title) ? $article->title : $article->subject);
 				$edit = lang('sl_edit');
 				$delete = lang('sl_delete');
+				$icon_class = '';
+				switch ($article->in_game_message)
+				{
+					case 1: // LEAGUE NEWS
+						$icon_class  = 'icon-list-alt';
+						break;
+					case 2: // PERSONAL MESSAGE
+						$icon_class  = 'icon-inbox';
+						break;
+					case 3: // NO MESSAGE (Replies)
+						$icon_class  = 'icon-remove';
+						break;
+					
+				}				
 				$html_out .= <<<EOL
 				<tr>
-					<td>
-						<input type="checkbox" name="checked[]" value="{$id}" />
-					</td>
-					<td>{$subject}</td>
+					<td><i class="{$icon_class}"></i></td>
+					<td>{$title}</td>
 					<td>
 						<a class="btn btn-small" href="{$link_edit}">
 							<i class="icon-edit"></i> ($edit)
@@ -329,12 +345,13 @@ if (!function_exists('draw_articles'))
 					</td>
 				</tr>
 EOL;
-				$count++;
 				if (isset($article->children) && is_array($article->children) && sizeof($article->children) > 0)
 				{
-					$html_out .= draw_articles($article->children, $level++);
+					$new_level = $level + 1;
+					$html_out .= draw_articles($article->children, $parent, $new_level);
 				}
-
+				if ($level == 1) $parent = $parent + 1;
+				$count = $count + 1;
 			}
 		}
 		return $html_out;
