@@ -406,13 +406,35 @@ class Custom extends Admin_Controller {
 	{
 		$type_id = $this->uri->segment(5);
 		$var_id = $this->uri->segment(6);
-		
+		$offset = $this->uri->segment(7);
+
 		if (isset($type_id) && !empty($type_id))
 		{
-			if (isset($type_id) && !empty($type_id))
+			if (isset($var_id) && !empty($var_id))
 			{
-				$history = $this->storylines_history_model->where('object_type',$type_id)->where('var_id',$var_id)->find_all();
+				$where = array();
+				$where['object_type'] = $type_id;
+				$where['var_id'] = $var_id;
+				$this->storylines_model->limit($this->limit, $offset)->where($where);
+				$history = $this->storylines_history_model->find_all();
 				Template::set('history', $history);
+				Template::set('type_id', $type_id);
+				Template::set('var_id', $var_id);
+
+				// Pagination
+				$this->load->library('pagination');
+
+				$this->storylines_history_model->where($where);
+				$total_items = $this->storylines_history_model->count_all();
+
+
+				$this->pager['base_url'] = site_url(SITE_AREA .'/custom/storylines/history');
+				$this->pager['total_rows'] = $total_items;
+				$this->pager['per_page'] = $this->limit;
+				$this->pager['uri_segment']	= 7;
+
+				$this->pagination->initialize($this->pager);
+				Template::set('current_url', current_url());
 			}
 			else
 			{
@@ -490,6 +512,41 @@ class Custom extends Admin_Controller {
 		if (isset($storyline_id) && !empty($storyline_id)) 
 		{
 			$json_out['result']['items'] = $this->storylines_model->get_data_objects($storyline_id);
+		}
+		else
+		{
+			$error = true;
+			$status = "Storyline ID was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	}	
+	//--------------------------------------------------------------------
+	/*
+		Method:
+			get_data_objects()
+		
+		An ajax method to get a JSON object of data objects for a storyline as a select friendly array
+		
+		Return:
+			JSON data object
+	*/
+	public function get_data_objects_list()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		$storyline_id = $this->uri->segment(5);
+		
+		if (isset($storyline_id) && !empty($storyline_id)) 
+		{
+			$json_out['result']['items'] = $this->storylines_model->get_data_objects_list($storyline_id);
 		}
 		else
 		{

@@ -318,22 +318,26 @@ if (!function_exists('draw_articles'))
 				$edit = lang('sl_edit');
 				$delete = lang('sl_delete');
 				$icon_class = '';
+				$icon_alt = '';
 				switch ($article->in_game_message)
 				{
 					case 1: // LEAGUE NEWS
 						$icon_class  = 'icon-list-alt';
+						$icon_alt = "League News";
 						break;
 					case 2: // PERSONAL MESSAGE
 						$icon_class  = 'icon-inbox';
+						$icon_alt = "Personal Message";
 						break;
 					case 3: // NO MESSAGE (Replies)
 						$icon_class  = 'icon-remove';
+						$icon_alt = "No Message";
 						break;
 					
 				}				
 				$html_out .= <<<EOL
 				<tr>
-					<td><i class="{$icon_class}"></i></td>
+					<td><i class="{$icon_class}" rel="tooltip" data-original-title="{$icon_alt}"></i></td>
 					<td>{$title}</td>
 					<td>
 						<a class="btn btn-small" href="{$link_edit}">

@@ -78,7 +78,8 @@
 						 <label class="control-label"><?php echo lang('sl_text') ?></label>
 						<div class="controls">
 							<?php echo form_textarea( array( 'name' => 'text', 'id' => 'text', 'class'=>'span7','rows' => '5', 'cols' => '80', 'value' => isset($article) ? $article->text : set_value('text') ) )?>
-							<?php if (form_error('text')) echo '<span class="help-inline">'. form_error('text') .'</span>'; ?>
+							<?php if (form_error('text')) echo '<span class="help-inline">'. form_error('text') .'</span>'; ?><br />
+							<a href="#" id="add_token" class="btn" disabled="disabled"><i class="icon-plus"></i> Insert Token</a>
 						</div>
 					</div>
 					
@@ -202,24 +203,32 @@
 				<legend><?php echo lang('sl_data_objects') ?></legend>
 				<table class="table table-bordered table-striped">
 				<?php
+				$data_objs_str = '';
 				if (isset($characters) && is_array($characters) && count($characters)) :
 					foreach($characters as $data_object) : ?>
 					<tr>
 						<td><a href="#" rel="tooltip" class="tooltips" title="<?php echo($data_object->description); ?>"><?php echo($data_object->name); ?></a></td>
 					</tr>
 					<?php
+					$data_objs_str .= 'data_objects['.$data_object->object_id.'] = {id:'.$data_object->object_id.',name:"'.$data_object->name.'",order_num:'.(isset($data_object->order_num)?$data_object->order_num:1).'};';
 					endforeach;
 				else:
 					echo '<tr><td>'.lang('sl_no_objects').'</td></tr>';
 				endif;
 				?>
 				</table>
+				<script>
+				var data_objects = [];
+				<?php echo $data_objs_str; ?>
+				</script>
 				<?php echo anchor(SITE_AREA. '/custom/storylines/edit/'.$article->storyline_id,lang('sl_edit')); ?>
 			</fieldset>
 			
 				<!-- PREDECESSORS -->
 			<fieldset>
 				<legend><?php echo lang('sl_predecessors') ?></legend>
+				<div id="predecessors" style="max-height: 250px; overflow:auto;">
+
 				<table class="table table-bordered table-striped">
 				<thead>
 					<th></th>
@@ -266,6 +275,7 @@
 				?>
 				</tbody>
 				</table>
+				</div>
 				<a class="btn btn-small" href="#" id="add_successive_article">
 					<i class="icon-plus"></i> <?php echo lang('sl_add_successive_article'); ?></i>
 				</a>

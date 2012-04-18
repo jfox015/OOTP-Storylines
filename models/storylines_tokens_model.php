@@ -86,6 +86,22 @@ class Storylines_tokens_model extends BF_Model
 		$query->free_result();
 		return $arrOut;
 	}
+	public function get_tokens_by_category($category_id = false, $show_inactive = false)
+	{
+		$tokens = array();
+		if ($category_id === false)
+		{
+			$this->error = "No category ID was received";
+			return false;
+		}
+		if ($show_inactive === false)
+		{
+			$this->db->where('active',1);
+		}
+		return $this->select('id, slug, name')
+					->where('category_id',$category_id)
+					->find_all();
+	}
 	public function categories_as_select()
 	{
 		return $this->data_as_select('list_storylines_tokens_categories');

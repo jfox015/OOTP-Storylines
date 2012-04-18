@@ -242,11 +242,10 @@ class Storylines_model extends BF_Model
 			return false;
 		}
 		$dbprefix = $this->db->dbprefix;
-		$query = $this->db->select('storylines_data_objects.object_num, storylines_data_objects.id, list_storylines_data_objects.name, list_storylines_data_objects.slug, list_storylines_data_objects.description, (SELECT COUNT('.$dbprefix.'storylines_conditions.id) FROM '.$dbprefix.'storylines_conditions WHERE '.$dbprefix.'storylines_conditions.var_id = '.$dbprefix.'storylines_data_objects.id AND '.$dbprefix.'storylines_conditions.level_type = 3) as condition_count')
+		$query = $this->db->select('storylines_data_objects.object_num, storylines_data_objects.object_id, storylines_data_objects.id, list_storylines_data_objects.name, list_storylines_data_objects.slug, list_storylines_data_objects.description, (SELECT COUNT('.$dbprefix.'storylines_conditions.id) FROM '.$dbprefix.'storylines_conditions WHERE '.$dbprefix.'storylines_conditions.var_id = '.$dbprefix.'storylines_data_objects.id AND '.$dbprefix.'storylines_conditions.level_type = 3) as condition_count')
 				 ->join('list_storylines_data_objects','list_storylines_data_objects.id = storylines_data_objects.object_id','right outer')
 				 ->where('storyline_id',$storyline_id)
 				 ->get('storylines_data_objects');
-		//echo($this->db->last_query()."<br />");
 		$data_objects = array();
 		if ($query->num_rows() > 0) 
 		{
@@ -255,6 +254,23 @@ class Storylines_model extends BF_Model
 		$query->free_result();
 		return $data_objects;
 	
+	}	
+	public function get_data_objects_list($storyline_id = false)
+	{
+		if ($storyline_id === false)
+		{
+			return false;
+		}
+		$data_objects = array();
+		$tmp_objects = $this->get_data_objects($storyline_id);
+		if (is_array($tmp_objects) && count($tmp_objects) > 0)
+		{
+			foreach($tmp_objects as $row)
+			{
+				array_push($data_objects,array('id'=>$row->object_id, 'name'=>$row->name));
+			}
+		}
+		return $data_objects;
 	}	
 	public function add_trigger($data = false)
 	{

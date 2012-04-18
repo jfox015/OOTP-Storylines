@@ -95,8 +95,12 @@ function handle_ajax_reponse(status, data, type, prefix)
 					draw_new_condition(data);
 				else if (type == 'existing_conditions')
 					draw_condition_edit_table(data);
+				else if (type == 'token_select')
+					draw_token_select(data);
 				else if (type == 'conditions_select')
 					draw_condition_select(data);
+				else if (type == 'token_list')
+					draw_token_list(data);
 				else if (type == 'result_list')
 					draw_result_list(data);
 				else if (type == 'condition_list' || type == 'article_conditions')
@@ -139,4 +143,39 @@ function fadeStatus(div) {
 }
 function fadeModalStatus() {
     $('div#modal_ajaxStatusBox').fadeOut("normal",function() { clearTimeout(fader); $('div#modal_ajaxStatusBox').hide(); });
+}
+function insertAtCaret(text)
+{
+	var txtarea = document.getElementById(selected_field);
+
+	var scrollPos = txtarea.scrollTop;
+	var strPos = 0;
+	var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ?
+	"ff" : (document.selection ? "ie" : false ) );
+	if (br == "ie") {
+		txtarea.focus();
+		var range = document.selection.createRange();
+		range.moveStart ('character', -txtarea.value.length);
+		strPos = range.text.length;
+	}
+	else if (br == "ff") strPos = txtarea.selectionStart;
+
+	var front = (txtarea.value).substring(0,strPos);
+	var back = (txtarea.value).substring(strPos,txtarea.value.length);
+	txtarea.value=front+text+back;
+	strPos = strPos + text.length;
+	if (br == "ie") {
+		txtarea.focus();
+		var range = document.selection.createRange();
+		range.moveStart ('character', -txtarea.value.length);
+		range.moveStart ('character', strPos);
+		range.moveEnd ('character', 0);
+		range.select();
+	}
+	else if (br == "ff") {
+		txtarea.selectionStart = strPos;
+		txtarea.selectionEnd = strPos;
+		txtarea.focus();
+	}
+	txtarea.scrollTop = scrollPos;
 }

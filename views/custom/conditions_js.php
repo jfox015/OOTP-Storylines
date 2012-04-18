@@ -34,23 +34,31 @@ $('#add_object_condition').click( function(e)
 		$('#condition_select').prev('.control-group').addClass('control-group-error');
 		$('#condition_select').next('.help-inline').html('You must select an item before adding');
 	} else {
-		if (find_condition(val)) {
-			$('#condition_select').prev('.control-group').addClass('control-group-error');
-			$('#condition_select').next('.help-inline').html('Selection is already in list. only one instance is allowed per item.');
-		} else {
-			if (conditions_objs[val] == null) {
-				// Construct URL. It changes based on the modals mode (condition or result)
-				var url = '<?php echo(site_url(SITE_AREA."/custom/storylines/")); ?>';
-				if (modal_mode == 'condition') url += '/conditions/get_condition/';
-				else if (modal_mode == 'result') url += '/results/get_result/';
-				$.getJSON(url+val, function(data,status) {
-					handle_ajax_reponse (status, data, 'new_condition', 'modal');
-				});
-			} else {
-				draw_new_condition(conditions_objs[val]);
-			} // END if
-			$('#save_conditions').attr('disabled',false);
+		if (modal_mode == 'token')
+		{
+			load_tokens_by_category(val);
 		}
+		else 
+		{
+			if (find_condition(val)) {
+				$('#condition_select').prev('.control-group').addClass('control-group-error');
+				$('#condition_select').next('.help-inline').html('Selection is already in list. only one instance is allowed per item.');
+			} else {
+				if (conditions_objs[val] == null) {
+					// Construct URL. It changes based on the modals mode (condition or result)
+					var url = '<?php echo(site_url(SITE_AREA."/custom/storylines/")); ?>';
+					if (modal_mode == 'condition') url += '/conditions/get_condition/';
+					else if (modal_mode == 'result') url += '/results/get_result/';
+					$.getJSON(url+val, function(data,status) {
+						handle_ajax_reponse (status, data, 'new_condition', 'modal');
+					});
+				} else {
+					draw_new_condition(conditions_objs[val]);
+				} // END if
+				$('#save_conditions').removeAttr('disabled');
+			}
+		}
+		
 	} // END if
 });  // END #add_object_condition.click
 
@@ -58,15 +66,19 @@ $('#save_conditions').click( function(e) {
     e.preventDefault();
 	var elems = $('.condition_frm');
 	// PREPARE JSON OBJECT FOR POST
-	//console.log(elems);
 	if (elems.length > 0)
 	{
 		var objs = [];
 		// Update values from form
 		$.each(elems, function(i, item) {
 			var tmpobj = conditions_objs[item.id], value = null;
-			if (tmpobj.type_id == 2 && (item.value == null || item.value == '')) value = 0;
+			var type = (modal_mode == "condition") ? tmpobj.type_id : tmpobj.value_type;
+			// Set unchecked check box value to 0
+			if (type == 2 && (item.value == null || item.value == '')) value = 0;
+			// Handle positive/negative modifiers
+			else if (type == 1 && $('#mod_'+item.id) && $('#neg_'+item.id).hasClass('active')) value = '-'+item.value;
 			else value = item.value;
+
 			objs.push({'id':item.id,'value':value});
 		});
 		
@@ -83,8 +95,6 @@ $('#save_conditions').click( function(e) {
 			data_obj = JSON.stringify({"article_id" : currDataObj, "results": objs },true,4);
 			url += '/results/save_object_results/';
 		}
-		console.log(data_obj);
-		console.log(url);
 		$.post(url, {'post_data':data_obj}, function(data,status) {
 			if (handle_ajax_reponse (status, data, 'result_save', 'modal')) {
 				if (modal_mode == "condition")
@@ -102,6 +112,16 @@ $('#save_conditions').click( function(e) {
 			}
 		});
 	}
+});
+$('button[rel=modifier]').live('click', function(e) {
+	e.preventDefault();
+	var id = this.id.split('_')[1];
+	if ($(this).hasClass('negative')) {
+		$('#pos_'+id).removeClass('active');
+	} else {
+		$('#neg_'+id).removeClass('active');
+	}
+	$(this).addClass('active');
 });
 $('a[rel=delete_condition]').live('click', function(e) {
     e.preventDefault();
@@ -171,7 +191,7 @@ function init_conditions_list(object_id)
 				break;
 		}
 	}
-	$('#save_conditions').attr('disabled',true);
+	$('#save_conditions').attr('disabled','disabled');
 	$.getJSON("<?php echo(site_url(SITE_AREA."/custom/storylines/conditions/load_conditions_list")); ?>/"+categories, function(data,status) {
 		handle_ajax_reponse (status, data, 'conditions_select', 'cond');
 	});
@@ -232,9 +252,9 @@ function draw_new_condition(data) {
 			htmlOut += ' \t<div id="cond_slider_'+ obj.id +'"></div>';
 			htmlOut += ' \t<div id="val_'+ obj.id + '" style="color:#0073EA;font-weight:bold;display:inline-block;float:left;"></div>';
 			if (condName.indexOf('modifier') != -1) {
-				htmlOut += '<div class="btn-group" style="display:inline-block;float:right;padding-left:15px;" data-toggle="buttons-radio">';
-				htmlOut += ' \t\t<button class="btn active" id="positive">+</button>';
-				htmlOut += ' \t\t<button class="btn" id="negative">-</button>';
+				htmlOut += '<div class="btn-group" id="mod_'+obj.id + '" style="display:inline-block;float:right;padding-left:15px;" data-toggle="buttons-radio">';
+				htmlOut += ' \t\t<button class="btn active positive" rel="modifier" id="pos_'+ obj.id + '">+</button>';
+				htmlOut += ' \t\t<button class="btn negative" rel="modifier" id="neg_'+ obj.id + '">-</button>';
 				htmlOut += ' \t</div>';
 			}
 			htmlOut += '<input type="hidden" class="condition_frm" id="'+ obj.id + '" value="" />\n';
@@ -314,7 +334,7 @@ function draw_condition_edit_table(data) {
 		draw_new_condition(item);
 	});
 	if (data.result.items.length > 0)
-		$('#save_conditions').attr('disabled',false);
+		$('#save_conditions').removeAttr('disabled');
 };
 function draw_condition_list(data) {
 	var htmlOut = '';

@@ -27,6 +27,7 @@ $("a[rel=edit_object_cond]").live('click', function(e) {
 	init_conditions_list(this.id);
 	load_existing_conditions(this.id,condition_level_type);
 	$('#condition_modal h3').html('Conditions Editor');
+	$('#save_conditions').css('display','inline-block');
 	$('#condition_modal').modal('show');
 });
 $('#add_data_object').click( function(e) {
@@ -51,7 +52,7 @@ $("a[rel=remove_data_object]").live('click', function(e) {
     e.preventDefault();
     var proceed = false, dataStr = this.id.split("|");
 	var data_object_id = dataStr[1];
-	console.log(data_object_id);
+	//console.log(data_object_id);
 	if (data_object_id != null && data_object_id != '' && data_objects.length > 0) {
 		$.each(data_objects, function(i, item) {
 			if (item.id == data_object_id)
@@ -71,8 +72,8 @@ $("a[rel=remove_data_object]").live('click', function(e) {
 });
 function drawDataObjects(data) {
 
-	console.debug('drawDataObjects');
-	console.debug(data.result.items.length);
+	//console.debug('drawDataObjects');
+	//console.debug(data.result.items.length);
 if (data.result.items.length > 0) {
 		$('#data_objects_tbl > tbody:last').empty();
 		data_objects = [];
@@ -182,6 +183,7 @@ $('#edit_conditions').live('click', function(e) {
 	init_conditions_list('all');
 	load_existing_conditions(currDataObj,condition_level_type);
 	$('#condition_modal h3').html('Conditions Editor');
+	$('#save_conditions').css('display','inline-block');
 	$('#condition_modal').modal('show');
 });
 

@@ -22,6 +22,7 @@
 */
 class Articles extends Admin_Controller {
 
+	var $save_error = null;
 	//--------------------------------------------------------------------
 	
 	public function __construct() 
@@ -149,7 +150,11 @@ class Articles extends Admin_Controller {
 			}
 			else
 			{
-				Template::set_message('There was a problem creating the article: '. $this->storylines_articles_model->error);
+				if (!empty($this->storylines_articles_model->error))
+				{
+					$this->save_error = $this->storylines_articles_model->error;
+				}
+				Template::set_message('There was a problem adding the Storyline Article: '.$this->save_error, 'error' );
 			}
 		}
         
@@ -192,7 +197,11 @@ class Articles extends Admin_Controller {
 			}
 			else
 			{
-				Template::set_message('There was a problem updating the Storyline Article: '. $this->storylines_articles_model->error);
+				if (!empty($this->storylines_articles_model->error))
+				{
+					$this->save_error = $this->storylines_articles_model->error;
+				}
+				Template::set_message('There was a problem updating the Storyline Article: '.$this->save_error, 'error' );
 			}
 		}
 
@@ -208,9 +217,6 @@ class Articles extends Admin_Controller {
 			Template::set('article', $article);
 			
 			Template::set('characters', $this->storylines_model->get_data_objects($article->storyline_id));
-			//Template::set('tokens', $this->storylines_tokens_model->list_as_select_by_category());
-			//Template::set('conditions', $this->storylines_conditions_model->list_as_select_by_category());
-			//Template::set('results', $this->storylines_results_model->find_all());
 			Template::set('game_message_types', $this->storylines_articles_model->get_game_message_types());
 			
 			Template::set('storyline', $this->storylines_model->find($article->storyline_id));
@@ -219,8 +225,7 @@ class Articles extends Admin_Controller {
 			Template::set('article_conditions', $this->storylines_articles_model->get_article_conditions($article_id));
 			Template::set('article_results', $this->storylines_articles_model->get_article_results_for_form($article_id));
 			Template::set('article_predecessor_ids', $this->storylines_articles_model->get_article_predecessor_ids($article_id));
-			//Template::set('article_predecessors', $this->storylines_articles_model->get_article_predecessors($article_id));
-			
+
 			Template::set('all_articles', $this->storylines_articles_model->get_all_articles($article->storyline_id,$article->id,false));
 			
 			Template::set_theme('admin');
@@ -396,7 +401,7 @@ class Articles extends Admin_Controller {
 		$this->form_validation->set_rules('description', lang('sl_description'), 'trim|strip_tags|xss_clean');
 		$this->form_validation->set_rules('subject', lang('sl_subject'), 'required|trim|max_length[255]|xss_clean');
 		$this->form_validation->set_rules('text', lang('sl_text'), 'required|trim|strip_tags|xss_clean');
-		$this->form_validation->set_rules('reply', lang('sl_reply'), 'strip_tags|trim|xss_clean');
+		$this->form_validation->set_rules('reply', lang('sl_reply'), 'strip_tags|trim|max_length[255]|xss_clean');
 		$this->form_validation->set_rules('in_game_message', lang('sl_in_game_message'), 'required|strip_tags|numeric|trim|xss_clean');
 		$this->form_validation->set_rules('predecessor_id', lang('sl_predecessor'), 'strip_tags|numeric|trim|xss_clean');
 
@@ -404,6 +409,25 @@ class Articles extends Admin_Controller {
 		{
 			return false;
 		}
+		// INTERACTIVE REPLY VALIDATION
+		if ($this->input->post('reply'))
+		{
+			$reply = $this->input->post('reply');
+			$subject = $this->input->post('subject');
+			$text = $this->input->post('text');
+			if ($reply != $subject || $reply != $text || $subject != $text)
+			{
+				$this->save_error = 'When using interactive replies, the subject, text and reply must all be the same value. Please correct your article to continue submitting.';
+				return false;
+			}
+			$mess =$this->input->post('in_game_message');
+			if (!empty($reply) && $mess != 3)
+			{
+				$this->save_error = 'When using interactive replies, the In Game Message must be set to <b>No Message</b>. Please correct your article to continue submitting.';
+				return false;
+			}
+		}
+		
 		$data = array(
 					'title'=>$this->input->post('title'),
 					'description'=>$this->input->post('description'),
@@ -412,7 +436,9 @@ class Articles extends Admin_Controller {
 					'reply'=>$this->input->post('reply'),
 					'in_game_message'=>($this->input->post('in_game_message')) ? (int)$this->input->post('in_game_message') : 1
 		);
-
+		
+		
+		
 		$success = null;
 		if ($type == 'insert')
 		{

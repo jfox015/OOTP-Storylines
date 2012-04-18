@@ -235,6 +235,33 @@ class Tokens extends Admin_Controller {
 		}
 		redirect(SITE_AREA .'/custom/storylines/data_manage');
 	}
+			
+	public function load_tokens_by_category()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		$categories = $this->uri->segment(6);
+		
+		if (isset($categories) && !empty($categories)) 
+		{
+			$json_out['result']['items'] = $this->storylines_tokens_model->get_tokens_by_category($categories);
+		}
+		else
+		{
+			$error = true;
+			$status = "Categories specifier was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	}
+	
 	//--------------------------------------------------------------------
 
 	public function change_status($items=false, $active = 1)
