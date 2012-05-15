@@ -4,5 +4,5 @@ $config['module_config'] = array(
 	'description'	=> 'Editor and Manager of Storylines content',
 	'author'		=> 'Jeff Fox',
 	'name'			=> 'Storylines',
-	'version'		=> '0.1'
+	'version'		=> '0.2'
 );
