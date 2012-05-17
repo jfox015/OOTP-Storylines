@@ -34,6 +34,7 @@ class Settings extends Admin_Controller {
         {
             $this->load->model('activities/Activity_model', 'activity_model', true);
         }
+        $this->lang->load('storylines');
 
 	}
 	
@@ -66,7 +67,7 @@ class Settings extends Admin_Controller {
         Template::set('settings', $settings);
 
         Template::set('toolbar_title', lang('mod_settings_title'));
-        Template::set_view('[module]/settings/index');
+        Template::set_view('storylines/settings/index');
         Template::render();
     }
 
@@ -81,7 +82,7 @@ class Settings extends Admin_Controller {
 
 		$this->load->library('form_validation');
 
-        $this->form_validation->set_rules('field_name', lang('mod_field_name'), 'trim|xss_clean');
+        $this->form_validation->set_rules('comments_enabled', lang('sl_comments_enabled'), 'trim|xss_clean');
         
         if ($this->form_validation->run() === false)
         {
@@ -89,7 +90,7 @@ class Settings extends Admin_Controller {
         }
 
 		$data = array(
-            array('name' => '[prefix].field_name', 'value' => $this->input->post('field_name')),
+            array('name' => 'storylines.comments_enabled', 'value' => $this->input->post('comments_enabled')),
 
         );
         //destroy the saved update message in case they changed update preferences.

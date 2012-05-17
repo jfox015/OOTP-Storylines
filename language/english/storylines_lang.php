@@ -153,3 +153,9 @@ $lang['sl_added']					= 'Added';
 $lang['sl_removed']					= 'Removed';
 $lang['sl_deleted']					= 'Deleted';
 $lang['sl_empty_id']				= 'No ID parameter was received';
+
+$lang['sl_storyline_options']		= 'Storylines Options';
+$lang['sl_comments']		        = 'Comments';
+$lang['sl_comments_enabled']		= 'Enable Comments';
+$lang['sl_comments_enabled_note']	= 'Comments can be moderated from the <a href="[COMMENTS_URL]">Comments content page</a>';
+$lang['sl_get_comments_module']		= 'Enable user comments and feedback with the <a href="https://github.com/jfox015/Bonfire-Comments" target="_blank">Bonfire Comments</a> module.';

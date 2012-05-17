@@ -260,7 +260,7 @@ class Custom extends Admin_Controller {
 			Template::set('author_statuses', $this->storylines_author_status_model->list_as_select());
 			
 			// COMMENTS
-			$comments = (in_array('comments',module_list(true))) ? modules::run('comments/thread_view_with_form',$storyline->comments_thread_id) : '';
+			$comments = (in_array('comments',module_list(true)) && (isset($settings['storylines.comments_enabled']) && $settings['storylines.comments_enabled'] == 1)) ? modules::run('comments/thread_view_with_form',$storyline->comments_thread_id) : '';
 			Template::set('comment_form', $comments);
 			Template::set_theme('admin');
 			// ADD Conditions supportiog JS and CSS
