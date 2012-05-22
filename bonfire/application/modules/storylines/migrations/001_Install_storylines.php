@@ -1,51 +1,24 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class Migration_Install_storylines extends Migration {
-	
-	public function up() 
+
+    private $permission_array = array(
+        'Storylines.Settings.Manage' => 'Manage Storylines Settings.',
+        'Storylines.Content.Add' => 'Add Storylines Content.',
+        'Storylines.Content.Manage' => 'Manage Storylines Content.',
+        'Storylines.Data.Manage' => 'Manage Storylines Data Values.'
+    );
+
+    public function up()
 	{
 		$prefix = $this->db->dbprefix;
 		
-		$data = array(
-			'name'        => 'Storylines.Settings.Manage' ,
-			'description' => 'Manage Storylines Settings'
-		);
-		$this->db->insert("{$prefix}permissions", $data);
-		
-		$permission_id = $this->db->insert_id();
-		
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
-
-		$data = array(
-			'name'        => 'Storylines.Content.Add' ,
-			'description' => 'Add Storylines Content'
-		);
-		$this->db->insert("{$prefix}permissions", $data);
-
-		$permission_id = $this->db->insert_id();
-
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
-
-		$data = array(
-			'name'        => 'Storylines.Content.Manage' ,
-			'description' => 'Manage Storylines Content'
-		);
-		$this->db->insert("{$prefix}permissions", $data);
-
-		$permission_id = $this->db->insert_id();
-
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
-
-		$data = array(
-			'name'        => 'Storylines.Data.Manage' ,
-			'description' => 'Manage Storylines Data Values'
-		);
-		$this->db->insert("{$prefix}permissions", $data);
-
-		$permission_id = $this->db->insert_id();
-
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
-
+		foreach ($this->permission_array as $name => $description)
+        {
+            $this->db->query("INSERT INTO {$prefix}permissions(name, description) VALUES('".$name."', '".$description."')");
+            // give current role (or administrators if fresh install) full right to manage permissions
+            $this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1,".$this->db->insert_id().")");
+        }
 		// ADD TABLES
 		
 		// Storylines
@@ -145,51 +118,6 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('storylines_article_predecessors');
 		
-		// STORYLINE 1
-		$comments = $this->db->table_exists('comments_threads');
-		$comments_thread_id = 0;
-		if ($comments) { 
-			$this->db->query("INSERT INTO {$prefix}comments_threads VALUES(0,".time().",0,'storylines')");
-			$comments_thread_id = $this->db->insert_id();
-			$this->db->query("INSERT INTO {$prefix}comments VALUES(0, {$comments_thread_id},'This is a default comment. Do with it as you will.',".time().",1,".time().",'', 0,1)");
-		}
-		$this->db->query("INSERT INTO {$prefix}storylines VALUES(0, 'Test Story','<b>This is a test</b><br />Testing how this all works out.</b>','news,article,first',1,1,1,{$comments_thread_id},5000,".time().",1,".time().",1,0)");
-        $storyline_id = $this->db->insert_id();
-		$this->db->query("INSERT INTO {$prefix}storylines_history VALUES(0, {$storyline_id}, 1,'Added default storyline and article','','',".time().",1)");
-
-
-		// ARTICLE 1
-		if ($comments) {
-			$this->db->query("INSERT INTO {$prefix}comments_threads VALUES(0,".time().",0,'storylines')");
-			$comments_thread_id = $this->db->insert_id();
-			$this->db->query("INSERT INTO {$prefix}comments VALUES(0, {$comments_thread_id},'This is a default comment. Do with it as you will.',".time().",1,".time().",'', 0,1)");
-		}
-		$this->db->query("INSERT INTO {$prefix}storylines_articles VALUES(0, {$storyline_id}, 'Test Article','This is a test. Testing how this all works out.','Pujols Spains akle playing catach','Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis lobortis ullamcorper bibendum. Vivamus mauris dolor, hendrerit nec sodales et, pulvinar vel neque. Vestibulum sit amet nibh lacus.',0,0,1,'',{$comments_thread_id},".time().",2,".time().",1,0)");
-		$prev_article_id = $this->db->insert_id();
-		$this->db->query("INSERT INTO {$prefix}storylines_history VALUES(0, {$prev_article_id}, 2,'Added article to storlyine','','',".time().",1)");
-		
-		// ARTICLE 2
-		if ($comments) {
-			$this->db->query("INSERT INTO {$prefix}comments_threads VALUES(0,".time().",0,'storylines')");
-			$comments_thread_id = $this->db->insert_id();
-			$this->db->query("INSERT INTO {$prefix}comments VALUES(0, {$comments_thread_id},'This is a default comment. Do with it as you will.',".time().",1,".time().",'', 0,1)");
-		}
-		$this->db->query("INSERT INTO {$prefix}storylines_articles VALUES(0, {$storyline_id}, 'Child Test Article 1','This is a child test. Testing how this all works out.','Pujols slams thumb,. Says good gravy!','Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis lobortis ullamcorper bibendum. Vivamus mauris dolor, hendrerit nec sodales et, pulvinar vel neque. Vestibulum sit amet nibh lacus.',7,14,1,'',{$comments_thread_id},".time().",3,".time().",1,0)");
-		$article_id = $this->db->insert_id();
-		$this->db->query("INSERT INTO {$prefix}storylines_history VALUES(0, {$article_id}, 2,'Added article to storlyine','','',".time().",1)");
-		$this->db->query("INSERT INTO {$prefix}storylines_article_predecessors VALUES(0, {$storyline_id}, {$article_id}, {$prev_article_id})");
-		$prev_article_id = $article_id;
-		
-		// ARTICLE 3
-		if ($comments) {
-			$this->db->query("INSERT INTO {$prefix}comments_threads VALUES(0,".time().",0,'storylines')");
-			$comments_thread_id = $this->db->insert_id();
-			$this->db->query("INSERT INTO {$prefix}comments VALUES(0, {$comments_thread_id},'This is a default comment. Do with it as you will.',".time().",1,".time().",'', 0,1)");
-		}
-		$this->db->query("INSERT INTO {$prefix}storylines_articles VALUES(0, {$storyline_id}, 'A second level child test Article','This is a child test. Testing how this all works out.','Pujols wants to go see his mommy over brusied thumb.!','Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis lobortis ullamcorper bibendum. Vivamus mauris dolor, hendrerit nec sodales et, pulvinar vel neque. Vestibulum sit amet nibh lacus.',7,21,1,'',{$comments_thread_id},".time().",1,".time().",1,0)");
-		$article_id = $this->db->insert_id();
-		$this->db->query("INSERT INTO {$prefix}storylines_history VALUES(0, {$article_id}, 2,'Added article to storlyine','','',".time().",1)");
-		$this->db->query("INSERT INTO {$prefix}storylines_article_predecessors VALUES(0, {$storyline_id}, {$article_id}, {$prev_article_id})");
 
 		/*--------------------------
 		/	LISTS
@@ -1023,43 +951,18 @@ class Migration_Install_storylines extends Migration {
 	public function down() 
 	{
 		$prefix = $this->db->dbprefix;
-		
-		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Storylines.Settings.Manage'");
-		foreach ($query->result_array() as $row)
-		{
-			$permission_id = $row['permission_id'];
-			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
-		}
-		//delete the permission
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Storylines.Settings.Manage')");
 
-		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Storylines.Content.Manage'");
-		foreach ($query->result_array() as $row)
-		{
-			$permission_id = $row['permission_id'];
-			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
-		}
-		//delete the permission
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Storylines.Content.Manage')");
-
-		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Storylines.Content.Add'");
-		foreach ($query->result_array() as $row)
-		{
-			$permission_id = $row['permission_id'];
-			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
-		}
-		//delete the permission
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Storylines.Content.Add')");
-		
-		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Storylines.Data.Manage'");
-		foreach ($query->result_array() as $row)
-		{
-			$permission_id = $row['permission_id'];
-			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
-		}
-		//delete the permission
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Storylines.Data.Manage')");
-
+        foreach ($this->permission_array as $name => $description)
+        {
+            $query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = '".$name."'");
+            foreach ($query->result_array() as $row)
+            {
+                $permission_id = $row['permission_id'];
+                $this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
+            }
+            //delete the role
+            $this->db->query("DELETE FROM {$prefix}permissions WHERE (name = '".$name."')");
+        }
 		// drop tables
 		$this->dbforge->drop_table('storylines');
 		$this->dbforge->drop_table('storylines_articles');
