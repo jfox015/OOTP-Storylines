@@ -2,10 +2,6 @@
 
 class Migration_Default_storylines_data extends Migration {
 
-    private $permission_array = array(
-        'Storylines.Settings.View' => 'Manage Storylines Settings.',
-        'Storylines.Custom.View' => 'View Storylines menu item and index.'
-    );
     public function up()
 	{
 		$prefix = $this->db->dbprefix;
