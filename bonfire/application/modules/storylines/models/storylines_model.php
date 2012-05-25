@@ -162,7 +162,7 @@ class Storylines_model extends BF_Model
 		$this->join('list_storylines_categories','list_storylines_categories.id = storylines.category_id');
 		$this->join('list_storylines_publish_status','list_storylines_publish_status.id = storylines.publish_status_id');
 		$this->join('list_storylines_author_status','list_storylines_author_status.id = storylines.author_status_id');
-		$this->select('storylines.id, storylines.description, random_frequency, storylines.category_id, list_storylines_categories.name as category_name, title, created_by, created_on, modified_on, modified_by, storylines.publish_status_id, list_storylines_publish_status.name as publish_status_name,  storylines.author_status_id, list_storylines_author_status.name as author_status_name, comments_thread_id, (SELECT COUNT('.$dbprefix.'storylines_articles.id) FROM '.$dbprefix.'storylines_articles WHERE '.$dbprefix.'storylines_articles.storyline_id = '.$dbprefix.'storylines.id) as article_count');
+		$this->select('storylines.id, storylines.description, random_frequency, storylines.category_id, list_storylines_categories.name as category_name, title, created_by, created_on, modified_on, modified_by, storylines.publish_status_id, list_storylines_publish_status.name as publish_status_name,  storylines.author_status_id, list_storylines_author_status.name as author_status_name, comments_thread_id, flagged, (SELECT COUNT('.$dbprefix.'storylines_articles.id) FROM '.$dbprefix.'storylines_articles WHERE '.$dbprefix.'storylines_articles.storyline_id = '.$dbprefix.'storylines.id) as article_count');
 		return parent::find($value);
 	}
 	public function find_all()
@@ -171,7 +171,7 @@ class Storylines_model extends BF_Model
 		$this->join('list_storylines_categories','list_storylines_categories.id = storylines.category_id');
 		$this->join('list_storylines_publish_status','list_storylines_publish_status.id = storylines.publish_status_id');
 		$this->join('list_storylines_author_status','list_storylines_author_status.id = storylines.author_status_id');
-		$this->select('storylines.id, storylines.description, random_frequency, storylines.category_id, list_storylines_categories.name as category_name, title, created_by, created_on, modified_on, modified_by, storylines.publish_status_id, list_storylines_publish_status.name as publish_status_name,  storylines.author_status_id, list_storylines_author_status.name as author_status_name, comments_thread_id, (SELECT COUNT('.$dbprefix.'storylines_articles.id) FROM '.$dbprefix.'storylines_articles WHERE '.$dbprefix.'storylines_articles.storyline_id = '.$dbprefix.'storylines.id) as article_count');
+		$this->select('storylines.id, storylines.description, random_frequency, storylines.category_id, list_storylines_categories.name as category_name, title, created_by, created_on, modified_on, modified_by, storylines.publish_status_id, list_storylines_publish_status.name as publish_status_name,  storylines.author_status_id, list_storylines_author_status.name as author_status_name, comments_thread_id, flagged, (SELECT COUNT('.$dbprefix.'storylines_articles.id) FROM '.$dbprefix.'storylines_articles WHERE '.$dbprefix.'storylines_articles.storyline_id = '.$dbprefix.'storylines.id) as article_count');
 		return parent::find_all();
 	}
 	//---------------------------------------------------------

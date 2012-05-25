@@ -290,8 +290,13 @@
 					<td><?php echo lang('sl_modified'); ?>:</td>
 					<td><?php echo date('m/d/Y h:i:s', $storyline->modified_on) .'<div class="help-inline">('. anchor(SITE_AREA.'/custom/storylines/history/1/'.$storyline->id,'History') .')</div>'; ?></td>
 				</tr>
-				<?php endif; ?>		
-				
+				<?php endif;
+				if (isset($storyline->flagged) && $storyline->flagged == 1) : ?>		
+				<tr>
+					<td><div class="label label-important"><?php echo lang('sl_flagged'); ?></div></td>
+					<td><?php echo lang('sl_storyline_flagged'); ?></td>
+				</tr>
+				<?php endif; ?>
 				</table>
 			</fieldset>
 		</div>

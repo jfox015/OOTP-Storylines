@@ -14,7 +14,7 @@ class Migration_Default_storylines_data extends Migration {
             $comments_thread_id = $this->db->insert_id();
             $this->db->query("INSERT INTO {$prefix}comments VALUES(0, {$comments_thread_id},'This is a default comment. Do with it as you will.',".time().",1,".time().",'', 0,1)");
         }
-        $this->db->query("INSERT INTO {$prefix}storylines VALUES(0, 'Test Story','<b>This is a test</b><br />Testing how this all works out.</b>','news,article,first',1,1,1,{$comments_thread_id},5000,".time().",1,".time().",1,0)");
+        $this->db->query("INSERT INTO {$prefix}storylines VALUES(0, 'Test Story','<b>This is a test</b><br />Testing how this all works out.</b>','news,article,first',1,1,1,{$comments_thread_id},5000,".time().",1,".time().",1,0,0,'')");
         $storyline_id = $this->db->insert_id();
         $this->db->query("INSERT INTO {$prefix}storylines_history VALUES(0, {$storyline_id}, 1,'Added default storyline and article','','',".time().",1)");
         // ARTICLE 1

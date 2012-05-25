@@ -9,6 +9,7 @@ $lang['mod_unauthorized']			= 'Unauthorized. Sorry you do not have the appropria
 $lang['sl_general_header']			= 'General Details';
 $lang['sl_general_note']			= 'These fields are not used within the game. They are only for SLE organization purposes.';
 
+$lang['sl_id']						= 'ID';
 $lang['sl_storyline']				= 'Storyline';
 $lang['sl_custom_header']			= 'Storylines';
 $lang['sl_settings_header']			= 'Storylines Settings';
@@ -17,6 +18,8 @@ $lang['sl_action_review']			= 'In Review';
 $lang['sl_action_reject']			= 'Reject';
 $lang['sl_action_archive']			= 'Archive';
 $lang['sl_article_count']			= 'Articles';
+$lang['sl_action_export']			= 'Export for Game';
+$lang['sl_action_flag']				= 'Flag';
 $lang['sl_creator']					= 'Created By';
 $lang['sl_delete_confirm']			= 'Are you sure you want to deleted the selected items? This will permanently remove items from the database. This action cannot be undone!\n\nDo you want to proceed?';
 $lang['sl_no_matches_found']		= 'No items were found that match your selection.';
@@ -61,6 +64,10 @@ $lang['sl_edit_trigger']			= 'Edit Trigger';
 $lang['sl_trigger_details']			= 'Trigger Details';
 $lang['sl_activate_note']			= 'Make item active for use in the editor';
 $lang['sl_deactivate_note']			= 'Deactivate this item to prevent use in editor';
+
+$lang['sl_storyline_flagged']		= 'This storyline was flagged as being inapproriate or inaccurate.';
+$lang['sl_status_change']			= 'Storyline Status Changed';
+$lang['sl_anonymous']				= 'Anonymous User';
 
 $lang['sl_result_details']			= 'Result Details';
 $lang['sl_create_result']			= 'Create Result';

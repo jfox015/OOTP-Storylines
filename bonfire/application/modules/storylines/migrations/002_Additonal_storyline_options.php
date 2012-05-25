@@ -15,6 +15,21 @@ class Migration_Additonal_storyline_options extends Migration {
 			 ('storylines.comments_enabled', 'storylines', '1');
 		";
         $this->db->query($default_settings);
+		
+		$this->dbforge->add_column('storylines', array(
+                'flagged'	=> array(
+                'type'	=> 'int',
+                'constraint'	=> 1,
+                'default'		=> '0'
+            )
+        ));
+        $this->dbforge->add_column('storylines', array(
+                'flag_message'	=> array(
+                'type'	=> 'varchar',
+                'constraint'	=> 255,
+                'default'		=> ''
+            )
+        ));
         foreach ($this->permission_array as $name => $description)
         {
             $this->db->query("INSERT INTO {$prefix}permissions(name, description) VALUES('".$name."', '".$description."')");
@@ -32,7 +47,9 @@ class Migration_Additonal_storyline_options extends Migration {
         // remove the keys
 		$this->db->query("DELETE FROM {$prefix}settings WHERE (name = 'storylines.comments_enabled'
 		)");
-        foreach ($this->permission_array as $name => $description)
+        $this->dbforge->drop_column("storylines","flagged");
+        $this->dbforge->drop_column("storylines","flag_message");
+		foreach ($this->permission_array as $name => $description)
         {
             $query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = '".$name."'");
             foreach ($query->result_array() as $row)

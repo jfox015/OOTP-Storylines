@@ -707,25 +707,77 @@ class Custom extends Admin_Controller {
 		$this->output->set_header('Content-type: application/json'); 
 		$this->output->set_output(json_encode($json_out));
 	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Flag a storyline or group of storylines
+	 *
+	 * @access public
+	 *
+	 * @param array  $storylines       	Array of storylines to flag
+	 * @param string $bflag_message 		Set a message for the storyline as the reason for flagging it
+	 *
+	 * @return void
+	 */
+	public function flag($storylines=array(), $flag_message='', $bypass_auth = false)
+	{
+
+		if (empty($storylines))
+		{
+			return;
+		}
+
+		if (!$bypass_auth)
+		{
+			$this->auth->restrict('Storylines.Content.Manage');
+		}
+		foreach ($storylines as $storyline_id)
+		{
+			$data = array(
+				'flagged'		=> 1,
+				'flag_message'	=> $flag_message
+			);
+
+			$this->storylines_model->update($storyline_id, $data);
+		}
+
+	}//end flag()
+	
 	//--------------------------------------------------------------------
 	//	!PRIVATE FUNCTIONS
 	//--------------------------------------------------------------------
 
+
 	//--------------------------------------------------------------------
 
-	private function change_status($items=false, $status_id = 1)
+	public function change_status($items=false, $status_id = 1, $bypass_auth = false)
 	{
 		if (!$items)
 		{
 			return;
 		}
-		$this->auth->restrict('Storylines.Content.Manage');
-		
+		if (!$bypass_auth)
+		{
+			$this->auth->restrict('Storylines.Content.Manage');
+		}
+		$this->load->model('activities/Activity_model', 'activity_model');
+		$status = $this->storylines_publish_status_model->find($status_id);
+		if (isset($this->current_user) && isset($this->current_user->id))
+		{
+			$user = $this->user_model->find($this->current_user->id)->id;
+		}
+		else 
+		{
+			$user = 999;
+		}
 		foreach ($items as $item_id)
 		{
+			$old_status = $this->storylines_model->find($item_id)->publish_status_id;
 			$this->storylines_model->update($item_id, array('publish_status_id' => $status_id));
+			$this->activity_model->log_activity($user, lang('sl_status_change') . ', storyline id: '.$item_id.', old status = '.$old_status.', new status = '.$status->name, 'storylines');
 		}
-	}
+	}	
 	
 	//--------------------------------------------------------------------
 
