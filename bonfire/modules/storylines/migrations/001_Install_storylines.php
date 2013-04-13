@@ -142,7 +142,7 @@ class Migration_Install_storylines extends Migration {
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('list_storylines_articles_message_types');
 		
-		$this->db->query("INSERT INTO {$prefix}list_storylines_articles_message_types VALUES(1,'League News')");
+		$this->db->query("INSERT INTO {$prefix}list_storylines_articles_message_types VALUES(1,'League News Article')");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_articles_message_types VALUES(2,'Personal Message')");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_articles_message_types VALUES(3,'No Message')");
 		
@@ -238,7 +238,7 @@ class Migration_Install_storylines extends Migration {
 		$this->db->query("INSERT INTO {$prefix}list_storylines_triggers VALUES(91,'team_eliminated_from_postseason_contention',5000,'','',1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_triggers VALUES(92,'team_clinches_postseason_berth',5000,'','',1)");
 		$this->db->query("INSERT INTO {$prefix}list_storylines_triggers VALUES(93,'team_clinches_division_title',5000,'','',1)");
-
+		
 		// Storylines Data Objects List
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
 		$this->dbforge->add_field("`slug` varchar(255) NOT NULL DEFAULT ''");

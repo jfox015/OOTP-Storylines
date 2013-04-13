@@ -596,6 +596,43 @@ class Custom extends Admin_Controller {
 		}
 		$this->output->set_header('Content-type: application/json'); 
 		$this->output->set_output(json_encode($json_out));
+	}	
+	//--------------------------------------------------------------------
+	/*
+		Method:
+			make_main_actor()
+		
+		An ajax method to set the passed data objects main actor value to 1 and all 
+		other data object main actor values to 0
+		
+		Return:
+			JSON data object
+	*/
+	public function make_main_actor()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		if ($this->input->post('object_data'))
+		{
+			$items = json_decode($this->input->post('object_data'));
+			$this->storylines_model->clear_main_actors($items->storyline_id);
+			$this->storylines_model->set_main_actor($items->object_id);
+			$json_out['result']['items'] = $this->storylines_model->get_data_objects($items->storyline_id);
+		}
+		else
+		{
+			$error = true;
+			$status = "Required post data was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
 	}
 	
 	//--------------------------------------------------------------------
@@ -652,7 +689,7 @@ class Custom extends Admin_Controller {
 		$error = false;
 		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
 		
-		$storyline_id = $this->uri->segment(5);
+		$object_id = $this->uri->segment(5);
 		
 		if (isset($storyline_id) && !empty($storyline_id)) 
 		{

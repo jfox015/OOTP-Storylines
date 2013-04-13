@@ -91,7 +91,9 @@
 					<tr><td>&nbsp;</td></tr>
 					</tbody>
 					</table>
+					<div class="help-inline"><i class="icon-hand-right"></i> <?php echo lang('sl_main_actor_notes'); ?></div>
 				</fieldset>
+				
 				<div style="display:block:height:12px; clear: both;">&nbsp;</div>
 					<!-- ARTICLES -->
 				<fieldset>

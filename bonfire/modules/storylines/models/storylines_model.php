@@ -218,6 +218,26 @@ class Storylines_model extends BF_Model
 		$this->db->delete('storylines_data_objects',array('id'=>$object_id));
 		return ($this->db->affected_rows() > 0);
 	}
+	public function clear_main_actors($storyline_id = false)
+	{
+		if ($storyline_id === false)
+		{
+			return false;
+		}
+		$this->db->where('storyline_id', $storyline_id);
+		$this->db->update('storylines_data_objects', array('main_actor' => 0)); 
+		return ($this->db->affected_rows() > 0);
+	}
+	public function set_main_actor($object_id = false)
+	{
+		if ($object_id === false)
+		{
+			return false;
+		}
+		$this->db->where('object_num', $object_id);
+		$this->db->update('storylines_data_objects', array('main_actor' => 1)); 
+		return ($this->db->affected_rows() > 0);
+	}
 	public function get_data_objects_ids($storyline_id = false)
 	{
 		if ($storyline_id === false)
@@ -242,7 +262,7 @@ class Storylines_model extends BF_Model
 			return false;
 		}
 		$dbprefix = $this->db->dbprefix;
-		$query = $this->db->select('storylines_data_objects.object_num, storylines_data_objects.object_id, storylines_data_objects.id, list_storylines_data_objects.name, list_storylines_data_objects.slug, list_storylines_data_objects.description, (SELECT COUNT('.$dbprefix.'storylines_conditions.id) FROM '.$dbprefix.'storylines_conditions WHERE '.$dbprefix.'storylines_conditions.var_id = '.$dbprefix.'storylines_data_objects.id AND '.$dbprefix.'storylines_conditions.level_type = 3) as condition_count')
+		$query = $this->db->select('storylines_data_objects.object_num, storylines_data_objects.object_id, storylines_data_objects.id,  storylines_data_objects.main_actor, list_storylines_data_objects.name, list_storylines_data_objects.slug, list_storylines_data_objects.description, (SELECT COUNT('.$dbprefix.'storylines_conditions.id) FROM '.$dbprefix.'storylines_conditions WHERE '.$dbprefix.'storylines_conditions.var_id = '.$dbprefix.'storylines_data_objects.id AND '.$dbprefix.'storylines_conditions.level_type = 3) as condition_count')
 				 ->join('list_storylines_data_objects','list_storylines_data_objects.id = storylines_data_objects.object_id','right outer')
 				 ->where('storyline_id',$storyline_id)
 				 ->get('storylines_data_objects');

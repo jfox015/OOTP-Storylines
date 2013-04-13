@@ -39,6 +39,19 @@
 					</div>
 				</div>
 				
+				<div id="preview_modal" class="modal" style="display:none;">
+					<div class="modal-header">
+						<a href="#" class="close" data-dismiss="modal"></a>
+						<h3>Preview Article</h3>
+					</div>
+					<div class="modal-body">
+						<div id="preview_content"></div>
+					</div>
+					<div class="modal-footer">
+						<a href="#" class="btn" data-dismiss="modal"><?php echo lang('sl_action_close'); ?></a>
+					</div>
+				</div>
+				
 					<!-- GENERAL DETAILS -->
 				<fieldset>
 					<legend style="margin-bottom:0px;"><?php echo lang('sl_general_header'); ?></legend>
@@ -77,6 +90,7 @@
 					<div class="control-group <?php echo form_error('text') ? 'error' : '' ?>">
 						 <label class="control-label"><?php echo lang('sl_text') ?></label>
 						<div class="controls">
+							<div id="preview_err" style="display:none;"></div>
 							<?php echo form_textarea( array( 'name' => 'text', 'id' => 'text', 'class'=>'span7','rows' => '5', 'cols' => '80', 'value' => isset($article) ? $article->text : set_value('text') ) )?>
 							<?php if (form_error('text')) echo '<span class="help-inline">'. form_error('text') .'</span>'; ?><br />
 							<a href="#" id="add_token" class="btn" disabled="disabled"><i class="icon-plus"></i> Insert Token</a>
@@ -176,6 +190,7 @@
 			<fieldset>
 				<div class="well">
 					<input type="submit" name="submit" id="submit" class="btn btn-primary btn-large" value="<?php echo lang('bf_action_save') ?>" />
+					<input type="button" id="preview" class="btn btn-info btn-large disabled" disabled="disabled" value="<?php echo lang('sl_action_preview') ?>" />
 					<input type="hidden" name="storyline_id" value="<?php echo $storyline->id; ?>" />
 				</div>
 			</fieldset>

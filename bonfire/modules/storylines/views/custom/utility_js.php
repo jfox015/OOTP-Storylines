@@ -21,7 +21,7 @@ function ajax_post(type, object_id, func ) {
 	var prefix = '', data_obj = '{ "storyline_id": '+storyline_id+', "object_id": '+object_id+'}';
 	if (type == 'triggers' || type == 'trigger')
 		prefix = "trg";
-	else if (type == 'data_objects' || type == 'data_object')
+	else if (type == 'data_objects' || type == 'data_object' || type == 'main-actor')
 		prefix = "obj";
     $('#'+prefix+'_waitload').css('display','block');
 	$.post('<?php echo site_url(SITE_AREA.'/custom/storylines'); ?>/' + func +'_'+type+'/', {'object_data':data_obj}, function(data,status) {
@@ -88,7 +88,7 @@ function handle_ajax_reponse(status, data, type, prefix)
 				//Storyline form data returns
 				if (type == 'trigger' || type == 'triggers')
 					drawTriggers(data)
-				else if (type == 'data_objects' || type == 'data_object')
+				else if (type == 'data_objects' || type == 'data_object' || type == 'main_actor')
 					drawDataObjects(data);
 				// Modal window returns
 				else if (type == 'new_condition')
@@ -125,7 +125,7 @@ function handle_ajax_reponse(status, data, type, prefix)
 	if (statusMess != '') {
 		$('div#'+prefix+'_ajaxStatus').addClass(statusClass);
 		$('div#'+prefix+'_ajaxStatus').html(statusMess);
-		$('div#'+prefix+'_ajaxStatusBox').fadeIn("slow",function() { setTimeout("fadeStatus('"+prefix+"_ajaxStatusBox')",5000); });
+		$('div#'+prefix+'_ajaxStatusBox').fadeIn("slow",function() { setTimeout("fadeSLStatus('"+prefix+"_ajaxStatusBox')",5000); });
 	}
 	$('#'+prefix+'_waitload').css('display','none');
 }
@@ -137,7 +137,7 @@ $(window).bind('beforeunload', function(){
     	return "There may be unsaved changes on this page. Are you sure you want to exit? Click 'Cancel' to stop unload and save your changes first.";
     }
 });
-function fadeStatus(div) {
+function fadeSLStatus(div) {
     if (div == null || div == '') div = 'ajaxStatusBox';
 	$('div#'+div).fadeOut("normal",function() { clearTimeout(fader); $('div#'+div).hide(); });
 }

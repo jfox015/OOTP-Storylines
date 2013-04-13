@@ -207,6 +207,56 @@ $('#edit_conditions').live('click', function(e) {
 	$('#save_conditions').css('display','inline-block');
 	$('#condition_modal').modal('show');
 });
+//---------------------------------------------------------
+//	!PREVIEW
+//---------------------------------------------------------
+$('#text').blur(function(e) {
+	var article_txt = $('#text').val(), prev = $('#preview');
+	if (article_txt && article_txt.length > 0) {
+		prev.removeClass('disabled');
+		prev.removeAttr('disabled');
+	} else {
+		prev.addClass('disabled');
+		prev.attr("disabled", 'disabled');
+	}
+});
+
+$('#preview').click(function(e) {
+	var article_txt = $('#text').val();
+	//parse tokens from text body
+	var re = new RegExp(/\[(.+?)\]/);
+	var token_list = re.exec(article_txt);
+	if (token_list.length > 0) {
+		// LOAD TOKENS
+		$.ajax({
+			dataType: "json",
+			url: '<?php echo(site_url(SITE_AREA.'/custom/storylines/tokens/load_tokens')); ?>',
+			data: {'tokens': token_list},
+			success: function(tokens) {
+				$.each(tokens, function(item) {
+					var start_str = '', end_str = '';
+					if (item.slug.indexOf('link') != -1) {
+						start_str = '<a href="#">';
+						end_str = '</a>';
+					}
+                    article_txt.replace('[ ' + item.slug + ' ]',start_str + item.name + end_str);
+				});
+				$('#preview_content').html(article_txt);
+				$('#preview_modal').modal('show');
+			},
+			error: function(error) {
+				$('#preview_content').html(article_txt);
+				$('#preview_modal').modal('show');
+			}
+		});
+	}
+});
+$('#preview_modal').modal({
+	keyboard: false,
+	static:true,
+	background: true
+});
+$('#preview_modal').modal('hide');
 //--------------------------------------------------------
 //	!PAGE INIT
 //--------------------------------------------------------

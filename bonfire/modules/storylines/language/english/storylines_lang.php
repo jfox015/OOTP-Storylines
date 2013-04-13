@@ -31,6 +31,8 @@ $lang['sl_description']				= 'Description';
 $lang['sl_category']				= 'Category';
 $lang['sl_edit_after_create']		= 'Edit after created';
 
+$lang['sl_action_preview']			= 'Preview';
+$lang['sl_action_close']			= 'Close';
 $lang['sl_create_article']			= 'Create Article';
 $lang['sl_edit_article']			= 'Edit Article';
 $lang['sl_subject']					= 'Subject';
@@ -112,6 +114,8 @@ $lang['sl_add_object']				= 'Add Character';
 $lang['sl_add_comment']				= 'Add Comment';
 
 $lang['sl_data_object']				= 'Data Object';
+$lang['sl_main_actor']				= 'Main actor';
+$lang['sl_main_actor_notes']		= ' = Object serves as the main actor of story. If this storyline has child articles, no other storylines will be created for this person until the current one completes.';
 $lang['sl_comments']				= 'Comments';
 $lang['sl_data_objects']			= 'Characters (Data Objects)';
 $lang['sl_article']					= 'Article';

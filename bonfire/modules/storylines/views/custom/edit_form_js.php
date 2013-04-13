@@ -70,6 +70,16 @@ $("a[rel=remove_data_object]").live('click', function(e) {
 		$('div#obj_ajaxStatusBox').fadeIn("slow",function() { setTimeout('fadeStatus("obj_ajaxStatusBox")',5000); });
 	}
 });
+$("a[rel=set_main_actor]").live('click', function(e) {
+    e.preventDefault();
+	$('#actor_node_'+this.id).css('display','none');
+	$('#obj_waitload').css('display','block');
+	data_obj = '{ "storyline_id": '+storyline_id+', "object_id": '+this.id+'}'
+	$.post('<?php echo(site_url(SITE_AREA."/custom/storylines/make_main_actor")); ?>',{'object_data': data_obj}, function(data,status) {
+		handle_ajax_reponse(status, data, 'main_actor', 'main_actor');
+	});
+});
+
 function drawDataObjects(data) {
 
 	//console.debug('drawDataObjects');
@@ -83,15 +93,24 @@ if (data.result.items.length > 0) {
 			outStr += '<td>' + "\n";
 			outStr += '<input type="checkbox" name="checked[]" value="'+ item.id +'" />' + "\n";
 			outStr += '</td>' + "\n";
-			outStr += '<td><a href="#" rel="tooltip" class="tooltips" title="'+ item.description +'">'+ item.name +'</a></td>' + "\n";
+			outStr += '<td>';
+			if (item.main_actor && item.main_actor != 0) { 
+				outStr += '<i title="<?php echo lang('sl_main_actor'); ?>" class="icon-hand-right"></i>&nbsp;';
+			}
+			outStr += '<a href="#" rel="tooltip" class="tooltips" title="'+ item.description +'">'+ item.name +'</a></td>' + "\n";
 			outStr += '<td>'+ item.condition_count +'</td>' + "\n";
 			outStr += '<td>' + "\n";
 			outStr += '<a class="btn btn-small" href="#" rel="edit_object_cond" id="'+ item.id +'">' + "\n";
 			outStr += '<i class="icon-edit"></i><?php echo lang('sl_edit'); ?>' + "\n";
 			outStr += '</a>' + "\n";
 			outStr += '<a class="btn btn-small" href="#" rel="remove_data_object" id="'+ item.id +'">' + "\n";
-			outStr += '<i class=" icon-remove"></i> <?php echo lang('sl_delete'); ?>' + "\n";
+			outStr += '<i class="icon-remove"></i> <?php echo lang('sl_delete'); ?>' + "\n";
 			outStr += '</a>' + "\n";
+			if (item.main_actor == 0 && item.id < 12) {
+				outStr += '<div id="actor_node_'+item.id+'" style="display:inline-block;"><a class="btn btn-small" href="#" rel="set_main_actor" id="'+ item.id +'">' + "\n";
+				outStr += '<i class="icon-hand-right"></i>' + "\n";
+				outStr += '</a></div>' + "\n";
+			}
 			outStr += '</td>' + "\n";
 			outStr += '</tr>' + "\n";
 			

@@ -262,6 +262,31 @@ class Tokens extends Admin_Controller {
 		$this->output->set_output(json_encode($json_out));
 	}
 	
+	public function load_tokens()
+	{
+		$error = false;
+		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+		
+		if ($this->input->post('tokens'))
+		{
+			$slugs = json_decode($this->input->post('tokens'));
+			$json_out['result']['tokens'] = $this->storylines_tokens_model->get_tokens_by_slug($slugs);
+		}
+		else
+		{
+			$error = true;
+			$status = "Tkens list was missing.";
+		}
+		if ($error) 
+		{ 
+			$json_out['code'] = 301;
+			$json_out['status'] = "error:".$status; 
+			$json_out['result'] = 'An error occured.';
+		}
+		$this->output->set_header('Content-type: application/json'); 
+		$this->output->set_output(json_encode($json_out));
+	}
+
 	//--------------------------------------------------------------------
 
 	public function change_status($items=false, $active = 1)
