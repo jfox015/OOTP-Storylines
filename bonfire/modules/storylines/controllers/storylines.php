@@ -83,7 +83,7 @@ class Storylines extends Front_Controller {
         {
             $checked = $this->input->post('checked');
 			
-			$this->modules->load('storylines/custom');
+			$this->load->module('storylines/custom');
 			
             switch(strtolower($action))
             {
