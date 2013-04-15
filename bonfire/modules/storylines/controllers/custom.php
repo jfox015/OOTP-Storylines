@@ -688,10 +688,10 @@ class Custom extends Admin_Controller {
 	{
 		$error = false;
 		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
+
+        $storyline_id = $this->uri->segment(5);
 		
-		$object_id = $this->uri->segment(5);
-		
-		if (isset($storyline_id) && !empty($storyline_id)) 
+		if (isset($storyline_id) && !empty($storyline_id))
 		{
 			$json_out['result']['items'] = $this->storylines_model->get_triggers($storyline_id);
 		}

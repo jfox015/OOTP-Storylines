@@ -225,8 +225,8 @@ class Storylines_model extends BF_Model
 			return false;
 		}
 		$this->db->where('storyline_id', $storyline_id);
-		$this->db->update('storylines_data_objects', array('main_actor' => 0)); 
-		return ($this->db->affected_rows() > 0);
+		$this->db->update('storylines_data_objects', array('main_actor' => 0));
+        return ($this->db->affected_rows() > 0);
 	}
 	public function set_main_actor($object_id = false)
 	{
@@ -234,9 +234,9 @@ class Storylines_model extends BF_Model
 		{
 			return false;
 		}
-		$this->db->where('object_num', $object_id);
-		$this->db->update('storylines_data_objects', array('main_actor' => 1)); 
-		return ($this->db->affected_rows() > 0);
+        $this->db->where('id', $object_id);
+		$this->db->update('storylines_data_objects', array('main_actor' => 1));
+        return ($this->db->affected_rows() > 0);
 	}
 	public function get_data_objects_ids($storyline_id = false)
 	{

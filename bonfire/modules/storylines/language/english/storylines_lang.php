@@ -115,7 +115,7 @@ $lang['sl_add_comment']				= 'Add Comment';
 
 $lang['sl_data_object']				= 'Data Object';
 $lang['sl_main_actor']				= 'Main actor';
-$lang['sl_main_actor_notes']		= ' = Object serves as the main actor of story. If this storyline has child articles, no other storylines will be created for this person until the current one completes.';
+$lang['sl_main_actor_notes']		= ' = OOTP 14 and up only. Object serves as the MAIN ACTOR of story. If this storyline has child articles, no other storylines will be created for this person until the current one completes.';
 $lang['sl_comments']				= 'Comments';
 $lang['sl_data_objects']			= 'Characters (Data Objects)';
 $lang['sl_article']					= 'Article';
@@ -133,6 +133,8 @@ $lang['sl_name']					= 'Name';
 $lang['sl_name_note']				= 'Name for use in editor only';
 $lang['sl_frequency']				= 'Frequency';
 $lang['sl_add_successive_article']	= 'Add successive article';
+$lang['sl_action_insert_token']	    = 'Insert Token';
+$lang['sl_insert_token_note']	    = 'At least ONE data object must be connected to this storyline to select tokens to insert.';
 
 $lang['sl_no_storyline_found']		= 'The selected Storyline could nto be found.';
 $lang['sl_no_articles']				= 'No articles were found';

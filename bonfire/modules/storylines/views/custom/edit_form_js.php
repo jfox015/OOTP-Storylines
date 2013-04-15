@@ -50,25 +50,9 @@ $('#add_data_object').click( function(e) {
 });
 $("a[rel=remove_data_object]").live('click', function(e) {
     e.preventDefault();
-    var proceed = false, dataStr = this.id.split("|");
-	var data_object_id = dataStr[1];
-	//console.log(data_object_id);
-	if (data_object_id != null && data_object_id != '' && data_objects.length > 0) {
-		$.each(data_objects, function(i, item) {
-			if (item.id == data_object_id)
-				proceed = true;
-		});
-	}
-	if (proceed)
-	{	
-		if (confirm("Are you sure you want to remove the selected data object?")) {
-			ajax_post('data_object', data_object_id, 'remove');
-		}
-	} else {
-		$('div#obj_ajaxStatus').addClass('alert-error');
-		$('div#obj_ajaxStatus').html('The object you selected was not found in the object list. Please reload the page and try again');
-		$('div#obj_ajaxStatusBox').fadeIn("slow",function() { setTimeout('fadeStatus("obj_ajaxStatusBox")',5000); });
-	}
+    if (confirm("Are you sure you want to remove the selected data object?")) {
+        ajax_post('data_object', this.id, 'remove');
+    }
 });
 $("a[rel=set_main_actor]").live('click', function(e) {
     e.preventDefault();

@@ -51,7 +51,10 @@
 						<a href="#" class="btn" data-dismiss="modal"><?php echo lang('sl_action_close'); ?></a>
 					</div>
 				</div>
-				
+				<script type="text/template" id="preview_template">
+                    <b><%= preview.subject %></b><br /><br />
+                    <%= preview.article %>
+				</script>
 					<!-- GENERAL DETAILS -->
 				<fieldset>
 					<legend style="margin-bottom:0px;"><?php echo lang('sl_general_header'); ?></legend>
@@ -93,7 +96,7 @@
 							<div id="preview_err" style="display:none;"></div>
 							<?php echo form_textarea( array( 'name' => 'text', 'id' => 'text', 'class'=>'span7','rows' => '5', 'cols' => '80', 'value' => isset($article) ? $article->text : set_value('text') ) )?>
 							<?php if (form_error('text')) echo '<span class="help-inline">'. form_error('text') .'</span>'; ?><br />
-							<a href="#" id="add_token" class="btn" disabled="disabled"><i class="icon-plus"></i> Insert Token</a>
+                            <a href="#" id="add_token" class="btn" disabled="disabled"><i class="icon-plus"></i> <?php echo(lang('sl_action_insert_token')); ?></a> &nbsp; <span class="help-inline"><?php echo lang('sl_insert_token_note'); ?></span>
 						</div>
 					</div>
 					

@@ -267,15 +267,16 @@ class Tokens extends Admin_Controller {
 		$error = false;
 		$json_out = array("result"=>array(),"code"=>200,"status"=>"OK");
 		
-		if ($this->input->post('tokens'))
+		if ($this->input->post('post_data'))
 		{
-			$slugs = json_decode($this->input->post('tokens'));
+			$post_data = json_decode($this->input->post('post_data'));
+            $slugs = $post_data->tokens;
 			$json_out['result']['tokens'] = $this->storylines_tokens_model->get_tokens_by_slug($slugs);
 		}
 		else
 		{
 			$error = true;
-			$status = "Tkens list was missing.";
+			$status = "Tokens list was missing.";
 		}
 		if ($error) 
 		{ 

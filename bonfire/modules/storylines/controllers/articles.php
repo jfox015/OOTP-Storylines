@@ -231,7 +231,8 @@ class Articles extends Admin_Controller {
 			Template::set_theme('admin');
 			
 			// ADD Conditions supportiog JS and CSS
-			Assets::add_js($this->load->view('storylines/custom/utility_js',null,true),'inline');
+            Assets::add_js(base_url().'/assets/js/underscore-min.js','external');
+            Assets::add_js($this->load->view('storylines/custom/utility_js',null,true),'inline');
 			Assets::add_js($this->load->view('storylines/custom/conditions_js',null,true),'inline');
 			Assets::add_js($this->load->view('storylines/custom/edit_article_form_js',array('article'=>$article),true),'inline');
 			Assets::add_js(array(js_path() . 'json2.js',Template::theme_url('js/jquery-ui-1.8.13.min.js')));

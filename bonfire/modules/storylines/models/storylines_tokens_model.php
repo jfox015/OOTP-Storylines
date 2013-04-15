@@ -104,26 +104,31 @@ class Storylines_tokens_model extends BF_Model
 	}
 	public function get_tokens_by_slug($slugs = false, $show_inactive = false)
 	{
-		$tokens = array();
-		if ($category_id === false)
+		if ($slugs === false)
 		{
-			$this->error = "No category ID was received";
+			$this->error = "No tokens were received";
 			return false;
 		}
-		if ($show_inactive === false)
+        $tokens = array();
+        if ($show_inactive === false)
 		{
 			$this->db->where('active',1);
 		}
 		$slug_str = "('";
 		foreach($slugs as $slug) 
 		{
-			$slug_str .= $slug;
+			if ($slug_str != "('") { $slug_str .=  "','"; }
+            $slug_str .= $slug;
 		}
-		$slug_str .= "')";
-		
-		return $this->select('id, slug, name')
-					->where_in('slug',$slug_str)
-					->find_all();
+        $slug_str .= "')";
+		$this->db->select('id, slug, name', false)
+					->where('slug IN '.$slug_str);
+		$query = $this->db->get('list_storylines_tokens');
+        //echo ($this->db->last_query()."<br />");
+        if ($query->num_rows > 0) {
+            $tokens = $query->result();
+        }
+        return $tokens;
 	}
 	public function categories_as_select()
 	{

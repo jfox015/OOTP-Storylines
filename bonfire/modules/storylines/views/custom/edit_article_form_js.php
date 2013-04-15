@@ -223,33 +223,53 @@ $('#text').blur(function(e) {
 
 $('#preview').click(function(e) {
 	var article_txt = $('#text').val();
+	var subject_txt = $('#subject').val();
 	//parse tokens from text body
-	var re = new RegExp(/\[(.+?)\]/);
-	var token_list = re.exec(article_txt);
+    var token_list = [];
+    var myRegexp = /\[(.+?)\]/g;
+    var match = myRegexp.exec(article_txt);
+    if (match != null) token_list.push(match[1]);
+    while (match != null) {
+        match = myRegexp.exec(article_txt);
+        if (match != null) token_list.push(match[1]);
+        else break;
+    }
+    match = myRegexp.exec(subject_txt);
+    if (match != null) token_list.push(match[1]);
+    while (match != null) {
+        match = myRegexp.exec(article_txt);
+        if (match != null) token_list.push(match[1]);
+        else break;
+    }
 	if (token_list.length > 0) {
-		// LOAD TOKENS
-		$.ajax({
-			dataType: "json",
-			url: '<?php echo(site_url(SITE_AREA.'/custom/storylines/tokens/load_tokens')); ?>',
-			data: {'tokens': token_list},
-			success: function(tokens) {
-				$.each(tokens, function(item) {
-					var start_str = '', end_str = '';
-					if (item.slug.indexOf('link') != -1) {
-						start_str = '<a href="#">';
-						end_str = '</a>';
-					}
-                    article_txt.replace('[ ' + item.slug + ' ]',start_str + item.name + end_str);
-				});
-				$('#preview_content').html(article_txt);
-				$('#preview_modal').modal('show');
-			},
-			error: function(error) {
-				$('#preview_content').html(article_txt);
-				$('#preview_modal').modal('show');
-			}
+        // LOAD TOKENS
+        var data_obj = JSON.stringify({'tokens': token_list},true,4);
+        url = '<?php echo(site_url(SITE_AREA.'/custom/storylines/tokens/load_tokens')); ?>';
+
+
+        $.post(url, {'post_data':data_obj}, function(data,status) {
+            $.each(data.result.tokens, function(i, item) {
+                var start_str = '', end_str = '';
+                if (item.slug.indexOf('link') != -1) {
+                    start_str = '<a href="#">';
+                    end_str = '</a>';
+                }
+                if (article_txt.indexOf(item.slug) != -1) {
+                    article_txt = article_txt.replace('[' + item.slug + ']',start_str + item.name + end_str);
+                }
+                if (subject_txt.indexOf(item.slug) != -1) {
+                    subject_txt = subject_txt.replace('[' + item.slug + ']',item.name);
+                }
+            });
+            var tmpl = _.template($('#preview_template').html());
+            $('#preview_content').html(tmpl({'preview':{'subject':subject_txt, 'article': article_txt}}));
+            $('#preview_modal').modal('show');
 		});
-	}
+	}  else {
+        $('#preview_content').html(article_txt);
+        $('#preview_modal').modal('show');
+    }
+
 });
 $('#preview_modal').modal({
 	keyboard: false,
@@ -273,17 +293,21 @@ $('#condition_modal').modal({
 	static:true,
 	background: true
 });
+if ($('#text').val() != '' ||  $('#subject').val() != '') {
+    $('#preview').removeAttr('disabled');
+}
 $('#condition_modal').modal('hide');
 $(":input").focus(function () {
-    //console.log(data_objects.length);
-	if (data_objects.length > 0 && (this.id == "subject" || this.id == "text"))
-	{
-		$('#add_token').removeAttr('disabled');
-		selected_field = this.id;
-	}
-	else
-	{
-		$('#add_token').attr('disabled','disabled');
-		selected_field = null;
-	}
+	if ((this.id == "subject" || this.id == "text")) {
+        if (data_objects.length > 0)
+        {
+            $('#add_token').removeAttr('disabled');
+            selected_field = this.id;
+        }
+        else
+        {
+            $('#add_token').attr('disabled','disabled');
+            selected_field = null;
+        }
+    }
 });

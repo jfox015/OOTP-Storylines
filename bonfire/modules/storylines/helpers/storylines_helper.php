@@ -15,7 +15,7 @@ if (!function_exists('find_author_name'))
 	{
 		$ci =& get_instance();
 
-		$ci->load->model('author_model');
+		$ci->load->model('storylines/author_model');
 
 		return $ci->author_model->find_author ($id);
 

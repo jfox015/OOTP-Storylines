@@ -45,8 +45,8 @@ class Author_model extends BF_Model
 
 	public function find_author( $id = 0 )
 	{
-	if ( (int)$id == 0 )
-		return false;
+	    if ( (int)$id == 0 )
+		    return false;
 
 		$this->select('username');
 
