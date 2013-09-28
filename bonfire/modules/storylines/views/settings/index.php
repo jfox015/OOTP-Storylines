@@ -42,12 +42,3 @@
 	<?php echo form_close(); ?>
 </div>
 
-<script type="text/javascript">
-    head.ready(function(){
-        $(document).ready(function() {
-
-        });
-    });
-
-</script>
-
